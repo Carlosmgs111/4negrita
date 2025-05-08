@@ -1,0 +1,10 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { TicketsHUB } from "../components/TicketsHUB";
+---
+
+<Layout>
+  <div class="min-h-screen bg-background flex flex-col">
+    <TicketsHUB client:visible />
+  </div>
+</Layout>

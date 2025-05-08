@@ -1,0 +1,89 @@
+---
+import { Card } from "../components/ui/card";
+---
+
+<section id="historia" class="container-section">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-2xl md:text-3xl font-bold text-center mb-6">
+      La Historia de Negrita
+    </h2>
+
+    <Card client:visible className="overflow-hidden mb-8">
+      <div class="flex flex-col md:flex-row">
+        <div class="md:w-2/5">
+          <div
+            class="bg-gray-200 h-full min-h-[300px] flex items-center justify-center"
+          >
+            <div class="text-gray-500 text-center p-4">
+              <p class="font-medium">Imagen de Sofía</p>
+              <p class="text-sm">(Espacio reservado para la fotografía)</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-6 md:w-3/5">
+          <h3 class="text-xl font-semibold mb-4 text-heart-700">
+            Un 😇angelito de cuatro patas que quiere Volver a Caminar
+          </h3>
+          <p class="mb-4">
+            Negrita es una perrita llena de ternura y vitalidad. Le encanta
+            correr, jugar con los niños del barrio y descansar bajo el sol. Sin
+            embargo, hace poco sufrió un grave accidente: una camioneta de carga
+            le pasó por encima, provocándole una fractura bilateral en la
+            cadera.
+          </p>
+          <p class="mb-4">
+            Desde entonces, Negrita ha enfrentado un camino difícil. Su
+            recuperación será larga y requiere una intervención quirúrgica
+            urgente para que pueda volver a caminar sin dolor. A pesar de todo,
+            su mirada sigue transmitiendo amor, confianza y muchas ganas de
+            vivir.
+          </p>
+          <p class="font-medium text-heart-600">
+            Con tu ayuda, podemos brindarle a Negrita la atención médica que
+            necesita y darle la oportunidad de volver a correr como antes. Cada
+            aporte cuenta y nos acerca más a su recuperación completa.
+          </p>
+        </div>
+      </div>
+    </Card>
+  </div>
+
+  <div class="bg-warmth-100 rounded-xl p-6 border border-warmth-200">
+    <h3 class="text-xl font-semibold mb-4 text-warmth-500 text-center">
+      ¿Por qué es urgente?
+    </h3>
+    <p class="text-center mb-4">
+      Los médicos han indicado que la operación debe realizarse en los próximos
+      dos meses para maximizar sus posibilidades de recuperación completa.
+    </p>
+    <div
+      class="flex flex-col sm:flex-row items-center justify-center gap-6 mt-6"
+    >
+      <div class="text-center">
+        <div
+          class="bg-white h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-3"
+        >
+          <span class="font-bold text-heart-600 text-2xl">$120K</span>
+        </div>
+        <p class="text-sm">Costo total</p>
+      </div>
+      <div class="text-center">
+        <div
+          class="bg-white h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-3"
+        >
+          <span class="font-bold text-heart-600 text-2xl">56%</span>
+        </div>
+        <p class="text-sm">Recaudado</p>
+      </div>
+      <div class="text-center">
+        <div
+          class="bg-white h-16 w-16 rounded-full flex items-center justify-center mx-auto mb-3"
+        >
+          <span class="font-bold text-heart-600 text-2xl">60</span>
+        </div>
+        <p class="text-sm">Días límite</p>
+      </div>
+    </div>
+  </div>
+</section>

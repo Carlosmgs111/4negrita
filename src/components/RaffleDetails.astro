@@ -1,0 +1,150 @@
+---
+import { Separator } from "@/components/ui/separator";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Ticket } from "lucide-react";
+---
+
+<section id="rifa" class="bg-white py-16">
+  <div class="container-section">
+    <div class="text-center mb-10">
+      <h2 class="text-2xl md:text-3xl font-bold mb-4">Detalles de la Rifa</h2>
+      <p class="text-gray-600 max-w-2xl mx-auto">
+        Tu participación nos acerca a la meta. Cada boleto cuenta y tú podrías
+        ser el ganador de estos increíbles premios.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+      <Card client:visible className="card-highlight">
+        <CardContent className="p-6">
+          <h3 class="text-xl font-semibold mb-4">¿Qué se sortea?</h3>
+
+          <div class="space-y-6">
+            <div class="flex gap-4 items-start">
+              <div class="bg-warmth-100 rounded-lg p-2 text-warmth-500">
+                <span class="font-semibold text-xl">1°</span>
+              </div>
+              <div>
+                <h4 class="font-medium text-lg">Premio Principal</h4>
+                <p class="text-gray-600">
+                  Un viaje para dos personas a Cancún, con estancia de 5 días
+                  todo incluido.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex gap-4 items-start">
+              <div class="bg-warmth-100 rounded-lg p-2 text-warmth-500">
+                <span class="font-semibold text-xl">2°</span>
+              </div>
+              <div>
+                <h4 class="font-medium text-lg">Segundo Premio</h4>
+                <p class="text-gray-600">
+                  Una laptop última generación para apoyar tus proyectos
+                  personales.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex gap-4 items-start">
+              <div class="bg-warmth-100 rounded-lg p-2 text-warmth-500">
+                <span class="font-semibold text-xl">3°</span>
+              </div>
+              <div>
+                <h4 class="font-medium text-lg">Tercer Premio</h4>
+                <p class="text-gray-600">
+                  Una cena para cuatro personas en un restaurante de primera
+                  categoría.
+                </p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card client:visible className="card-highlight">
+        <CardContent className="p-6">
+          <h3 class="text-xl font-semibold mb-4">¿Cómo participar?</h3>
+
+          <div class="space-y-6">
+            <div class="flex gap-4 items-start">
+              <div
+                class="bg-heart-100 rounded-lg p-2 text-heart-500 flex items-center justify-center h-10 w-10"
+              >
+                <span class="font-semibold">1</span>
+              </div>
+              <div>
+                <h4 class="font-medium">Compra tu boleto</h4>
+                <p class="text-gray-600">
+                  Adquiere uno o más boletos por $100 pesos cada uno.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex gap-4 items-start">
+              <div
+                class="bg-heart-100 rounded-lg p-2 text-heart-500 flex items-center justify-center h-10 w-10"
+              >
+                <span class="font-semibold">2</span>
+              </div>
+              <div>
+                <h4 class="font-medium">Recibe tu confirmación</h4>
+                <p class="text-gray-600">
+                  Recibirás tu número de boleto por correo electrónico.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex gap-4 items-start">
+              <div
+                class="bg-heart-100 rounded-lg p-2 text-heart-500 flex items-center justify-center h-10 w-10"
+              >
+                <span class="font-semibold">3</span>
+              </div>
+              <div>
+                <h4 class="font-medium">Espera el sorteo</h4>
+                <p class="text-gray-600">
+                  El sorteo será el 15 de julio a las 19:00 horas en vivo por
+                  nuestras redes sociales.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <Separator client:visible className="my-6" />
+
+          <div
+            class="flex flex-col sm:flex-row gap-4 items-center justify-between"
+          >
+            <div class="text-center sm:text-left">
+              <span class="block text-xl font-bold text-heart-600"
+                >$100 MXN</span
+              >
+              <span class="text-sm text-gray-500">por boleto</span>
+            </div>
+            <Button client:visible className="btn-primary flex gap-2 items-center min-w-[200px]">
+              <Ticket client:visible size={18} />
+              <span>Comprar Boleto</span>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+
+    <Card client:visible className="border-warmth-200 bg-warmth-100">
+      <CardContent className="p-6">
+        <h3 class="text-xl font-semibold mb-4 text-center">
+          Método de Selección
+        </h3>
+        <p class="text-center max-w-2xl mx-auto">
+          El sorteo se realizará el <span class="font-semibold"
+            >15 de julio de 2025</span
+          > mediante un sistema transparente de selección aleatoria, transmitido
+          en vivo por nuestras redes sociales. Los ganadores serán contactados por
+          correo electrónico y publicados en nuestro sitio web.
+        </p>
+      </CardContent>
+    </Card>
+  </div>
+</section>

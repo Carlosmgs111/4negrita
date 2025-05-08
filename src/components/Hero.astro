@@ -1,0 +1,58 @@
+---
+import "../styles/global.css";
+import { Button } from "@/components/ui/button";
+---
+
+<div class="relative bg-gradient-to-b from-warmth-100 to-white py-20 md:py-28">
+  <div class="container-section">
+    <div class="text-center max-w-3xl mx-auto">
+      <span
+        class="inline-block bg-heart-100 text-heart-600 rounded-full px-4 py-1 text-sm font-semibold mb-4"
+      >
+        Rifa Solidaria
+      </span>
+      <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-6">
+        <span class="text-heart-600">Unidos</span> por Negrita y su recuperación
+      </h1>
+      <p class="text-lg md:text-xl text-gray-600 mb-8">
+        Ayúdanos a transformar la vida de una pequeña guerrera de 6 años. Tu
+        boleto no solo te da la oportunidad de ganar, sino de cambiar una vida.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4 mb-8">
+        <Button client:visible className="btn-primary text-lg" size="lg">
+          ¡Quiero Ayudar!
+        </Button>
+        <Button
+          client:visible
+          variant="outline"
+          size="lg"
+          className="border-heart-300 text-heart-700 hover:bg-heart-50 text-lg"
+        >
+          Conoce a Sofía
+        </Button>
+      </div>
+
+      <div
+        class="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-sm inline-flex flex-wrap justify-center gap-x-6 gap-y-2"
+      >
+        <div class="text-center px-2">
+          <p class="text-sm text-gray-500">Boletos Vendidos</p>
+          <p class="font-bold text-heart-600 text-xl">673 de 1000</p>
+        </div>
+        <div class="text-center px-2">
+          <p class="text-sm text-gray-500">Recaudado</p>
+          <p class="font-bold text-heart-600 text-xl">$67,300</p>
+        </div>
+        <div class="text-center px-2">
+          <p class="text-sm text-gray-500">Días Restantes</p>
+          <p class="font-bold text-heart-600 text-xl">12</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-white to-transparent"
+  >
+  </div>
+</div>
