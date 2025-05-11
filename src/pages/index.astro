@@ -1,5 +1,4 @@
 ---
-import "../styles/global.css";
 import Layout from "../layouts/Layout.astro";
 import Hero from "../components/Hero.astro";
 import StorySection from "../components/StorySection.astro";
@@ -7,17 +6,9 @@ import RaffleDetails from "../components/RaffleDetails.astro";
 import ProgressSection from "../components/ProgressSection.astro";
 import FAQSection from "../components/FAQSection.astro";
 import CallToAction from "../components/CallToAction.astro";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  import.meta.env.SUPABASE_URL,
-  import.meta.env.SUPABASE_ANON_KEY
-);
-
-const { data } = await supabase.from("raffle").select("*");
 ---
 
-<Layout>
+<Layout title="Home | 4Negrita">
   <main>
     <Hero />
     <StorySection />

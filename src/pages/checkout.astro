@@ -1,0 +1,10 @@
+---
+import { CheckoutStep } from "@/components/CheckoutStep";
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Checkout | 4Negrita">
+  <div class="min-h-screen bg-background flex flex-col pt-32">
+    <CheckoutStep client:visible />
+  </div>
+</Layout>

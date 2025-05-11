@@ -3,5 +3,5 @@ import { Navbar as NavbarComponent } from "./Navbar";
 ---
 
 <header class="bg-white sticky top-0 z-50 shadow-sm">
-  <NavbarComponent client:visible/>
+  <NavbarComponent client:visible pathname={Astro.url.pathname}/>
 </header>

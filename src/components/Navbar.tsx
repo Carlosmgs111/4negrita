@@ -1,15 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Ticket } from "lucide-react";
 
-export const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+const validPaths = ["/", "/tickets"];
 
+export const Navbar = ({ pathname }: { pathname: string }) => {
+  console.log({ pathname });
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const isValidPath = validPaths.includes(pathname)
   const toggleMenu: any = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+  if (!isValidPath) {
+    return null;
+  }
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-100 px-4">
       <div className="flex justify-between items-center h-16">
         <div className="flex items-center">
           <a href="/" className="flex items-center">
@@ -21,31 +27,31 @@ export const Navbar = () => {
 
         <nav className="hidden md:flex items-center space-x-6">
           <a
-            href="#historia"
+            href="/#historia"
             className="text-gray-700 hover:text-heart-500 font-medium"
           >
             Historia
           </a>
           <a
-            href="#rifa"
+            href="/#rifa"
             className="text-gray-700 hover:text-heart-500 font-medium"
           >
             La Rifa
           </a>
           <a
-            href="#faq"
+            href="/#faq"
             className="text-gray-700 hover:text-heart-500 font-medium"
           >
             FAQ
           </a>
           <a
-            href="/Tickets"
+            href="/tickets"
             className="text-gray-700 hover:text-heart-500 font-medium flex items-center"
           >
             <Ticket size={18} className="mr-1" />
             Boletos
           </a>
-          <a href="/Tickets">
+          <a href="/tickets">
             <Button className="btn-primary">Comprar Boleto</Button>
           </a>
         </nav>
