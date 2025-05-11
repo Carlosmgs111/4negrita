@@ -1,0 +1,13 @@
+---
+import { CheckoutStep } from "@/components/Payment/PaymentCheckout";
+import Layout from "../layouts/Layout.astro";
+const url = Astro.url;
+const searchParams = url.searchParams;
+const tickets = JSON.parse(searchParams.get("tickets") || "[]");
+---
+
+<Layout title="Checkout | 4Negrita">
+  <div class="min-h-screen bg-background flex flex-col pt-32">
+    <CheckoutStep tickets={tickets} />
+  </div>
+</Layout>

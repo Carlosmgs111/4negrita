@@ -1,9 +1,14 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { TicketsHUB } from "../components/TicketsHUB";
+import { TicketsHUB } from "../components/Tickets/TicketsHUB";
+
+const url = Astro.url;
+url.searchParams.set("tickets", "[1,2,3]");
+url.searchParams.set("tickets", "[1,2,3]");
+console.log(url.searchParams.get("tickets"));
 ---
 
-<Layout>
+<Layout title="Tickets | 4Negrita">
   <div class="min-h-screen bg-background flex flex-col">
     <TicketsHUB client:visible />
   </div>

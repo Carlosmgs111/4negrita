@@ -1,0 +1,16 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { Auth as AuthComponent } from "../components/Auth";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  import.meta.env.SUPABASE_URL,
+  import.meta.env.SUPABASE_ANON_KEY
+);
+---
+
+<Layout title="Auth | 4Negrita">
+  <div class="min-h-screen bg-background flex flex-col w-content">
+    <AuthComponent supabase={supabase} client:visible />
+  </div>
+</Layout>

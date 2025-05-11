@@ -1,0 +1,30 @@
+---
+const integritySignature = Array.from(
+  new Uint8Array(
+    await crypto.subtle.digest(
+      "SHA-256",
+      new TextEncoder().encode(
+        "4XMPGKWWPKWQ4950000COPtest_integrity_CccW7vNNeWcC7HFyjvD3KmQL4c8GvOTc"
+      )
+    )
+  )
+)
+  .map((b) => b.toString(16).padStart(2, "0"))
+  .join("");
+console.log({ integritySignature });
+---
+
+<form>
+  <script
+    src="https://checkout.wompi.co/widget.js"
+    data-render="button"
+    data-public-key="pub_test_HJitXNE9KtiDp1vlXYPYIQ85qkl0GZqr"
+    data-currency="COP"
+    data-amount-in-cents="4950000"
+    data-reference="4XMPGKWWPKWQ"
+    data-signature:integrity={integritySignature}
+    data-customer-data:full-name="4Negrita"
+    data-customer-data:legal-id="123456789"
+    data-customer-data:legal-id-type="CC"
+  ></script>
+</form>

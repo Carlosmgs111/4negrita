@@ -1,6 +1,12 @@
 ---
+import "@/styles/global.css";
 import Navbar from "../components/Navbar.astro";
 import Footer from "../components/Footer.astro";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { ClientRouter } from "astro:transitions";
+
+const { title } = Astro.props;
 ---
 
 <!doctype html>
@@ -10,14 +16,22 @@ import Footer from "../components/Footer.astro";
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <title>Astro Basics</title>
+    <title>{title || "4Negrita"}</title>
+    <script
+      type="text/javascript"
+      src="https://wompijs.wompi.com/libs/js/v1.js"
+      data-public-key="pub_test_HJitXNE9KtiDp1vlXYPYIQ85qkl0GZqr"></script>
+    <ClientRouter />
   </head>
   <body>
-    <div class="min-h-screen bg-background">
-      <Navbar />
-      <slot />
-      <Footer />
-    </div>
+    <TooltipProvider>
+      <Toaster client:visible />
+      <div class="min-h-screen bg-background">
+        <Navbar />
+        <slot />
+        <Footer />
+      </div>
+    </TooltipProvider>
   </body>
 </html>
 
