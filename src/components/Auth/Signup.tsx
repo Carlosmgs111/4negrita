@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/useToast";
 import { Eye, EyeOff, UserPlus, Phone, User } from "lucide-react";
-// import { supabase } from "@/layouts/Layout.astro";
+// import { supabase } from "@/lib/supabase";
 
 // Form validation schema
 const registerFormSchema = z
@@ -42,10 +42,9 @@ type RegisterFormValues = z.infer<typeof registerFormSchema>;
 
 interface RegisterFormProps {
   onSwitchToLogin: () => void;
-supabase: any;
 }
 
-export const Signup = ({ onSwitchToLogin, supabase }: RegisterFormProps) => {
+export const Signup = ({ onSwitchToLogin }: RegisterFormProps) => {
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const { toast } = useToast();
@@ -72,19 +71,18 @@ export const Signup = ({ onSwitchToLogin, supabase }: RegisterFormProps) => {
   // Process the form
   const onSubmit = async (data: RegisterFormValues) => {
     // This is a mock registration - in a real app, you would call an API
-    const { data: userData, error } = await supabase.auth.signUp({
-      phone: data.phone,
-      password: data.password,
-    });
-    console.log("Registration with:", userData);
+    // const { data: userData, error } = await supabase.auth.signUp({
+    //   phone: data.phone,
+    //   password: data.password,
+    // });
 
-    if (error) {
-      toast({
-        title: "Error",
-        description: error.message,
-      });
-      return;
-    }
+    // if (error) {
+    //   toast({
+    //     title: "Error",
+    //     description: error.message,
+    //   });
+    //   return;
+    // }
 
     // For demo purposes - in a real app, this would be from the API response
     const mockUserData = {

@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -14,6 +14,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/useToast";
 import { Eye, EyeOff, LogIn, Phone } from "lucide-react";
+import { URLManager } from "@/lib/URLManager";
+// import { supabase } from "@/lib/supabase";
 
 // Form validation schema
 const loginFormSchema = z.object({
@@ -30,13 +32,19 @@ type LoginFormValues = z.infer<typeof loginFormSchema>;
 
 interface LoginProps {
   onSwitchToRegister: () => void;
-  supabase: any;
+  raffle: any;
 }
 
-export const Login = ({ onSwitchToRegister, supabase }: LoginProps) => {
-  const [showPassword, setShowPassword] = React.useState(false);
+export const Login = ({ onSwitchToRegister, raffle }: LoginProps) => {
+  const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
 
+  // console.log("supabase", supabase);
+  useEffect(() => {
+   URLManager.listenURLChanges((url) => {
+     console.log("URL changed to:", url);
+   });
+  }, []);
   // Initialize react-hook-form with zod
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
@@ -70,6 +78,8 @@ export const Login = ({ onSwitchToRegister, supabase }: LoginProps) => {
       description: `Bienvenido de nuevo, ${mockUserData.name}`,
     });
 
+    URLManager.updateURL({ params: { phone: data.phone } });
+
     // Redirect to home page
     // window.location.href = "/";
   };
@@ -86,7 +96,7 @@ export const Login = ({ onSwitchToRegister, supabase }: LoginProps) => {
                 <FormLabel>Número de teléfono</FormLabel>
                 <div className="relative">
                   <FormControl>
-                    <Input placeholder="3001234567" {...field} type="tel" />
+                    <Input  placeholder="3001234567" {...field} type="tel" />
                   </FormControl>
                   <Phone
                     className="absolute right-3 top-3 text-gray-400"

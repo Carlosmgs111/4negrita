@@ -5,7 +5,7 @@ import { Signup } from "@/components/Auth/Signup";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
-export const Auth = ({ supabase }: { supabase: any }) => {
+export const Auth = ({ raffle }: { raffle: any }) => {
   const [isLogin, setIsLogin] = useState(true);
 
   return (
@@ -26,9 +26,9 @@ export const Auth = ({ supabase }: { supabase: any }) => {
         </CardHeader>
         <CardContent>
           {isLogin ? (
-            <Login supabase={supabase} onSwitchToRegister={() => setIsLogin(false)} />
+            <Login raffle={raffle} onSwitchToRegister={() => setIsLogin(false)} />
           ) : (
-            <Signup supabase={supabase} onSwitchToLogin={() => setIsLogin(true)} />
+            <Signup onSwitchToLogin={() => setIsLogin(true)} />
           )}
         </CardContent>
       </Card>

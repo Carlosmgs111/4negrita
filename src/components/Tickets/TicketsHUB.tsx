@@ -13,13 +13,14 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TicketsDisplay } from "./TicketsDisplay";
 import { TicketsPurchaseConfirm } from "./TicketsPurchaseConfirm";
 import { useTickets } from "@/hooks/useTickets";
+import { URLManager } from "@/lib/URLManager";
 
 export const TicketsHUB = () => {
   const {
     tickets,
     currentView,
     setCurrentView,
-    selectedTickets,
+    selectedTickets = [],
     setSelectedTickets,
     handleClearSelection,
     handleCheckout,
@@ -35,6 +36,12 @@ export const TicketsHUB = () => {
           <p className="text-muted-foreground">
             Selecciona un boleto para participar en el sorteo benéfico
           </p>
+          <input
+            type="text"
+            onChange={(e) => {
+              URLManager.updateURL({ params: { phone: e.target.value } });
+            }}
+          />
         </div>
 
         <div className="flex items-center gap-2">

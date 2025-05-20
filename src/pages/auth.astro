@@ -1,16 +1,22 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { Auth as AuthComponent } from "../components/Auth";
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase";
 
-const supabase = createClient(
-  import.meta.env.SUPABASE_URL,
-  import.meta.env.SUPABASE_ANON_KEY
-);
+const { url } = Astro.request;
+const params = new URL(url).searchParams;
+
+
+
+let { data: raffle, error } = await supabase
+  .from("raffle")
+  .select("totalTickets");
+
+console.log("raffle", raffle);
 ---
 
-<Layout title="Auth | 4Negrita">
+<Layout  title="Auth | 4Negrita">
   <div class="min-h-screen bg-background flex flex-col w-content">
-    <AuthComponent supabase={supabase} client:visible />
+    <AuthComponent raffle={raffle} client:load />
   </div>
 </Layout>

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useToast } from "./useToast";
+import { stateManager } from "@/lib/stores";
 
 type TicketStatus = "disponible" | "reservado" | "vendido";
 
@@ -30,54 +31,25 @@ const generarBoletos = (): TicketItem[] => {
   }));
 };
 
-const getSelectedTicketsFromURL = (): number[] => {
-  try {
-    const params = new URLSearchParams(window.location.search);
-    const ticketsParam = params.get("tickets");
-    if (ticketsParam) {
-      return JSON.parse(ticketsParam);
-    }
-  } catch (error) {
-    console.error("Error parsing tickets from URL:", error);
-  }
-  return [];
-};
-
-export const updateURLWithSelectedTickets = (tickets: number[]): void => {
-  const params = new URLSearchParams(window.location.search);
-
-  if (tickets.length > 0) {
-    params.set("tickets", JSON.stringify(tickets));
-  } else {
-    params.delete("tickets");
-  }
-
-  window.history.pushState(
-    {},
-    "",
-    window.location.pathname +
-      (params.toString() ? "?" + params.toString() : "")
-  );
-};
-
 export const useTickets = () => {
   const tickets: TicketItem[] = useMemo(() => generarBoletos(), []);
   const [currentView, setCurrentView] = useState<"grid" | "list">("grid");
   const [selectedTickets, setSelectedTickets] = useState<number[]>(
-    getSelectedTicketsFromURL()
+    stateManager.getState().tickets
   );
+  console.log("selectedTickets", selectedTickets);
   const { toast } = useToast();
 
   useEffect(() => {
     const handlePopState = () => {
-      setSelectedTickets(getSelectedTicketsFromURL());
+      setSelectedTickets(stateManager.getState().tickets);
     };
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
   useEffect(() => {
-    updateURLWithSelectedTickets(selectedTickets);
+    stateManager.setState({ tickets: selectedTickets }, true);
   }, [selectedTickets]);
 
   const handleClearSelection = () => {

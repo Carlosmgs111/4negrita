@@ -1,11 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { TicketsHUB } from "../components/Tickets/TicketsHUB";
-
-const url = Astro.url;
-url.searchParams.set("tickets", "[1,2,3]");
-url.searchParams.set("tickets", "[1,2,3]");
-console.log(url.searchParams.get("tickets"));
 ---
 
 <Layout title="Tickets | 4Negrita">
@@ -13,3 +8,16 @@ console.log(url.searchParams.get("tickets"));
     <TicketsHUB client:visible />
   </div>
 </Layout>
+
+<script>
+  import { stateManager } from "@/lib/stores";
+
+  stateManager.subscribe((state: any) => {
+    console.log("state", state);
+  });
+
+  // stateManager.setState({
+  //   tickets: [1, 2, 3],
+  //   // other: "P127HTAMO5K2BC_P677DM2MO8C15O_P247IRAOBS2SJG",
+  // });
+</script>
