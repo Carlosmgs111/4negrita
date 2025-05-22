@@ -14,8 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/useToast";
 import { Eye, EyeOff, LogIn, Phone } from "lucide-react";
-import { URLManager } from "@/lib/URLManager";
-// import { supabase } from "@/lib/supabase";
+import { stateManager } from "@/lib/stores";
 
 // Form validation schema
 const loginFormSchema = z.object({
@@ -32,19 +31,15 @@ type LoginFormValues = z.infer<typeof loginFormSchema>;
 
 interface LoginProps {
   onSwitchToRegister: () => void;
-  raffle: any;
 }
 
-export const Login = ({ onSwitchToRegister, raffle }: LoginProps) => {
+export const Login = ({ onSwitchToRegister }: LoginProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
+  const raffles = stateManager.getState().raffles;
 
-  // console.log("supabase", supabase);
-  useEffect(() => {
-   URLManager.listenURLChanges((url) => {
-     console.log("URL changed to:", url);
-   });
-  }, []);
+  console.log("raffles", raffles);
+
   // Initialize react-hook-form with zod
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
@@ -78,8 +73,6 @@ export const Login = ({ onSwitchToRegister, raffle }: LoginProps) => {
       description: `Bienvenido de nuevo, ${mockUserData.name}`,
     });
 
-    URLManager.updateURL({ params: { phone: data.phone } });
-
     // Redirect to home page
     // window.location.href = "/";
   };
@@ -88,6 +81,7 @@ export const Login = ({ onSwitchToRegister, raffle }: LoginProps) => {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-4">
+          <p>{JSON.stringify(raffles)}</p>
           <FormField
             control={form.control}
             name="phone"

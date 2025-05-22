@@ -5,14 +5,12 @@ import { Signup } from "@/components/Auth/Signup";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
-export const Auth = ({ raffle }: { raffle: any }) => {
+export const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
 
   return (
     <div className="flex-1 flex items-center justify-center p-4 flex-col flex-end gap-4 width-content">
-      <a
-        href={`/`}
-      >
+      <a href={`/`}>
         <Button variant="ghost" className="pt-2 pb-2 pl-4 pr-6 text-1xl ">
           <ArrowLeft className="mr-1 h-4 w-4" />
           Volver
@@ -26,7 +24,7 @@ export const Auth = ({ raffle }: { raffle: any }) => {
         </CardHeader>
         <CardContent>
           {isLogin ? (
-            <Login raffle={raffle} onSwitchToRegister={() => setIsLogin(false)} />
+            <Login onSwitchToRegister={() => setIsLogin(false)} />
           ) : (
             <Signup onSwitchToLogin={() => setIsLogin(true)} />
           )}

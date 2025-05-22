@@ -1,5 +1,6 @@
 import { URLManager } from "./URLManager";
-import { LZCompressor } from "./LZCompressor";
+import * as LZString from "lz-string";
+import * as URLON from "urlon";
 
 export class StateManager {
   namespace: string;
@@ -11,6 +12,7 @@ export class StateManager {
   listeners: Set<any>;
   state: any;
   unlisten: any;
+
   /**
    * @typedef {Object} StateOptions
    * @property {string} [namespace] - Espacio de nombres para evitar colisiones
@@ -27,8 +29,8 @@ export class StateManager {
   constructor({
     namespace = "state",
     initialState = {},
-    serializer = JSON.stringify,
-    deserializer = JSON.parse,
+    serializer = URLON.stringify,
+    deserializer = URLON.parse,
     useHash = false,
     useCompression = true,
   } = {}) {
@@ -68,19 +70,13 @@ export class StateManager {
    */
   setState(updater: Object | Function, replace = false) {
     const prevState = this.state;
-
     if (typeof updater === "function") {
       this.state = updater(prevState);
     } else {
       this.state = { ...prevState, ...updater };
     }
-
-    // Actualizar URL
     this.updateURLWithState(replace);
-
-    // Notificar a los listeners
     this.notifyListeners();
-
     return this.state;
   }
 
@@ -91,8 +87,6 @@ export class StateManager {
    */
   subscribe(listener: Function) {
     this.listeners.add(listener);
-
-    // Devolver función para cancelar suscripción
     return () => {
       this.listeners.delete(listener);
     };
@@ -135,11 +129,8 @@ export class StateManager {
    * @returns {boolean} true si debe ser serializado, false si no
    */
   private shouldSerialize(value: any): boolean {
-    // Si es una cadena, no necesita serialización
     if (typeof value === "string") return false;
-    // Si es null o undefined, no necesita serialización
     if (value === null || value === undefined) return false;
-    // Para otros tipos primitivos o objetos, se debe serializar
     return true;
   }
 
@@ -150,39 +141,21 @@ export class StateManager {
    * @returns {string} Valor serializado
    */
   private serializeValue(value: any): string {
-    try {
-      // Si no debe ser serializado, convertir a string directamente
-      if (!this.shouldSerialize(value)) {
-        return String(value);
-      }
+    console.log("Serializando valor:", value); // Debug
 
-      // Serializar el valor
-      const serialized = this.serializer(value);
-
-      // Aplicar compresión si está activada
-      if (this.useCompression) {
-        try {
-          const compressed = LZCompressor.compressToEncodedURIComponent(serialized);
-          // Verificar que la compresión fue exitosa (no debería estar vacía)
-          if (!compressed) {
-            console.warn("Compresión produjo un valor vacío, usando valor sin comprimir");
-            return serialized;
-          }
-          return compressed;
-        } catch (compressionError) {
-          console.warn("Error en compresión, usando valor sin comprimir", compressionError);
-          // Si falla la compresión, usar el valor serializado sin comprimir pero codificado para URL
-          return serialized;
-        }
-      }
-
-      // Si no usamos compresión, asegurarnos de que el valor es seguro para URL
-      return serialized;
-    } catch (error) {
-      console.error("Error en serializeValue:", error);
-      // En caso de error, intentar devolver una cadena segura
+    if (!this.shouldSerialize(value)) {
       return String(value);
     }
+    const serialized = this.serializer(value);
+    console.log("Valor serializado:", serialized); // Debug
+
+    if (this.useCompression) {
+      const compressed = LZString.compressToEncodedURIComponent(serialized);
+      console.log("Valor comprimido:", compressed); // Debug
+      return compressed;
+    }
+
+    return serialized;
   }
 
   /**
@@ -194,60 +167,43 @@ export class StateManager {
   private deserializeValue(value: string): any {
     if (!value) return value;
 
-    try {
-      // Si está usando compresión, primero descomprimir
-      let processedValue = value;
-      
-      if (this.useCompression) {
-        try {
-          // Descomprimir el valor usando LZCompressor
-          const decompressedValue = LZCompressor.decompressFromEncodedURIComponent(value);
-          
-          // Verificar que realmente se descomprimió con éxito
-          if (decompressedValue) {
-            processedValue = decompressedValue;
-          } else {
-            console.warn("Descompresión produjo un valor vacío, intentando tratar como valor no comprimido");
-            // Intentar decodificar como URL
-            processedValue = value;
-          }
-        } catch (compressionError) {
-          console.warn("Error en descompresión, intentando usar el valor decodificado", compressionError);
-          // Si falla la descompresión, intentar decodificar el valor como URL
-          try {
-            processedValue = value;
-          } catch (decodeError) {
-            console.warn("Error decodificando valor URL:", decodeError);
-            processedValue = value; // Usar el valor original como último recurso
-          }
-        }
-      } else {
-        // Si no usa compresión, decodificar URL
-        try {
-          processedValue = value;
-        } catch (decodeError) {
-          console.warn("Error decodificando valor URL:", decodeError);
-          processedValue = value;
-        }
-      }
+    console.log("Deserializando valor desde URL:", value);
 
-      // Luego intentar deserializar
+    // Primero, intentar deserializar con compresión si está habilitada
+    if (this.useCompression) {
       try {
-        return this.deserializer(processedValue);
-      } catch (deserializeError) {
-        console.warn("Error deserializando valor:", deserializeError, "valor procesado:", processedValue);
+        const decompressed = LZString.decompressFromEncodedURIComponent(value);
+        console.log("Valor descomprimido:", decompressed);
         
-        // Verificar si el valor procesado ya parece un objeto (esto podría ocurrir si la deserialización se hizo en otro paso)
-        if (typeof processedValue === 'object' && processedValue !== null) {
-          return processedValue;
+        if (decompressed !== null && decompressed !== undefined && decompressed !== "") {
+          try {
+            const result = this.deserializer(decompressed);
+            console.log("Valor deserializado con compresión:", result);
+            return result;
+          } catch (deserializationError) {
+            console.warn("Error deserializando valor descomprimido:", deserializationError);
+          }
         }
-        
-        // Si ninguno de los intentos anteriores funciona, intentar devolver el valor tal cual
-        return value;
+      } catch (decompressionError) {
+        console.warn("Error en descompresión:", decompressionError);
       }
-    } catch (error) {
-      // Si no se puede deserializar, devolver el valor original
-      console.warn("Error general en deserializeValue:", error);
+    }
+
+    // Si llegamos aquí, intentar deserializar sin compresión
+    try {
+      const result = this.deserializer(value);
+      console.log("Valor deserializado sin compresión:", result);
+      return result;
+    } catch (deserializationError) {
+      console.warn("Error deserializando valor sin compresión:", deserializationError);
+      
+      // Si todo falla, verificar si es un valor que parece ser URLON mal formado
+      // y intentar recuperar el estado inicial en su lugar
+      if (typeof value === 'string' && value.includes('@:') && value.includes('&:')) {
+        console.warn("Valor parece ser URLON corrupto, usando estado inicial");
+        return this.initialState;
+      }
+      
       return value;
     }
   }
@@ -258,63 +214,69 @@ export class StateManager {
    * @returns {Object|null} Estado deserializado o null si no hay estado en la URL
    */
   private getStateFromURL() {
+    const url = URLManager.getURL();
+
+    if (!url) return null;
+
     try {
-      const url = URLManager.getURL();
-      if (!url) return null;
-
-      let stateParam: string | null = null;
-
+      let stateParam;
+      
       if (this.useHash) {
-        // Obtener estado del hash
-        const hash = url.hash && url.hash.startsWith("#")
+        const hash = url.hash.startsWith("#")
           ? url.hash.substring(1)
-          : url.hash || "";
-          
+          : url.hash;
         if (!hash) return null;
 
-        try {
-          const hashParams = new URLSearchParams(hash);
-          stateParam = hashParams.get(this.namespace);
-        } catch (hashError) {
-          console.warn("Error parsing hash params:", hashError);
-          return null;
-        }
+        const hashParams = new URLSearchParams(hash);
+        stateParam = hashParams.get(this.namespace);
       } else {
-        // Obtener estado de los parámetros de búsqueda
-        stateParam = url.params?.[this.namespace] || null;
+        stateParam = url.params[this.namespace];
       }
 
       if (!stateParam) return null;
+
+      console.log("Parámetro de estado desde URL:", stateParam);
       
-      // Intentar deserializar el valor
-      try {
-        const deserializedState = this.deserializeValue(stateParam);
-        
-        // Verificar que el resultado es un objeto válido y no el estado corrupto que muestra el error
-        if (deserializedState && typeof deserializedState === 'object') {
-          // Verificar que no es la cadena JSON representada como objeto (error común)
-          const keys = Object.keys(deserializedState);
-          if (keys.length > 0 && keys.every(k => !isNaN(Number(k)) && typeof deserializedState[k] === 'string')) {
-            // Detectamos el error - intentar recuperar el estado original
-            const jsonString = Object.values(deserializedState).join('');
-            try {
-              return JSON.parse(jsonString);
-            } catch (e) {
-              console.error("Error reconstruyendo el estado desde cadena de caracteres:", e);
-              return null;
-            }
-          }
+      const deserializedState = this.deserializeValue(stateParam);
+      
+      // Validar que el estado deserializado sea un objeto válido
+      if (deserializedState && typeof deserializedState === 'object' && !Array.isArray(deserializedState)) {
+        // Verificar que no sea un string convertido a objeto (como tu problema)
+        if (!this.isStringAsObject(deserializedState)) {
+          console.log("Estado válido recuperado desde URL:", deserializedState);
           return deserializedState;
         }
-        return null;
-      } catch (deserializeError) {
-        console.error("Error deserializing state:", deserializeError);
-        return null;
       }
+      
+      console.warn("Estado recuperado no es válido, usando estado inicial");
+      return this.initialState;
+      
     } catch (error) {
-      console.error("Error getting state from URL:", error);
-      return null;
+      console.error("Error parsing state from URL:", error);
+      return this.initialState; // Retornar estado inicial en caso de error
     }
+  }
+
+  /**
+   * Verifica si un objeto es realmente un string convertido a objeto
+   * @private
+   * @param {any} obj - Objeto a verificar
+   * @returns {boolean} true si es un string convertido a objeto
+   */
+  private isStringAsObject(obj: any): boolean {
+    if (!obj || typeof obj !== 'object') return false;
+    
+    // Verificar si tiene propiedades numéricas secuenciales como un string
+    const keys = Object.keys(obj);
+    const hasNumericKeys = keys.some(key => /^\d+$/.test(key));
+    
+    // Si tiene claves numéricas y alguna clave con caracteres especiales de URLON
+    if (hasNumericKeys) {
+      const stringified = JSON.stringify(obj);
+      return stringified.includes('"@"') || stringified.includes('"&"') || stringified.includes('":"');
+    }
+    
+    return false;
   }
 
   /**
@@ -323,32 +285,22 @@ export class StateManager {
    * @param {boolean} replace - Si debe reemplazar la entrada en el historial
    */
   private updateURLWithState(replace = false) {
-    try {
-      if (!this.state) {
-        console.warn("No state to update URL with");
-        return;
-      }
-      
-      // Serializar el estado (y comprimir si está habilitado)
-      const stateStr = this.serializeValue(this.state);
-      
-      if (!stateStr) {
-        console.warn("Failed to serialize state");
-        return;
-      }
+    console.log("Actualizando URL con estado:", this.state);
 
-      const currentURL = URLManager.getURL();
-      if (!currentURL) return;
+    try {
+      const stateStr = this.serializeValue(this.state);
 
       if (this.useHash) {
-        // Actualizar hash
-        let hash = currentURL.hash || "";
-        if (hash.startsWith("#")) {
-          hash = hash.substring(1);
+        const url = URLManager.getURL();
+
+        if (!url) {
+          console.error("No se pudo obtener la URL actual");
+          return;
         }
 
-        // Crear nuevos hashParams para evitar problemas con parámetros existentes
-        const hashParams = new URLSearchParams(hash);
+        const hashParams = new URLSearchParams(
+          url.hash.startsWith("#") ? url.hash.substring(1) : url.hash
+        );
         hashParams.set(this.namespace, stateStr);
 
         URLManager.updateURL({
@@ -356,13 +308,14 @@ export class StateManager {
           replace,
         });
       } else {
-        // Crear una copia de los parámetros actuales para evitar modificaciones in-place
-        const newParams = { ...currentURL.params };
-        
-        // Agregar/actualizar el parámetro del estado
-        newParams[this.namespace] = stateStr;
-        
-        // Actualizar la URL con los nuevos parámetros
+        const currentURL = URLManager.getURL();
+        const currentParams = currentURL ? currentURL.params : {};
+
+        const newParams = {
+          ...currentParams,
+          [this.namespace]: stateStr,
+        };
+
         URLManager.updateURL({
           params: newParams,
           replace,
@@ -383,9 +336,9 @@ export class StateManager {
   }
 
   /**
-   * Crea una instancia de StateManager o recupera el estado existente
+   * Crea una instancia de URLStateManager o recupera el estado existente
    * @param {StateOptions} options - Opciones de configuración
-   * @returns {StateManager} Instancia del gestor de estado
+   * @returns {URLStateManager} Instancia del gestor de estado
    */
   static create(options = {}) {
     return new StateManager(options);
