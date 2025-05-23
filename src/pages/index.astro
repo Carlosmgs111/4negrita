@@ -1,6 +1,5 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import LayoutState from "../layouts/LayoutState.astro";
 import Hero from "../components/Home/Hero.astro";
 import StorySection from "../components/Home/StorySection.astro";
 import RaffleDetails from "../components/Home/RaffleDetails.astro";
@@ -10,14 +9,12 @@ import CallToAction from "../components/Home/CallToAction.astro";
 ---
 
 <Layout title="Home | 4Negrita">
-  <LayoutState>
-    <main>
-      <Hero />
-      <StorySection />
-      <RaffleDetails />
-      <ProgressSection />
-      <FAQSection />
-      <CallToAction />
-    </main>
-  </LayoutState>
+  <main>
+    <Hero />
+    <StorySection />
+    <RaffleDetails />
+    <ProgressSection />
+    <FAQSection />
+    <CallToAction />
+  </main>
 </Layout>

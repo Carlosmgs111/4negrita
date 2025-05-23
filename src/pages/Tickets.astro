@@ -9,15 +9,3 @@ import { TicketsHUB } from "../components/Tickets/TicketsHUB";
   </div>
 </Layout>
 
-<script>
-  import { stateManager } from "@/stores/stores";
-
-  stateManager.subscribe((state: any) => {
-    console.log("state", state);
-  });
-
-  stateManager.setState({
-    tickets: [1, 2, 3],
-    // other: "P127HTAMO5K2BC_P677DM2MO8C15O_P247IRAOBS2SJG",
-  });
-</script>

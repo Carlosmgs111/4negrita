@@ -14,7 +14,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/useToast";
 import { Eye, EyeOff, LogIn, Phone } from "lucide-react";
-import { stateManager } from "@/stores/stores";
 import { supabase } from "@/lib/supabase";
 import { authStore } from "@/stores/authStore";
 
@@ -28,17 +27,13 @@ const loginFormSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginFormSchema>;
 
-const defaultValues = {
-  email: authStore.getState().email || "carlosmgs111@outlook.com",
-  password: "123456",
-};
-
 export const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
-  const raffles = stateManager.getState().raffles;
-
-  console.log("raffles", raffles);
+  const defaultValues = {
+    email: authStore.getState().email,
+    password: "",
+  };
 
   // Initialize react-hook-form with zod
   const form = useForm<LoginFormValues>({
@@ -56,19 +51,25 @@ export const Login = () => {
 
   // Process the form
   const onSubmit = async (data: LoginFormValues) => {
-    // This is a mock login - in a real app, you would call an API
-    console.log("Login attempt with:", data);
-    const { data: signUpData, error } = await supabase.auth.signUp({
-      email: data.email, // asegúrate de formatearlo bien
+    const {
+      data: { session, user },
+      error,
+    } = await supabase.auth.signInWithPassword({
+      email: data.email,
       password: data.password,
-      options: {
-        channel: "email",
-      },
+    });
+
+    Object.entries(session).forEach(([key, value]) => {
+      sessionStorage.setItem(key, JSON.stringify(value));
+    });
+
+    Object.entries(user).forEach(([key, value]) => {
+      localStorage.setItem(key, JSON.stringify(value));
     });
 
     if (error) {
       toast({
-        title: "Error al registrar",
+        title: "Error al iniciar sesión",
         description: error.message,
         variant: "destructive",
       });
@@ -76,20 +77,22 @@ export const Login = () => {
     }
 
     toast({
-      title: "Registro exitoso",
-      description: "Revisa tu correo para continuar.",
+      title: "Ingreso exitoso",
+      description: "Bienvenido, " + data.email,
     });
 
-    console.log("signUpData", signUpData);
+    authStore.setState({
+      email: data.email,
+      fullName: data.email,
+    });
     // Redirect to home page
-    // window.location.href = "/";
+    window.location.href = "/";
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-4">
-          <p>{JSON.stringify(raffles)}</p>
           <FormField
             control={form.control}
             name="email"
@@ -97,13 +100,15 @@ export const Login = () => {
               <FormItem>
                 <FormLabel>Correo electrónico</FormLabel>
                 <div className="relative">
-                  <FormControl >
+                  <FormControl>
                     <Input
                       placeholder="example@email.com"
                       {...field}
                       onChange={(e) => {
                         field.onChange(e); // Update react-hook-form's state
-                        authStore.setState({ email: e.target.value }); // Call your custom onChange handler
+                        authStore.setState({
+                          email: e.target.value,
+                        }); // Call your custom onChange handler
                       }}
                     />
                   </FormControl>

@@ -58,7 +58,7 @@ export const PaymentButton = ({
 
       // Get the current URL to build redirect URLs
       const currentOrigin = window.location.origin;
-      const successUrl = `${currentOrigin}/payment-success?reference=${reference}`;
+      const successUrl = `${currentOrigin}/payment/success?reference=${reference}`;
 
       // Create Wompi payment
       const paymentData = await usePayment(

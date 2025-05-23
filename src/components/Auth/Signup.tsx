@@ -38,17 +38,17 @@ const registerFormSchema = z
 
 type RegisterFormValues = z.infer<typeof registerFormSchema>;
 
-const defaultValues = {
-  email: authStore.getState().email || "carlosmgs111@outlook.com",
-  fullName: authStore.getState().fullName || "Carlos Muñoz",
-  password: "123456",
-  confirmPassword: "123456",
-};
-
 export const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { toast } = useToast();
+  
+  const defaultValues = {
+    email: authStore.getState().email,
+    fullName: authStore.getState().fullName,
+    password: "",
+    confirmPassword: "",
+  };
 
   useEffect(() => {
     authStore.setState({
@@ -73,35 +73,31 @@ export const Signup = () => {
 
   // Process the form
   const onSubmit = async (data: RegisterFormValues) => {
-    // This is a mock registration - in a real app, you would call an API
-    // const { data: userData, error } = await supabase.auth.signUp({
-    //   phone: data.phone,
-    //   password: data.password,
-    // });
+    const { data: signUpData, error } = await supabase.auth.signUp({
+      email: data.email, // asegúrate de formatearlo bien
+      password: data.password,
+      options: {
+        channel: "email",
+      },
+    });
 
-    // if (error) {
-    //   toast({
-    //     title: "Error",
-    //     description: error.message,
-    //   });
-    //   return;
-    // }
-
-    // For demo purposes - in a real app, this would be from the API response
-    const mockUserData = {
-      id: "12345",
-      email: data.email,
-      name: data.fullName,
-    };
-
-    // Store user data in localStorage (in a real app, you'd use a more secure approach)
-    localStorage.setItem("user", JSON.stringify(mockUserData));
+    if (error) {
+      toast({
+        title: "Error al registrar",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
 
     toast({
       title: "Registro exitoso",
       description: `Bienvenido, ${data.fullName}`,
     });
-
+    authStore.setState({
+      email: data.email,
+      fullName: data.fullName,
+    });
     // Redirect to home page
     window.location.href = "/";
   };
@@ -122,8 +118,8 @@ export const Signup = () => {
                       placeholder="Juan Pérez"
                       {...field}
                       onChange={(e) => {
-                        field.onChange(e); // Update react-hook-form's state
-                        authStore.setState({ fullName: e.target.value }); // Call your custom onChange handler
+                        field.onChange(e);
+                        authStore.setState({ fullName: e.target.value });
                       }}
                     />
                   </FormControl>
@@ -149,8 +145,8 @@ export const Signup = () => {
                       placeholder="example@email.com"
                       {...field}
                       onChange={(e) => {
-                        field.onChange(e); // Update react-hook-form's state
-                        authStore.setState({ email: e.target.value }); // Call your custom onChange handler
+                        field.onChange(e);
+                        authStore.setState({ email: e.target.value });
                       }}
                     />
                   </FormControl>
