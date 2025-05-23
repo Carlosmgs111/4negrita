@@ -5,24 +5,20 @@ import { Menu, X, Ticket, User, LogIn } from "lucide-react";
 const validPaths = ["/", "/tickets"];
 
 export const Navbar = ({ pathname }: { pathname: string }) => {
-  console.log({ pathname });
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isValidPath = validPaths.includes(pathname);
+  const [token, setToken] = useState<{ name: string } | null>(null);
   const [user, setUser] = useState<{ name: string } | null>(null);
   useEffect(() => {
-    // Check if user is logged in
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    const storedToken = sessionStorage.getItem("access_token");
+    const participant = JSON.parse(localStorage.getItem("participant") || "{}");
+    setUser({ name: participant?.fullName?.split(" ")[0] || "" });
+    if (storedToken) {
+      setToken(JSON.parse(storedToken));
     }
   }, []);
   const toggleMenu: any = () => {
     setIsMenuOpen(!isMenuOpen);
-  };
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    setUser(null);
-    window.location.href = "/";
   };
   if (!isValidPath) {
     return null;
@@ -67,32 +63,30 @@ export const Navbar = ({ pathname }: { pathname: string }) => {
           <a href="/tickets">
             <Button className="btn-primary">Comprar Boleto</Button>
           </a>
-           
-          {user ? (
-              <div className="flex items-center space-x-4">
-                <span className="text-gray-700 font-medium flex items-center">
-                  <User size={18} className="mr-1" />
-                  {user.name}
-                </span>
-                <Button 
-                  variant="outline" 
-                  className="border-heart-500 text-heart-500 hover:bg-heart-50"
-                  onClick={handleLogout}
-                >
-                  Cerrar sesión
-                </Button>
-              </div>
-            ) : (
-              <a href="/auth/login">
-                <Button 
-                  variant="outline" 
+
+          {token ? (
+            <div className="flex items-center space-x-4">
+              <a href="/dashboard">
+                <Button
+                  variant="outline"
                   className="border-heart-500 text-heart-500 hover:bg-heart-50"
                 >
-                  <LogIn size={18} className="mr-1" />
-                  Iniciar sesión
+                  <User size={18} />
+                  {user?.name}
                 </Button>
               </a>
-            )}
+            </div>
+          ) : (
+            <a href="/auth/login">
+              <Button
+                variant="outline"
+                className="border-heart-500 text-heart-500 hover:bg-heart-50"
+              >
+                <LogIn size={18} className="mr-1" />
+                Iniciar sesión
+              </Button>
+            </a>
+          )}
         </nav>
 
         <div className="md:hidden flex items-center">

@@ -1,0 +1,26 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { UserSettings } from "@/components/Dashboard/UserSettings";
+import { SecuritySettings } from "@/components/Dashboard/SecuritySettings";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+---
+
+<Layout title="Perfil | 4Negrita">
+  <div class="min-h-screen flex flex-col bg-gray-50 pt-32">
+    <div
+      class="flex-1 container mx-auto px-4 py-8 flex flex-col gap-4 items-center"
+    >
+      <a href={`/`}>
+        <Button variant="ghost" className="pt-2 pb-2 pl-4 pr-6 text-1xl ">
+          <ArrowLeft className="mr-1 h-4 w-4" />
+          Volver
+        </Button>
+      </a>
+      <div class="flex flex-col max-w-2xl mx-auto gap-8">
+        <UserSettings client:load />
+        <SecuritySettings client:load />
+      </div>
+    </div>
+  </div>
+</Layout>

@@ -59,14 +59,6 @@ export const Login = () => {
       password: data.password,
     });
 
-    Object.entries(session).forEach(([key, value]) => {
-      sessionStorage.setItem(key, JSON.stringify(value));
-    });
-
-    Object.entries(user).forEach(([key, value]) => {
-      localStorage.setItem(key, JSON.stringify(value));
-    });
-
     if (error) {
       toast({
         title: "Error al iniciar sesión",
@@ -81,9 +73,21 @@ export const Login = () => {
       description: "Bienvenido, " + data.email,
     });
 
+    const { data: participant } = await supabase
+      .from("participant")
+      .select()
+      .eq("userId", user.id)
+      .single();
+
+    localStorage.setItem("participant", JSON.stringify(participant));
+
+    Object.entries(session).forEach(([key, value]) => {
+      sessionStorage.setItem(key, JSON.stringify(value));
+    });
+    localStorage.setItem("user", JSON.stringify(user));
+
     authStore.setState({
       email: data.email,
-      fullName: data.email,
     });
     // Redirect to home page
     window.location.href = "/";
