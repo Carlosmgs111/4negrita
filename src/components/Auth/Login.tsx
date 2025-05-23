@@ -14,14 +14,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/useToast";
 import { Eye, EyeOff, LogIn, Phone } from "lucide-react";
-import { stateManager } from "@/lib/stores";
+import { stateManager } from "@/stores/stores";
+import { supabase } from "@/lib/supabase";
+import { authStore } from "@/stores/authStore";
 
 // Form validation schema
 const loginFormSchema = z.object({
-  phone: z
-    .string()
-    .min(10, { message: "El teléfono debe tener al menos 10 dígitos" })
-    .max(10, { message: "El teléfono debe tener máximo 10 dígitos" }),
+  email: z.string().email({ message: "Por favor, ingresa un correo válido" }),
   password: z
     .string()
     .min(6, { message: "La contraseña debe tener al menos 6 caracteres" }),
@@ -29,11 +28,12 @@ const loginFormSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginFormSchema>;
 
-interface LoginProps {
-  onSwitchToRegister: () => void;
-}
+const defaultValues = {
+  email: authStore.getState().email || "carlosmgs111@outlook.com",
+  password: "123456",
+};
 
-export const Login = ({ onSwitchToRegister }: LoginProps) => {
+export const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
   const raffles = stateManager.getState().raffles;
@@ -43,36 +43,44 @@ export const Login = ({ onSwitchToRegister }: LoginProps) => {
   // Initialize react-hook-form with zod
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
-    defaultValues: {
-      phone: "",
-      password: "",
-    },
+    defaultValues,
   });
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
+  useEffect(() => {
+    authStore.setState({ email: defaultValues.email });
+  }, []);
+
   // Process the form
-  const onSubmit = (data: LoginFormValues) => {
+  const onSubmit = async (data: LoginFormValues) => {
     // This is a mock login - in a real app, you would call an API
     console.log("Login attempt with:", data);
-
-    // For demo purposes - in a real app, this would be from the API response
-    const mockUserData = {
-      id: "12345",
-      phone: data.phone,
-      name: "Usuario Demo",
-    };
-
-    // Store user data in localStorage (in a real app, you'd use a more secure approach)
-    localStorage.setItem("user", JSON.stringify(mockUserData));
-
-    toast({
-      title: "Inicio de sesión exitoso",
-      description: `Bienvenido de nuevo, ${mockUserData.name}`,
+    const { data: signUpData, error } = await supabase.auth.signUp({
+      email: data.email, // asegúrate de formatearlo bien
+      password: data.password,
+      options: {
+        channel: "email",
+      },
     });
 
+    if (error) {
+      toast({
+        title: "Error al registrar",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Registro exitoso",
+      description: "Revisa tu correo para continuar.",
+    });
+
+    console.log("signUpData", signUpData);
     // Redirect to home page
     // window.location.href = "/";
   };
@@ -84,13 +92,20 @@ export const Login = ({ onSwitchToRegister }: LoginProps) => {
           <p>{JSON.stringify(raffles)}</p>
           <FormField
             control={form.control}
-            name="phone"
+            name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Número de teléfono</FormLabel>
+                <FormLabel>Correo electrónico</FormLabel>
                 <div className="relative">
-                  <FormControl>
-                    <Input  placeholder="3001234567" {...field} type="tel" />
+                  <FormControl >
+                    <Input
+                      placeholder="example@email.com"
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e); // Update react-hook-form's state
+                        authStore.setState({ email: e.target.value }); // Call your custom onChange handler
+                      }}
+                    />
                   </FormControl>
                   <Phone
                     className="absolute right-3 top-3 text-gray-400"
@@ -140,13 +155,12 @@ export const Login = ({ onSwitchToRegister }: LoginProps) => {
 
         <p className="text-center text-sm">
           ¿No tienes una cuenta?{" "}
-          <button
-            type="button"
-            onClick={onSwitchToRegister}
+          <a
+            href="/auth/signup"
             className="text-heart-500 hover:text-heart-600 font-medium"
           >
             Regístrate
-          </button>
+          </a>
         </p>
       </form>
     </Form>

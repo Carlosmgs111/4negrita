@@ -1,0 +1,8 @@
+---
+import AuthLayout from "../../layouts/AuthLayout.astro";
+import { Login as LoginComponent } from "@/components/Auth/Login";
+---
+
+<AuthLayout label="Iniciar Sesión">
+  <LoginComponent client:visible />
+</AuthLayout>

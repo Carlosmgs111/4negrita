@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useToast } from "./useToast";
-import { stateManager } from "@/lib/stores";
+import { stateManager } from "@/stores/stores";
 
 type TicketStatus = "disponible" | "reservado" | "vendido";
 
@@ -19,9 +19,9 @@ const assignDigit = (numb: number, maxDigits = 3) => {
 };
 
 const generarBoletos = (): TicketItem[] => {
-  return Array.from({ length: 100 }, (_, i) => ({
+  return Array.from({ length: 1000 }, (_, i) => ({
     numero: i,
-    digito: assignDigit(i, 2),
+    digito: assignDigit(i, 3),
     estado:
       Math.random() > 0.7
         ? Math.random() > 0.5
@@ -37,7 +37,6 @@ export const useTickets = () => {
   const [selectedTickets, setSelectedTickets] = useState<number[]>(
     stateManager.getState().tickets
   );
-  console.log("selectedTickets", selectedTickets);
   const { toast } = useToast();
 
   useEffect(() => {

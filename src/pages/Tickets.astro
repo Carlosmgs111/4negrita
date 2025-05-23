@@ -10,7 +10,7 @@ import { TicketsHUB } from "../components/Tickets/TicketsHUB";
 </Layout>
 
 <script>
-  import { stateManager } from "@/lib/stores";
+  import { stateManager } from "@/stores/stores";
 
   stateManager.subscribe((state: any) => {
     console.log("state", state);

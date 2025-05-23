@@ -1,0 +1,8 @@
+---
+import AuthLayout from "../../layouts/AuthLayout.astro";
+import { Signup as SignupComponent } from "@/components/Auth/Signup";
+---
+
+<AuthLayout label="Crear Cuenta">
+  <SignupComponent client:visible />
+</AuthLayout>

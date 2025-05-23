@@ -83,7 +83,7 @@ export const Navbar = ({ pathname }: { pathname: string }) => {
                 </Button>
               </div>
             ) : (
-              <a href="/auth">
+              <a href="/auth/login">
                 <Button 
                   variant="outline" 
                   className="border-heart-500 text-heart-500 hover:bg-heart-50"
