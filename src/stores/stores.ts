@@ -2,6 +2,12 @@ import { StateManager } from "@/lib/StateManager";
 
 export const stateManager = StateManager.create({
   namespace: "app",
-  initialState: { tickets: [], /*  products: [] */ raffles: [] },
+  initialState: {
+    selectedTickets: [],
+    totalAmount: 0,
+    referenceCode: "",
+    totalTickets: undefined,
+    tickets: [],
+  },
   useCompression: true,
 });

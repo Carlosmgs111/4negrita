@@ -35,20 +35,20 @@ export const useTickets = () => {
   const tickets: TicketItem[] = useMemo(() => generarBoletos(), []);
   const [currentView, setCurrentView] = useState<"grid" | "list">("grid");
   const [selectedTickets, setSelectedTickets] = useState<number[]>(
-    stateManager.getState().tickets
+    stateManager.getState().selectedTickets
   );
   const { toast } = useToast();
 
   useEffect(() => {
     const handlePopState = () => {
-      setSelectedTickets(stateManager.getState().tickets);
+      setSelectedTickets(stateManager.getState().selectedTickets);
     };
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
   useEffect(() => {
-    stateManager.setState({ tickets: selectedTickets }, true);
+    stateManager.setState({ selectedTickets }, true);
   }, [selectedTickets]);
 
   const handleClearSelection = () => {

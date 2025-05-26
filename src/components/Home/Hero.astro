@@ -1,5 +1,7 @@
 ---
 import { Button } from "@/components/ui/button";
+const { totalSoldTickets, totalTickets, totalRaised, ticketPrice } =
+  Astro.props;
 ---
 
 <div class="relative bg-gradient-to-b from-warmth-100 to-white py-20 md:py-28">
@@ -14,8 +16,8 @@ import { Button } from "@/components/ui/button";
         <span class="text-heart-600">Unidos</span> por Negrita y su recuperación
       </h1>
       <p class="text-lg md:text-xl text-gray-600 mb-8">
-        Ayúdanos a transformar la vida de una pequeña guerrera de 6 años. Tu
-        boleto no solo te da la oportunidad de ganar, sino de cambiar una vida.
+        Ayúdanos a que nuestro angelito de cuatro patas se recupere y vuelva a
+        tener una vida normal y sana con su familia.
       </p>
       <div class="flex flex-col sm:flex-row justify-center gap-4 mb-8">
         <Button client:visible className="btn-primary text-lg" size="lg">
@@ -27,7 +29,7 @@ import { Button } from "@/components/ui/button";
           size="lg"
           className="border-heart-300 text-heart-700 hover:bg-heart-50 text-lg"
         >
-          Conoce a Sofía
+          Conoce a Negrita
         </Button>
       </div>
 
@@ -36,11 +38,19 @@ import { Button } from "@/components/ui/button";
       >
         <div class="text-center px-2">
           <p class="text-sm text-gray-500">Boletos Vendidos</p>
-          <p class="font-bold text-heart-600 text-xl">673 de 1000</p>
+          <p data-total-tickets class="font-bold text-heart-600 text-xl">
+            {totalSoldTickets} de {totalTickets}
+          </p>
+        </div>
+        <div class="text-center px-2">
+          <p class="text-sm text-gray-500">Valor por boleto</p>
+          <p data-total-tickets class="font-bold text-heart-600 text-xl">
+            ${ticketPrice}
+          </p>
         </div>
         <div class="text-center px-2">
           <p class="text-sm text-gray-500">Recaudado</p>
-          <p class="font-bold text-heart-600 text-xl">$67,300</p>
+          <p class="font-bold text-heart-600 text-xl">${totalRaised}</p>
         </div>
         <div class="text-center px-2">
           <p class="text-sm text-gray-500">Días Restantes</p>

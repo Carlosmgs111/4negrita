@@ -3,6 +3,17 @@ import { Separator } from "@/components/ui/separator";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Ticket } from "lucide-react";
+const { playDate, limitDate, ticketPrice } = Astro.props;
+const playDateFormated = new Intl.DateTimeFormat("es-CO", {
+  year: "numeric",
+  month: "long",
+  day: "2-digit",
+}).format(new Date(playDate));
+const limitDateFormated = new Intl.DateTimeFormat("es-CO", {
+  year: "numeric",
+  month: "long",
+  day: "2-digit",
+}).format(new Date(limitDate));
 ---
 
 <section id="rifa" class="bg-white py-16">
@@ -77,7 +88,7 @@ import { Ticket } from "lucide-react";
               <div>
                 <h4 class="font-medium">Compra tu boleto</h4>
                 <p class="text-gray-600">
-                  Adquiere uno o más boletos por $100 pesos cada uno.
+                  Adquiere uno o más boletos por $5000 COP cada uno.
                 </p>
               </div>
             </div>
@@ -119,11 +130,14 @@ import { Ticket } from "lucide-react";
           >
             <div class="text-center sm:text-left">
               <span class="block text-xl font-bold text-heart-600"
-                >$100 MXN</span
+                >${ticketPrice} COP</span
               >
               <span class="text-sm text-gray-500">por boleto</span>
             </div>
-            <Button client:visible className="btn-primary flex gap-2 items-center min-w-[200px]">
+            <Button
+              client:visible
+              className="btn-primary flex gap-2 items-center min-w-[200px] animate-pulse-gentle"
+            >
               <Ticket client:visible size={18} />
               <span>Comprar Boleto</span>
             </Button>
@@ -138,11 +152,21 @@ import { Ticket } from "lucide-react";
           Método de Selección
         </h3>
         <p class="text-center max-w-2xl mx-auto">
-          El sorteo se realizará el <span class="font-semibold"
-            >15 de julio de 2025</span
-          > mediante un sistema transparente de selección aleatoria, transmitido
-          en vivo por nuestras redes sociales. Los ganadores serán contactados por
-          correo electrónico y publicados en nuestro sitio web.
+          El sorteo se definirá con base al sorteo <span class="font-semibold"
+            >4574</span
+          > y los <span class="font-semibold">tres últimos dígitos</span> del número
+          ganador de la
+          <span class="font-semibold text-heart-600"
+            ><a
+              href="https://loteriadeboyaca.gov.co/"
+              target="_blank"
+              rel="noopener noreferrer">Lotería de Boyacá</a
+            ></span
+          >
+          que jugará el día
+          <span class="font-semibold">{playDateFormated}</span>. El resultado
+          será publicado aquí, en nuestra web y se notificará por correo
+          electrónico, teléfono o WhatsApp al ganador.
         </p>
       </CardContent>
     </Card>

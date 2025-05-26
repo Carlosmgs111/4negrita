@@ -33,21 +33,17 @@ const checkoutFormSchema = z.object({
 
 export type CheckoutFormValues = z.infer<typeof checkoutFormSchema>;
 
-export const PaymentForm = ({
-  totalAmount,
-  referenceCode,
-}: {
-  totalAmount: number;
-  referenceCode: string;
-}) => {
+export const PaymentForm = () => {
   // console.log({ totalAmount, referenceCode, selectedTickets });
   const { toast } = useToast();
+  const fullName = JSON.parse(localStorage.getItem("participant") || "{}").fullName;
+  const email = JSON.parse(localStorage.getItem("user") || "{}").email;
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutFormSchema),
     mode: "onChange",
     defaultValues: {
-      name: "",
-      email: "",
+      name: fullName,
+      email: email,
       phone: "",
       document: 0,
       documentType: "CC",
@@ -148,12 +144,7 @@ export const PaymentForm = ({
             />
           </div>
         </div>
-
-        <WompiPaymentButton
-          amount={totalAmount * 100 || 1}
-          reference={referenceCode}
-          currency="COP"
-        />
+        <WompiPaymentButton />
       </form>
     </Form>
   );

@@ -17,18 +17,14 @@ const { title } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title || "4Negrita"}</title>
-    <script
-      type="text/javascript"
-      src="https://wompijs.wompi.com/libs/js/v1.js"
-      data-public-key="pub_test_HJitXNE9KtiDp1vlXYPYIQ85qkl0GZqr"></script>
     <ClientRouter />
   </head>
   <body>
     <TooltipProvider>
-      <Toaster client:visible />
+      <Toaster client:only />
       <div class="min-h-screen bg-background">
         <Navbar />
-        <slot />
+        <slot  />
         <Footer />
       </div>
     </TooltipProvider>

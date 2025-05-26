@@ -26,6 +26,8 @@ export const TicketsHUB = () => {
     handleCheckout,
   } = useTickets();
 
+  
+
   return (
     <main className="flex-grow container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
@@ -61,10 +63,7 @@ export const TicketsHUB = () => {
             </TabsList>
           </Tabs>
 
-          <TicketsPurchaseConfirm
-            selectedTickets={selectedTickets}
-            handleCheckout={handleCheckout}
-          />
+         
         </div>
       </div>
 
@@ -102,7 +101,7 @@ export const TicketsHUB = () => {
 
         <CardFooter className="flex flex-col sm:flex-row justify-between pt-4 border-t gap-4">
           <div className="text-sm text-muted-foreground">
-            Total: 100 boletos | Disponibles:{" "}
+            Total: 1000 boletos | Disponibles:
             {tickets.filter((b) => b.estado === "disponible").length}
           </div>
           <div className="flex gap-2">
@@ -130,16 +129,11 @@ export const TicketsHUB = () => {
       </Card>
 
       {selectedTickets.length > 0 && (
-        <div className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-10">
-          <Button
-            onClick={handleCheckout}
-            size="lg"
-            className="bg-heart-500 hover:bg-heart-600 shadow-lg rounded-full px-6 py-6"
-          >
-            <ShoppingCart className="mr-2 h-5 w-5" />
-            Comprar {selectedTickets.length}{" "}
-            {selectedTickets.length === 1 ? "boleto" : "boletos"}
-          </Button>
+        <div className="fixed bottom-4 right-1 sm:bottom-8 sm:right-8 z-10">
+          <TicketsPurchaseConfirm
+            selectedTickets={selectedTickets}
+            handleCheckout={handleCheckout}
+          />
         </div>
       )}
     </main>

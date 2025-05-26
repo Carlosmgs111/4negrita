@@ -6,13 +6,48 @@ import RaffleDetails from "../components/Home/RaffleDetails.astro";
 import ProgressSection from "../components/Home/ProgressSection.astro";
 import FAQSection from "../components/Home/FAQSection.astro";
 import CallToAction from "../components/Home/CallToAction.astro";
+import { supabase } from "@/lib/supabase";
+
+const playedLotteryDate = "2025-05-24";
+const { result, series } = await fetch(
+  `https://api-resultadosloterias.com/api/results/${playedLotteryDate}`
+)
+  .then((res) => res.json().then((data) => data.data))
+  .then((data) =>
+    data.find(({ lottery }: { lottery: string }) => lottery === "BOYACA")
+  );
+console.log({ result, series });
+const { data: draw } = await supabase
+  .from("draw")
+  .select(["raffleId", "limitDate", "playDate"].join(","))
+  .eq("id", "5156d678-bc45-45d1-aa30-847a57330626")
+  .single();
+const { data: raffle } = await supabase
+  .from("raffle")
+  .select()
+  .eq("id", draw?.raffleId)
+  .single();
+const { data: tickets } = await supabase.from("ticket").select("*");
+
+const totalSoldTickets = tickets?.length;
+const totalTickets = raffle?.totalTickets;
+const totalRaised = raffle?.ticketPrice * totalSoldTickets;
 ---
 
 <Layout title="Home | 4Negrita">
   <main>
-    <Hero />
+    <Hero
+      totalSoldTickets={totalSoldTickets}
+      ticketPrice={raffle?.ticketPrice}
+      totalTickets={totalTickets}
+      totalRaised={totalRaised}
+    />
     <StorySection />
-    <RaffleDetails />
+    <RaffleDetails
+      playDate={draw?.playDate}
+      limitDate={draw?.limitDate}
+      ticketPrice={raffle?.ticketPrice}
+    />
     <ProgressSection />
     <FAQSection />
     <CallToAction />

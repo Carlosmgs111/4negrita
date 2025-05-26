@@ -2,7 +2,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -10,20 +9,29 @@ import { PaymentForm } from "./PaymentForm";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { PaymentResume } from "./PaymentResume";
-import { generateFinancialReference } from "@/lib/genRefCode";
+import { stateManager } from "@/stores/stores";
+import { URLManager } from "@/lib/URLManager";
 
-export const CheckoutStep = ({ tickets }: { tickets: number[] }) => {
-  const totalAmount = tickets.length * 10000;
-  console.log({ totalAmount });
-  const selectedTickets = tickets;
-  const referenceCode =
-    "4N" +
-    generateFinancialReference({
-      transactionType: "PAY",
-      clientId: "123456789",
-      amount: totalAmount,
-      date: new Date(),
-    });
+function generateRandomString(length: number): string {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    const index = Math.floor(Math.random() * characters.length);
+    result += characters.charAt(index);
+  }
+  return result;
+}
+
+export const PaymentCheckout = () => {
+  const selectedTickets = stateManager.getState().selectedTickets;
+  const totalAmount = selectedTickets.length * 10000;
+  const referenceCode = generateRandomString(16);
+  stateManager.setState({
+    totalAmount,
+    referenceCode,
+    selectedTickets,
+  });
 
   return (
     <main className="flex-grow container mx-auto px-4 py-8">
@@ -32,11 +40,7 @@ export const CheckoutStep = ({ tickets }: { tickets: number[] }) => {
           <h1 className="text-3xl font-bold mb-2 text-heart-600">
             Finaliza tu compra
           </h1>
-          <a
-            href={`/tickets?tickets=${encodeURIComponent(
-              JSON.stringify(tickets)
-            )}`}
-          >
+          <a href={`/tickets?app=${URLManager.getParam("app")}`}>
             <Button variant="ghost" className="pt-2 pb-2 pl-4 pr-6 text-1xl">
               <ArrowLeft className="mr-1 h-4 w-4" />
               Volver
@@ -57,19 +61,12 @@ export const CheckoutStep = ({ tickets }: { tickets: number[] }) => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <PaymentForm
-                  totalAmount={totalAmount}
-                  referenceCode={referenceCode}
-                />
+                <PaymentForm />
               </CardContent>
             </Card>
           </div>
 
-          <PaymentResume
-            totalAmount={totalAmount}
-            referenceCode={referenceCode}
-            selectedTickets={selectedTickets}
-          />
+          <PaymentResume />
         </div>
       </div>
     </main>

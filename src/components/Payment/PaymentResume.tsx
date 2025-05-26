@@ -8,16 +8,10 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Ticket } from "lucide-react";
+import { stateManager } from "@/stores/stores";
 
-export const PaymentResume = ({
-  totalAmount,
-  referenceCode,
-  selectedTickets,
-}: {
-  totalAmount: number;
-  referenceCode: string;
-  selectedTickets: number[];
-}) => {
+export const PaymentResume = () => {
+  const { totalAmount, referenceCode, selectedTickets } = stateManager.getState();
   return (
     <div>
       <Card>

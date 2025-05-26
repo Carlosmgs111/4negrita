@@ -23,8 +23,8 @@ export const TicketsPurchaseConfirm = ({
     <Dialog>
       <DialogTrigger asChild>
         <Button
-          className={`bg-heart-500 hover:bg-heart-600 ml-2 ${
-            selectedTickets.length > 0 ? "animate-pulse" : ""
+          className={`bg-heart-500 hover:bg-heart-600 ml-2 shadow-lg rounded-full px-6 py-6 ${
+            selectedTickets.length > 0 ? "animate-pulse-gentle" : ""
           }`}
           disabled={selectedTickets.length === 0}
         >
@@ -71,7 +71,7 @@ export const TicketsPurchaseConfirm = ({
           </DialogClose>
           <Button
             onClick={handleCheckout}
-            className="bg-heart-500 hover:bg-heart-600"
+            className="bg-heart-500 hover:bg-heart-600 animate-pulse-gentle"
           >
             Continuar con el pago
           </Button>

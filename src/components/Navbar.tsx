@@ -5,6 +5,7 @@ import { Menu, X, Ticket, User, LogIn } from "lucide-react";
 const validPaths = ["/", "/tickets"];
 
 export const Navbar = ({ pathname }: { pathname: string }) => {
+  console.log({pathname});
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isValidPath = validPaths.includes(pathname);
   const [token, setToken] = useState<{ name: string } | null>(null);
@@ -53,23 +54,20 @@ export const Navbar = ({ pathname }: { pathname: string }) => {
           >
             FAQ
           </a>
-          <a
-            href="/tickets"
-            className="text-gray-700 hover:text-heart-500 font-medium flex items-center"
-          >
-            <Ticket size={18} className="mr-1" />
-            Boletos
-          </a>
-          <a href="/tickets">
-            <Button className="btn-primary">Comprar Boleto</Button>
-          </a>
-
+          {pathname !== "/tickets" && (
+            <a href="/tickets">
+              <Button className="btn-primary animate-pulse-gentle">
+                <Ticket size={18} className="mr-1" />
+                Boletos
+              </Button>
+            </a>
+          )}
           {token ? (
             <div className="flex items-center space-x-4">
               <a href="/dashboard">
                 <Button
                   variant="outline"
-                  className="border-heart-500 text-heart-500 hover:bg-heart-50"
+                  className="border-heart-500 text-heart-500 hover:bg-heart-500 hover:text-white text-black"
                 >
                   <User size={18} />
                   {user?.name}
@@ -124,9 +122,17 @@ export const Navbar = ({ pathname }: { pathname: string }) => {
             >
               FAQ
             </a>
-            <Button className="btn-primary w-full" onClick={toggleMenu}>
-              Comprar Boleto
-            </Button>
+            {pathname !== "/tickets" && (
+              <a href="/tickets">
+                <Button
+                  className="btn-primary animate-pulse-gentle w-full"
+                  onClick={toggleMenu}
+                >
+                  <Ticket size={18} className="mr-1" />
+                 Comprar Boleto
+                </Button>
+              </a>
+            )}
           </nav>
         </div>
       )}

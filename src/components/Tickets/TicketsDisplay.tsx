@@ -43,7 +43,7 @@ export const TicketsDisplay = ({
             title: "Boleto deseleccionado",
             description: `Has quitado el boleto #${ticket.numero} de tu selección`,
             variant: "default",
-            duration: 3000
+            duration: 3000,
           });
         } else {
           toast({
