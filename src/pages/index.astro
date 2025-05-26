@@ -32,6 +32,8 @@ const { data: tickets } = await supabase.from("ticket").select("*");
 const totalSoldTickets = tickets?.length;
 const totalTickets = raffle?.totalTickets;
 const totalRaised = raffle?.ticketPrice * totalSoldTickets;
+
+console.log(import.meta.env.SECRET_WOMPI_PUBLIC_KEY)
 ---
 
 <Layout title="Home | 4Negrita">

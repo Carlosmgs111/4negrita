@@ -21,9 +21,9 @@ export const WompiPaymentButton = () => {
   const { referenceCode, totalAmount } = stateManager.getState();
   const {
     SECRET_WOMPI_INTEGRITY_KEY: integrityKey,
-    SECRET_WOMPI_PUBLIC_KEY: publicKey,
+    SECRET_WOMPI_PUBLIC_KEY: publicKey, 
   } = import.meta.env;
-  console.log({ totalAmount, referenceCode, integrityKey });
+  console.log({ totalAmount, referenceCode, integrityKey, publicKey });
   const fullName = JSON.parse(
     localStorage.getItem("participant") || "{}"
   ).fullName;
