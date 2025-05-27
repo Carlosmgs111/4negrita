@@ -1,5 +1,5 @@
 import { URLManager } from "./URLManager";
-import * as LZString from "lz-string";
+import LZString from "lz-string";
 import * as URLON from "urlon";
 
 export class StateManager {
@@ -17,6 +17,7 @@ export class StateManager {
    * @typedef {Object} StateOptions
    * @property {string} [namespace] - Espacio de nombres para evitar colisiones
    * @property {Object} [initialState] - Estado inicial
+   * @property {string} [serializedState] - Estado ya serializado para inicializar directamente desde URL
    * @property {Function} [serializer] - Función para serializar el estado a la URL
    * @property {Function} [deserializer] - Función para deserializar el estado desde la URL
    * @property {boolean} [useHash=false] - Si debe usar el hash en lugar de params para el estado
@@ -29,6 +30,7 @@ export class StateManager {
   constructor({
     namespace = "state",
     initialState = {},
+    serializedState = null,
     serializer = URLON.stringify,
     deserializer = URLON.parse,
     useHash = false,
@@ -42,8 +44,17 @@ export class StateManager {
     this.useCompression = useCompression;
     this.listeners = new Set();
 
-    // Inicializar estado desde URL o usar el inicial
-    this.state = this.getStateFromURL() || this.initialState;
+    // Verificar disponibilidad de LZString al inicializar
+    this.checkLZStringAvailability();
+
+    // Priorizar estado serializado si se proporciona
+    if (serializedState) {
+      console.log("Inicializando con estado serializado:", serializedState);
+      this.state = this.deserializeValue(serializedState) || this.initialState;
+    } else {
+      // Inicializar estado desde URL o usar el inicial
+      this.state = this.getStateFromURL() || this.initialState;
+    }
 
     // Configurar listeners para cambios de URL
     this.unlisten = URLManager.listenURLChanges(() => {
@@ -78,6 +89,45 @@ export class StateManager {
     this.updateURLWithState(replace);
     this.notifyListeners();
     return this.state;
+  }
+
+  /**
+   * Establece el estado desde un valor ya serializado
+   * @param {string} serializedState - Estado serializado (como se obtiene de la URL)
+   * @param {boolean} [replace=false] - Si debe reemplazar la entrada en el historial
+   * @returns {Object} El nuevo estado deserializado
+   */
+  setSerializedState(serializedState: string, replace = false) {
+    console.log("Estableciendo estado desde valor serializado:", serializedState);
+    
+    try {
+      const deserializedState = this.deserializeValue(serializedState);
+      
+      if (deserializedState && typeof deserializedState === 'object' && !Array.isArray(deserializedState)) {
+        if (!this.isStringAsObject(deserializedState)) {
+          this.state = deserializedState;
+          this.updateURLWithState(replace);
+          this.notifyListeners();
+          console.log("Estado establecido correctamente:", this.state);
+          return this.state;
+        }
+      }
+      
+      console.warn("Estado serializado no es válido, manteniendo estado actual");
+      return this.state;
+      
+    } catch (error) {
+      console.error("Error estableciendo estado serializado:", error);
+      return this.state;
+    }
+  }
+
+  /**
+   * Obtiene el estado actual en formato serializado
+   * @returns {string} Estado actual serializado
+   */
+  getSerializedState(): string {
+    return this.serializeValue(this.state);
   }
 
   /**
@@ -123,6 +173,20 @@ export class StateManager {
   }
 
   /**
+   * Verifica la disponibilidad de LZString y sus métodos
+   * @private
+   */
+  private checkLZStringAvailability() {
+    console.log("Verificando disponibilidad de LZString:");
+    console.log("LZString objeto:", LZString);
+    if (LZString) {
+      console.log("Métodos disponibles:", Object.getOwnPropertyNames(LZString));
+      console.log("compressToEncodedURIComponent:", typeof LZString.compressToEncodedURIComponent);
+      console.log("decompressFromEncodedURIComponent:", typeof LZString.decompressFromEncodedURIComponent);
+    }
+  }
+
+  /**
    * Determina si un valor debe ser serializado o no
    * @private
    * @param {any} value - Valor a comprobar
@@ -150,9 +214,14 @@ export class StateManager {
     console.log("Valor serializado:", serialized); // Debug
 
     if (this.useCompression) {
-      const compressed = LZString.compressToEncodedURIComponent(serialized);
-      console.log("Valor comprimido:", compressed); // Debug
-      return compressed;
+      // Verificar que LZString y el método estén disponibles
+      if (LZString && typeof LZString.compressToEncodedURIComponent === 'function') {
+        const compressed = LZString.compressToEncodedURIComponent(serialized);
+        console.log("Valor comprimido:", compressed); // Debug
+        return compressed;
+      } else {
+        console.warn("LZString.compressToEncodedURIComponent no está disponible, usando serialización sin compresión");
+      }
     }
 
     return serialized;
@@ -172,17 +241,22 @@ export class StateManager {
     // Primero, intentar deserializar con compresión si está habilitada
     if (this.useCompression) {
       try {
-        const decompressed = LZString.decompressFromEncodedURIComponent(value);
-        console.log("Valor descomprimido:", decompressed);
-        
-        if (decompressed !== null && decompressed !== undefined && decompressed !== "") {
-          try {
-            const result = this.deserializer(decompressed);
-            console.log("Valor deserializado con compresión:", result);
-            return result;
-          } catch (deserializationError) {
-            console.warn("Error deserializando valor descomprimido:", deserializationError);
+        // Verificar que LZString y el método estén disponibles
+        if (LZString && typeof LZString.decompressFromEncodedURIComponent === 'function') {
+          const decompressed = LZString.decompressFromEncodedURIComponent(value);
+          console.log("Valor descomprimido:", decompressed);
+          
+          if (decompressed !== null && decompressed !== undefined && decompressed !== "") {
+            try {
+              const result = this.deserializer(decompressed);
+              console.log("Valor deserializado con compresión:", result);
+              return result;
+            } catch (deserializationError) {
+              console.warn("Error deserializando valor descomprimido:", deserializationError);
+            }
           }
+        } else {
+          console.warn("LZString.decompressFromEncodedURIComponent no está disponible");
         }
       } catch (decompressionError) {
         console.warn("Error en descompresión:", decompressionError);
@@ -206,6 +280,11 @@ export class StateManager {
       
       return value;
     }
+  }
+
+  static deserializeState(state: string) {
+    const stateManager = new StateManager();
+    return stateManager.deserializeValue(state);
   }
 
   /**

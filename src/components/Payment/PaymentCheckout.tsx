@@ -23,8 +23,16 @@ function generateRandomString(length: number): string {
   return result;
 }
 
-export const PaymentCheckout = () => {
-  const selectedTickets = stateManager.getState().selectedTickets;
+export const PaymentCheckout = ({
+  selectedTickets,
+  fullName,
+  email,
+  
+}: {
+  selectedTickets: number[];
+  fullName: string;
+  email: string;
+}) => {
   const totalAmount = selectedTickets.length * 10000;
   const referenceCode = generateRandomString(16);
   stateManager.setState({
@@ -61,7 +69,13 @@ export const PaymentCheckout = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <PaymentForm />
+                <PaymentForm
+                  selectedTickets={selectedTickets}
+                  fullName={fullName}
+                  email={email}
+                  referenceCode={referenceCode}
+                  totalAmount={totalAmount}
+                />
               </CardContent>
             </Card>
           </div>

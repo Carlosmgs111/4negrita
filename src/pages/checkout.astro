@@ -1,10 +1,22 @@
 ---
 import { PaymentCheckout } from "@/components/Payment/PaymentCheckout";
 import Layout from "../layouts/Layout.astro";
+import {stateManager} from "@/stores/stores";
+const app = Astro.url.searchParams.get("app");
+if(app){
+  stateManager.setSerializedState(app);
+  console.log(stateManager.getState());
+}
+const {selectedTickets, fullName, email} = stateManager.getState();
+console.log({app});
 ---
 
 <Layout title="Checkout | 4Negrita">
   <div class="min-h-screen bg-background flex flex-col pt-32">
-    <PaymentCheckout client:only/>
+    <PaymentCheckout
+      selectedTickets={selectedTickets}
+      fullName={fullName}
+      email={email}
+    />
   </div>
 </Layout>
