@@ -33,6 +33,11 @@ export const PaymentCheckout = ({
   fullName: string;
   email: string;
 }) => {
+  console.log("🚀 Iniciando PaymentCheckout");
+  const state = stateManager.getSerializedState();
+  console.log("🚀 state", state);
+  // const app = URLManager.getParam("app")
+  // console.log("🚀 app", app)
   const totalAmount = selectedTickets.length * 10000;
   const referenceCode = generateRandomString(16);
   stateManager.setState({
@@ -48,7 +53,7 @@ export const PaymentCheckout = ({
           <h1 className="text-3xl font-bold mb-2 text-heart-600">
             Finaliza tu compra
           </h1>
-          <a href={`/tickets?app=${URLManager.getParam("app")}`}>
+          <a href={`/tickets?app=${state}`}>
             <Button variant="ghost" className="pt-2 pb-2 pl-4 pr-6 text-1xl">
               <ArrowLeft className="mr-1 h-4 w-4" />
               Volver
