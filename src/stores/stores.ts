@@ -1,5 +1,4 @@
 import { StateManager } from "@/lib/StateManager";
-console.log("::::::::::::::::::\n", "setting state", "\n::::::::::::::::::");
 
 export const stateManager = StateManager.create({
   namespace: "app",
@@ -9,6 +8,9 @@ export const stateManager = StateManager.create({
     referenceCode: "",
     totalTickets: undefined,
     tickets: [],
+    ticketPrice: 0,
+    playDate: "",
+    limitDate: "",
   },
   useCompression: true,
 });

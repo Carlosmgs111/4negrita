@@ -49,7 +49,6 @@ export class StateManager {
 
     // Priorizar estado serializado si se proporciona
     if (serializedState) {
-      console.log("Inicializando con estado serializado:", serializedState);
       this.state = this.deserializeValue(serializedState) || this.initialState;
     } else {
       // Inicializar estado desde URL o usar el inicial
@@ -98,8 +97,6 @@ export class StateManager {
    * @returns {Object} El nuevo estado deserializado
    */
   setSerializedState(serializedState: string, replace = false) {
-    console.log("Estableciendo estado desde valor serializado:", serializedState);
-    
     try {
       const deserializedState = this.deserializeValue(serializedState);
       
@@ -108,16 +105,11 @@ export class StateManager {
           this.state = deserializedState;
           this.updateURLWithState(replace);
           this.notifyListeners();
-          console.log("Estado establecido correctamente:", this.state);
           return this.state;
         }
       }
-      
-      console.warn("Estado serializado no es válido, manteniendo estado actual");
       return this.state;
-      
     } catch (error) {
-      console.error("Error estableciendo estado serializado:", error);
       return this.state;
     }
   }
@@ -177,12 +169,7 @@ export class StateManager {
    * @private
    */
   private checkLZStringAvailability() {
-    console.log("Verificando disponibilidad de LZString:");
-    console.log("LZString objeto:", LZString);
     if (LZString) {
-      console.log("Métodos disponibles:", Object.getOwnPropertyNames(LZString));
-      console.log("compressToEncodedURIComponent:", typeof LZString.compressToEncodedURIComponent);
-      console.log("decompressFromEncodedURIComponent:", typeof LZString.decompressFromEncodedURIComponent);
     }
   }
 
@@ -205,22 +192,16 @@ export class StateManager {
    * @returns {string} Valor serializado
    */
   private serializeValue(value: any): string {
-    console.log("Serializando valor:", value); // Debug
-
     if (!this.shouldSerialize(value)) {
       return String(value);
     }
     const serialized = this.serializer(value);
-    console.log("Valor serializado:", serialized); // Debug
 
     if (this.useCompression) {
       // Verificar que LZString y el método estén disponibles
       if (LZString && typeof LZString.compressToEncodedURIComponent === 'function') {
         const compressed = LZString.compressToEncodedURIComponent(serialized);
-        console.log("Valor comprimido:", compressed); // Debug
         return compressed;
-      } else {
-        console.warn("LZString.compressToEncodedURIComponent no está disponible, usando serialización sin compresión");
       }
     }
 
@@ -236,20 +217,16 @@ export class StateManager {
   private deserializeValue(value: string): any {
     if (!value) return value;
 
-    console.log("Deserializando valor desde URL:", value);
-
     // Primero, intentar deserializar con compresión si está habilitada
     if (this.useCompression) {
       try {
         // Verificar que LZString y el método estén disponibles
         if (LZString && typeof LZString.decompressFromEncodedURIComponent === 'function') {
           const decompressed = LZString.decompressFromEncodedURIComponent(value);
-          console.log("Valor descomprimido:", decompressed);
           
           if (decompressed !== null && decompressed !== undefined && decompressed !== "") {
             try {
               const result = this.deserializer(decompressed);
-              console.log("Valor deserializado con compresión:", result);
               return result;
             } catch (deserializationError) {
               console.warn("Error deserializando valor descomprimido:", deserializationError);
@@ -266,10 +243,8 @@ export class StateManager {
     // Si llegamos aquí, intentar deserializar sin compresión
     try {
       const result = this.deserializer(value);
-      console.log("Valor deserializado sin compresión:", result);
       return result;
     } catch (deserializationError) {
-      console.warn("Error deserializando valor sin compresión:", deserializationError);
       
       // Si todo falla, verificar si es un valor que parece ser URLON mal formado
       // y intentar recuperar el estado inicial en su lugar
@@ -313,8 +288,6 @@ export class StateManager {
       }
 
       if (!stateParam) return null;
-
-      console.log("Parámetro de estado desde URL:", stateParam);
       
       const deserializedState = this.deserializeValue(stateParam);
       
@@ -322,17 +295,14 @@ export class StateManager {
       if (deserializedState && typeof deserializedState === 'object' && !Array.isArray(deserializedState)) {
         // Verificar que no sea un string convertido a objeto (como tu problema)
         if (!this.isStringAsObject(deserializedState)) {
-          console.log("Estado válido recuperado desde URL:", deserializedState);
           return deserializedState;
         }
       }
       
-      console.warn("Estado recuperado no es válido, usando estado inicial");
       return this.initialState;
       
     } catch (error) {
-      console.error("Error parsing state from URL:", error);
-      return this.initialState; // Retornar estado inicial en caso de error
+      return this.initialState;
     }
   }
 
@@ -354,7 +324,6 @@ export class StateManager {
       const stringified = JSON.stringify(obj);
       return stringified.includes('"@"') || stringified.includes('"&"') || stringified.includes('":"');
     }
-    
     return false;
   }
 
@@ -364,8 +333,6 @@ export class StateManager {
    * @param {boolean} replace - Si debe reemplazar la entrada en el historial
    */
   private updateURLWithState(replace = false) {
-    console.log("Actualizando URL con estado:", this.state);
-
     try {
       const stateStr = this.serializeValue(this.state);
 
@@ -373,7 +340,6 @@ export class StateManager {
         const url = URLManager.getURL();
 
         if (!url) {
-          console.error("No se pudo obtener la URL actual");
           return;
         }
 

@@ -7,48 +7,68 @@ import ProgressSection from "../components/Home/ProgressSection.astro";
 import FAQSection from "../components/Home/FAQSection.astro";
 import CallToAction from "../components/Home/CallToAction.astro";
 import { supabase } from "@/lib/supabase";
+import { stateManager } from "@/stores/stores";
 
+const prodDrawId = "5156d678-bc45-45d1-aa30-847a57330626";
+const devDrawId = "7ea8c51c-f3ff-4c05-b15e-8d1975473bfc";
+const drawId =
+  import.meta.env.PUBLIC_ENV === "development" ? devDrawId : prodDrawId;
 const playedLotteryDate = "2025-05-24";
-const { result, series } = await fetch(
-  `https://api-resultadosloterias.com/api/results/${playedLotteryDate}`
-)
-  .then((res) => res.json().then((data) => data.data))
-  .then((data) =>
-    data.find(({ lottery }: { lottery: string }) => lottery === "BOYACA")
-  );
-console.log({ result, series });
-const { data: draw } = await supabase
-  .from("draw")
-  .select(["raffleId", "limitDate", "playDate"].join(","))
-  .eq("id", "5156d678-bc45-45d1-aa30-847a57330626")
-  .single();
-const { data: raffle } = await supabase
-  .from("raffle")
-  .select()
-  .eq("id", draw?.raffleId)
-  .single();
-const { data: tickets } = await supabase.from("ticket").select("*");
 
-const totalSoldTickets = tickets?.length;
-const totalTickets = raffle?.totalTickets;
-const totalRaised = raffle?.ticketPrice * totalSoldTickets;
+let totalSoldTickets;
+let totalRaised;
+let { playDate, limitDate, ticketPrice, totalTickets, tickets } =
+  stateManager.getState();
 
-console.log(import.meta.env.SECRET_WOMPI_PUBLIC_KEY)
+if (!playDate || !limitDate || !ticketPrice || !totalTickets ) {
+  // Ejecutar todas las consultas en paralelo
+  const [lotteryData, drawData, ticketsData] = await Promise.all([
+    fetch(`https://api-resultadosloterias.com/api/results/${playedLotteryDate}`)
+      .then((res) => res.json())
+      .then((data) =>
+        data.data?.find(({ lottery }: any) => lottery === "BOYACA")
+      ),
+    supabase
+      .from("draw")
+      .select("raffleId, limitDate, playDate, raffle(*)")
+      .eq("id", drawId)
+      .single(),
+    supabase.from("ticket").select("*"),
+  ]);
+  const { result, series } = lotteryData || {};
+  const { data: draw } = drawData;
+  const raffle = draw?.raffle;
+  const { data: _tickets } = ticketsData;
+  tickets = _tickets;
+  totalSoldTickets = tickets?.length;
+  totalTickets = raffle?.totalTickets;
+  totalRaised = raffle?.ticketPrice * totalSoldTickets;
+  playDate = draw?.playDate;
+  limitDate = draw?.limitDate;
+  ticketPrice = raffle?.ticketPrice;
+  stateManager.setState({
+    totalTickets,
+    playDate,
+    limitDate,
+    ticketPrice,
+    tickets,
+  });
+}
 ---
 
 <Layout title="Home | 4Negrita">
   <main>
     <Hero
       totalSoldTickets={totalSoldTickets}
-      ticketPrice={raffle?.ticketPrice}
+      ticketPrice={ticketPrice}
       totalTickets={totalTickets}
       totalRaised={totalRaised}
     />
     <StorySection />
     <RaffleDetails
-      playDate={draw?.playDate}
-      limitDate={draw?.limitDate}
-      ticketPrice={raffle?.ticketPrice}
+      playDate={playDate}
+      limitDate={limitDate}
+      ticketPrice={ticketPrice}
     />
     <ProgressSection />
     <FAQSection />

@@ -6,6 +6,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "prod": "astro build && astro preview",
     "build:node": "npx astro build ./ --node",
     "preview:node": "npx astro preview --node",
     "astro": "astro"
