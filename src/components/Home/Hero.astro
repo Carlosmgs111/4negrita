@@ -1,6 +1,6 @@
 ---
 import { Button } from "@/components/ui/button";
-const { totalSoldTickets, totalTickets, totalRaised, ticketPrice } =
+const { totalSoldTickets, totalTickets, totalRaised, ticketPrice, daysLeftToPlay } =
   Astro.props;
 ---
 
@@ -54,7 +54,7 @@ const { totalSoldTickets, totalTickets, totalRaised, ticketPrice } =
         </div>
         <div class="text-center px-2">
           <p class="text-sm text-gray-500">Días Restantes</p>
-          <p class="font-bold text-heart-600 text-xl">12</p>
+          <p class="font-bold text-heart-600 text-xl">{daysLeftToPlay}</p>
         </div>
       </div>
     </div>
