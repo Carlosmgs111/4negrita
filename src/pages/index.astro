@@ -12,7 +12,7 @@ import { stateManager } from "@/stores/stores";
 const prodDrawId = "5156d678-bc45-45d1-aa30-847a57330626";
 const devDrawId = "7ea8c51c-f3ff-4c05-b15e-8d1975473bfc";
 const drawId =
-  import.meta.env.PUBLIC_ENV === "development" ? devDrawId : prodDrawId;
+  import.meta.env.PUBLIC_SUPABASE_SCHEMA === "development" ? devDrawId : prodDrawId;
 const playedLotteryDate = import.meta.env.PUBLIC_LOTTERY_PLAY_DATE;
 
 let totalSoldTickets;
@@ -21,9 +21,9 @@ let daysLeftToPlay;
 let { playDate, limitDate, ticketPrice, totalTickets, tickets } =
   stateManager.getState();
 
-if (!playDate || !limitDate || !ticketPrice || !totalTickets) {
+if (!playDate || !limitDate || !ticketPrice || !totalTickets || !tickets) {
   // Ejecutar todas las consultas en paralelo
-  const [lotteryData, drawData, ticketsData] = await Promise.all([
+  const [lotteryData, drawData] = await Promise.all([
     fetch(`https://api-resultadosloterias.com/api/results/${playedLotteryDate}`)
       .then((res) => res.json())
       .then((data) =>
@@ -34,23 +34,26 @@ if (!playDate || !limitDate || !ticketPrice || !totalTickets) {
       .select("raffleId, limitDate, playDate, raffle(*)")
       .eq("id", drawId)
       .single(),
-    supabase.from("ticket").select("*"),
+  ]);
+  const [ticketsData] = await Promise.all([
+    supabase
+      .from("ticket")
+      .select("number, digits, status")
+      .eq("raffleId", drawData?.data?.raffleId),
   ]);
   const { result, series } = lotteryData || {};
-  console.log({ result, series });
   const { data: draw } = drawData;
   const raffle = draw?.raffle;
-  const { data: _tickets } = ticketsData;
-  tickets = _tickets;
+  tickets = ticketsData?.data;
   totalSoldTickets = tickets?.length;
-  console.log({ totalSoldTickets });
   totalTickets = raffle?.totalTickets;
   totalRaised = raffle?.ticketPrice * totalSoldTickets;
   playDate = draw?.playDate;
   limitDate = draw?.limitDate;
   ticketPrice = raffle?.ticketPrice;
   daysLeftToPlay = Math.floor(
-    (new Date(limitDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+    (new Date(limitDate).getTime() - new Date().getTime()) /
+      (1000 * 60 * 60 * 24)
   );
   stateManager.setState({
     totalTickets,
@@ -58,9 +61,9 @@ if (!playDate || !limitDate || !ticketPrice || !totalTickets) {
     limitDate,
     ticketPrice,
     tickets,
+    drawId,
   });
 }
-
 totalSoldTickets = tickets?.length;
 totalRaised = ticketPrice * totalSoldTickets;
 daysLeftToPlay = Math.floor(

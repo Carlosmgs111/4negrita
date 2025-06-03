@@ -14,8 +14,13 @@ import { TicketsDisplay } from "./TicketsDisplay";
 import { TicketsPurchaseConfirm } from "./TicketsPurchaseConfirm";
 import { useTickets } from "@/hooks/useTickets";
 import { URLManager } from "@/lib/URLManager";
+import type { TicketItem } from "@/hooks/useTickets";
 
-export const TicketsHUB = () => {
+export const TicketsHUB = ({
+  createdTickets,
+}: {
+  createdTickets: TicketItem[];
+}) => {
   const {
     tickets,
     currentView,
@@ -24,9 +29,7 @@ export const TicketsHUB = () => {
     setSelectedTickets,
     handleClearSelection,
     handleCheckout,
-  } = useTickets();
-
-  
+  } = useTickets({ createdTickets });
 
   return (
     <main className="flex-grow container mx-auto px-4 py-8">
@@ -62,8 +65,6 @@ export const TicketsHUB = () => {
               </TabsTrigger>
             </TabsList>
           </Tabs>
-
-         
         </div>
       </div>
 
@@ -102,7 +103,7 @@ export const TicketsHUB = () => {
         <CardFooter className="flex flex-col sm:flex-row justify-between pt-4 border-t gap-4">
           <div className="text-sm text-muted-foreground">
             Total: 1000 boletos | Disponibles:
-            {tickets.filter((b) => b.estado === "disponible").length}
+            {tickets.filter((b) => b.status === "available").length}
           </div>
           <div className="flex gap-2">
             {selectedTickets.length > 0 && (

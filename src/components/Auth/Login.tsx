@@ -14,7 +14,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/useToast";
 import { Eye, EyeOff, LogIn, Phone } from "lucide-react";
-import { supabase } from "@/lib/supabase";
 import { authStore } from "@/stores/authStore";
 
 // Form validation schema
@@ -29,7 +28,9 @@ type LoginFormValues = z.infer<typeof loginFormSchema>;
 
 export const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  
   const defaultValues = {
     email: authStore.getState().email,
     password: "",
@@ -51,47 +52,73 @@ export const Login = () => {
 
   // Process the form
   const onSubmit = async (data: LoginFormValues) => {
-    const {
-      data: { session, user },
-      error,
-    } = await supabase.auth.signInWithPassword({
-      email: data.email,
-      password: data.password,
-    });
+    setIsLoading(true);
+    
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+        }),
+      });
 
-    if (error) {
+      const result = await response.json();
+
+      if (!result.success) {
+        toast({
+          title: "Error al iniciar sesión",
+          description: result.error,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Success - handle client-side storage
+      const { user, session, participant } = result.data;
+
+      // Store data in browser storage
+      if (participant) {
+        localStorage.setItem("participant", JSON.stringify(participant));
+      }
+
+      Object.entries(session).forEach(([key, value]) => {
+        sessionStorage.setItem(key, JSON.stringify(value));
+      });
+      
+      localStorage.setItem("user", JSON.stringify(user));
+
+      // Update auth store
+      authStore.setState({
+        email: data.email,
+      });
+
+      // Show success message
       toast({
-        title: "Error al iniciar sesión",
-        description: error.message,
+        title: "Ingreso exitoso",
+        description: result.message,
+      });
+
+      // Redirect to home page
+      window.location.href = "/";
+
+    } catch (error) {
+      console.error('Login error:', error);
+      toast({
+        title: "Error de conexión",
+        description: "No se pudo conectar con el servidor",
         variant: "destructive",
       });
-      return;
+    } finally {
+      setIsLoading(false);
     }
-
-    toast({
-      title: "Ingreso exitoso",
-      description: "Bienvenido, " + data.email,
-    });
-
-    const { data: participant } = await supabase
-      .from("participant")
-      .select()
-      .eq("userId", user.id)
-      .single();
-
-    localStorage.setItem("participant", JSON.stringify(participant));
-
-    Object.entries(session).forEach(([key, value]) => {
-      sessionStorage.setItem(key, JSON.stringify(value));
-    });
-    localStorage.setItem("user", JSON.stringify(user));
-
-    authStore.setState({
-      email: data.email,
-    });
-    // Redirect to home page
-    window.location.href = "/";
   };
+
+  console.log("authStore", authStore.getSerializedState());
+  const authState = authStore.getSerializedState();
 
   return (
     <Form {...form}>
@@ -107,12 +134,14 @@ export const Login = () => {
                   <FormControl>
                     <Input
                       placeholder="example@email.com"
+                      disabled={isLoading}
                       {...field}
                       onChange={(e) => {
-                        field.onChange(e); // Update react-hook-form's state
+                        field.onChange(e); 
+                        console.log(e.target.value);
                         authStore.setState({
                           email: e.target.value,
-                        }); // Call your custom onChange handler
+                        }); 
                       }}
                     />
                   </FormControl>
@@ -137,13 +166,15 @@ export const Login = () => {
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="••••••••"
+                      disabled={isLoading}
                       {...field}
                     />
                   </FormControl>
                   <button
                     type="button"
                     onClick={togglePasswordVisibility}
-                    className="absolute right-3 top-3 text-gray-400"
+                    disabled={isLoading}
+                    className="absolute right-3 top-3 text-gray-400 disabled:opacity-50"
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -156,16 +187,17 @@ export const Login = () => {
 
         <Button
           type="submit"
-          className="w-full bg-heart-500 hover:bg-heart-600"
+          disabled={isLoading}
+          className="w-full bg-heart-500 hover:bg-heart-600 disabled:opacity-50"
         >
           <LogIn className="mr-2" size={18} />
-          Iniciar sesión
+          {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
         </Button>
 
         <p className="text-center text-sm">
           ¿No tienes una cuenta?{" "}
           <a
-            href="/auth/signup"
+            href={`/auth/signup?auth=${authState}`}
             className="text-heart-500 hover:text-heart-600 font-medium"
           >
             Regístrate

@@ -1,11 +1,33 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { TicketsHUB } from "../components/Tickets/TicketsHUB";
+import { stateManager } from "@/stores/stores";
+import { supabase } from "@/lib/supabase";
+const { tickets, drawId } = stateManager.getState();
+let raffleId;
+if (!drawId) {
+  const [drawData] = await Promise.all([
+    supabase
+      .from("draw")
+      .select("raffleId, limitDate, playDate, raffle(*)")
+      .single(),
+  ]);
+  stateManager.setState({ drawId: drawData?.data?.id });
+  raffleId = drawData?.data?.raffleId;
+}
+if (!tickets) {
+  const [ticketsData] = await Promise.all([
+    supabase
+      .from("ticket")
+      .select("number, digits, status")
+      .eq("raffleId", raffleId),
+  ]);
+  stateManager.setState({ tickets: ticketsData.data });
+}
 ---
 
 <Layout title="Tickets | 4Negrita">
   <div class="min-h-screen bg-background flex flex-col">
-    <TicketsHUB client:only />
+    <TicketsHUB client:only createdTickets={tickets} />
   </div>
 </Layout>
-

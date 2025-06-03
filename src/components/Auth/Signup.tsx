@@ -15,7 +15,6 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/useToast";
 import { Eye, EyeOff, UserPlus, Phone, User } from "lucide-react";
 import { authStore } from "@/stores/authStore";
-import { supabase } from "@/lib/supabase";
 
 // Form validation schema
 const registerFormSchema = z
@@ -41,6 +40,7 @@ type RegisterFormValues = z.infer<typeof registerFormSchema>;
 export const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   
   const defaultValues = {
@@ -73,33 +73,76 @@ export const Signup = () => {
 
   // Process the form
   const onSubmit = async (data: RegisterFormValues) => {
-    const { data: signUpData, error } = await supabase.auth.signUp({
-      email: data.email, // asegúrate de formatearlo bien
-      password: data.password,
-      options: {
-        channel: "email",
-      },
-    });
+    setIsLoading(true);
+    
+    try {
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fullName: data.fullName,
+          email: data.email,
+          password: data.password,
+          confirmPassword: data.confirmPassword,
+        }),
+      });
 
-    if (error) {
+      const result = await response.json();
+
+      if (!result.success) {
+        toast({
+          title: "Error al registrar",
+          description: result.error,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Success - handle client-side storage and state
+      const { user, session, needsVerification } = result.data;
+
+      // Update auth store
+      authStore.setState({
+        email: data.email,
+        fullName: data.fullName,
+      });
+
+      // Store user data if session exists (email verified immediately)
+      if (session && user) {
+        localStorage.setItem("user", JSON.stringify(user));
+        Object.entries(session).forEach(([key, value]) => {
+          sessionStorage.setItem(key, JSON.stringify(value));
+        });
+      }
+
+      // Show success message
       toast({
-        title: "Error al registrar",
-        description: error.message,
+        title: "Registro exitoso",
+        description: result.message,
+        variant: needsVerification ? "default" : "default",
+      });
+
+      // Redirect based on verification status
+      if (needsVerification) {
+        // Redirect to verification page or login
+        window.location.href = "/auth/verify-email";
+      } else {
+        // Redirect to home page
+        window.location.href = "/";
+      }
+
+    } catch (error) {
+      console.error('Signup error:', error);
+      toast({
+        title: "Error de conexión",
+        description: "No se pudo conectar con el servidor",
         variant: "destructive",
       });
-      return;
+    } finally {
+      setIsLoading(false);
     }
-
-    toast({
-      title: "Registro exitoso",
-      description: `Bienvenido, ${data.fullName}`,
-    });
-    authStore.setState({
-      email: data.email,
-      fullName: data.fullName,
-    });
-    // Redirect to home page
-    window.location.href = "/";
   };
 
   return (
@@ -116,6 +159,7 @@ export const Signup = () => {
                   <FormControl>
                     <Input
                       placeholder="Juan Pérez"
+                      disabled={isLoading}
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
@@ -143,6 +187,7 @@ export const Signup = () => {
                   <FormControl>
                     <Input
                       placeholder="example@email.com"
+                      disabled={isLoading}
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
@@ -171,13 +216,15 @@ export const Signup = () => {
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="••••••••"
+                      disabled={isLoading}
                       {...field}
                     />
                   </FormControl>
                   <button
                     type="button"
                     onClick={togglePasswordVisibility}
-                    className="absolute right-3 top-3 text-gray-400"
+                    disabled={isLoading}
+                    className="absolute right-3 top-3 text-gray-400 disabled:opacity-50"
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -198,13 +245,15 @@ export const Signup = () => {
                     <Input
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="••••••••"
+                      disabled={isLoading}
                       {...field}
                     />
                   </FormControl>
                   <button
                     type="button"
                     onClick={toggleConfirmPasswordVisibility}
-                    className="absolute right-3 top-3 text-gray-400"
+                    disabled={isLoading}
+                    className="absolute right-3 top-3 text-gray-400 disabled:opacity-50"
                   >
                     {showConfirmPassword ? (
                       <EyeOff size={16} />
@@ -221,10 +270,11 @@ export const Signup = () => {
 
         <Button
           type="submit"
-          className="w-full bg-heart-500 hover:bg-heart-600"
+          disabled={isLoading}
+          className="w-full bg-heart-500 hover:bg-heart-600 disabled:opacity-50"
         >
           <UserPlus className="mr-2" size={18} />
-          Registrarse
+          {isLoading ? "Registrando..." : "Registrarse"}
         </Button>
 
         <p className="text-center text-sm">

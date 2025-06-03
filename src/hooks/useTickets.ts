@@ -2,12 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { useToast } from "./useToast";
 import { stateManager } from "@/stores/stores";
 
-type TicketStatus = "disponible" | "reservado" | "vendido";
+type TicketStatus = "available" | "reserved" | "sold";
 
 export interface TicketItem {
-  numero: number;
-  digito: string;
-  estado: TicketStatus;
+  number: number;
+  digits: string;
+  status: TicketStatus;
 }
 
 const assignDigit = (numb: number, maxDigits = 3) => {
@@ -18,21 +18,31 @@ const assignDigit = (numb: number, maxDigits = 3) => {
   return numbArray.concat(con).reverse().join("");
 };
 
-const generarBoletos = (): TicketItem[] => {
-  return Array.from({ length: 1000 }, (_, i) => ({
-    numero: i,
-    digito: assignDigit(i, 3),
-    estado:
-      Math.random() > 0.7
-        ? Math.random() > 0.5
-          ? "vendido"
-          : "reservado"
-        : "disponible",
-  }));
+const generateMissingTickets = (createdTickets: TicketItem[]): TicketItem[] => {
+  return Array.from({ length: 1000 }, (_, i) => {
+    if (createdTickets.some((ticket) => ticket.number == i + 1))
+      return {
+        number: i + 1,
+        digits: assignDigit(i, 3),
+        status: "sold",
+      };
+    return {
+      number: i + 1,
+      digits: assignDigit(i, 3),
+      status: "available",
+    };
+  });
 };
 
-export const useTickets = () => {
-  const tickets: TicketItem[] = useMemo(() => generarBoletos(), []);
+export const useTickets = ({
+  createdTickets,
+}: {
+  createdTickets: TicketItem[];
+}) => {
+  const tickets: TicketItem[] = useMemo(
+    () => generateMissingTickets(createdTickets),
+    []
+  );
   const [currentView, setCurrentView] = useState<"grid" | "list">("grid");
   const [selectedTickets, setSelectedTickets] = useState<number[]>(
     stateManager.getState().selectedTickets

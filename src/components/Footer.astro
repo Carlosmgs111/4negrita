@@ -3,24 +3,34 @@ import { Separator } from "@/components/ui/separator";
 ---
 
 <footer class="bg-gray-50 py-12">
-    <div class="container mx-auto px-4">
-      <div class="text-center mb-6">
-        <h3 class="font-montserrat font-semibold text-xl text-gray-800 mb-2">Rifa Solidaria por Negrita</h3>
-        <p class="text-gray-500">Organizada por la Campaña 4Negrita</p>
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-6">
+      <h3 class="font-montserrat font-semibold text-xl text-gray-800 mb-2">
+        Rifa Solidaria por Negrita
+      </h3>
+      <p class="text-gray-500">Organizada por la Campaña 4Negrita</p>
+    </div>
+
+    <Separator client:visible className="my-6" />
+
+    <div class="flex flex-col md:flex-row justify-between items-center">
+      <div class="mb-4 md:mb-0 text-center md:text-left">
+        <p class="text-gray-500 text-sm">
+          &copy; 2025 Campaña 4Negrita. Todos los derechos reservados.
+        </p>
       </div>
-      
-      <Separator client:visible className="my-6" />
-      
-      <div class="flex flex-col md:flex-row justify-between items-center">
-        <div class="mb-4 md:mb-0 text-center md:text-left">
-          <p class="text-gray-500 text-sm">&copy; 2025 Campaña 4Negrita. Todos los derechos reservados.</p>
-        </div>
-        
-        <div class="flex flex-wrap gap-x-6 gap-y-2 justify-center">
-          <a href="#" class="text-heart-600 hover:text-heart-700 text-sm">Términos y Condiciones</a>
-          <a href="#" class="text-heart-600 hover:text-heart-700 text-sm">Política de Privacidad</a>
-          <a href="#" class="text-heart-600 hover:text-heart-700 text-sm">Contacto</a>
-        </div>
+
+      <div class="flex flex-wrap gap-x-6 gap-y-2 justify-center">
+        <a href="#" class="text-heart-600 hover:text-heart-700 text-sm"
+          >Términos y Condiciones</a
+        >
+        <a href="#" class="text-heart-600 hover:text-heart-700 text-sm"
+          >Política de Privacidad</a
+        >
+        <a href="#" class="text-heart-600 hover:text-heart-700 text-sm"
+          >Contacto</a
+        >
       </div>
     </div>
-  </footer>
+  </div>
+</footer>
