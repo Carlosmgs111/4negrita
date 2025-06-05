@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/useToast";
 import { Lock, Eye, EyeOff } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+// import { supabase } from "@/lib/supabase";
 
 export const SecuritySettings = () => {
   const { toast } = useToast();
@@ -55,19 +55,17 @@ export const SecuritySettings = () => {
       return;
     }
     
-    const { data, error } = await supabase.auth.updateUser({
-      password: passwords.newPassword
+    const response = await fetch("/api/user/security", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ password: passwords.newPassword }),
     });
-    if (error) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive"
-      });
-      return;
-    }
+    const result = await response.json();
+    const { data, error } = result;
 
-    console.log("Password updated successfully");
+    console.log({ data, error });
 
     // Clear form
     setPasswords({

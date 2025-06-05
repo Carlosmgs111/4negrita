@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/useToast";
 import { User, Phone, Mail, MapPin, Save } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+// import { supabase } from "@/lib/supabase";
 
 export const UserSettings = () => {
   const [user, setUser] = useState<any>(null);
@@ -65,36 +65,35 @@ export const UserSettings = () => {
       });
       return;
     }
-    const { error: participantError } = await supabase
-      .from("participant")
-      .update({
-        fullName: formData.name,
-        address: formData.address,
-        city: formData.city,
-      })
-      .eq("id", participant.id)
-      .single();
-
-    const { data: updatedUser, error: userError } =
-      await supabase.auth.updateUser({
-        // phone: formData.phone,
-      });
-
-    if (participantError || userError) {
+    const response = await fetch("/api/user/profile", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ...formData, participantId: participant.id }),
+    });
+    const result = await response.json();
+    console.log({ result });
+    const { user: updatedUser, error } = result;
+    if (error) {
       toast({
         title: "Error",
-        description: participantError?.message || userError?.message,
+        description: error.message,
         variant: "destructive",
       });
       return;
     }
-
-    localStorage.setItem("participant", JSON.stringify({ ...participant }));
     localStorage.setItem(
-      "user",
-      JSON.stringify({ ...user, ...updatedUser.user })
+      "participant",
+      JSON.stringify({
+        ...participant,
+        fullName: formData.name,
+        address: formData.address,
+        city: formData.city,
+      })
     );
-    setUser({ ...user, ...updatedUser.user });
+    localStorage.setItem("user", JSON.stringify({ ...user, ...updatedUser }));
+    setUser({ ...user, ...updatedUser });
     setParticipant({ ...participant });
     toast({
       title: "Información actualizada",
