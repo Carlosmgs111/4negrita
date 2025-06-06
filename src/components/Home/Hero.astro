@@ -1,7 +1,17 @@
 ---
 import { Button } from "@/components/ui/button";
-const { totalSoldTickets, totalTickets, totalRaised, ticketPrice, daysLeftToPlay } =
-  Astro.props;
+import {stateManager} from "@/stores/stores";
+import { authStore } from "@/stores/authStore";
+const {
+  totalSoldTickets,
+  totalTickets,
+  totalRaised,
+  ticketPrice,
+  daysLeftToPlay,
+} = Astro.props;
+const { fullName, email } = authStore.getState();
+console.log({ fullName, email });
+console.log(stateManager.getState());
 ---
 
 <div class="relative bg-gradient-to-b from-warmth-100 to-white py-20 md:py-28">

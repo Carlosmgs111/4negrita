@@ -20,6 +20,7 @@ let totalRaised;
 let daysLeftToPlay;
 let { playDate, limitDate, ticketPrice, totalTickets, tickets } =
   stateManager.getState();
+console.log({ playDate, limitDate, ticketPrice, totalTickets, tickets });
 
 if (!playDate || !limitDate || !ticketPrice || !totalTickets || !tickets) {
   // Ejecutar todas las consultas en paralelo
@@ -68,7 +69,7 @@ totalSoldTickets = tickets?.length;
 totalRaised = ticketPrice * totalSoldTickets;
 daysLeftToPlay = Math.floor(
   (new Date(limitDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
-);
+)
 ---
 
 <Layout title="Home | 4Negrita">
@@ -93,6 +94,8 @@ daysLeftToPlay = Math.floor(
       daysLeftToPlay={daysLeftToPlay}
     />
     <FAQSection />
-    <CallToAction />
+    <CallToAction
+      playDate={playDate}
+    />
   </main>
 </Layout>

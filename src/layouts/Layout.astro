@@ -5,6 +5,7 @@ import Footer from "../components/Footer.astro";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ClientRouter } from "astro:transitions";
+
 const { title } = Astro.props;
 ---
 
@@ -23,7 +24,7 @@ const { title } = Astro.props;
       <Toaster client:only />
       <div class="min-h-screen bg-background">
         <Navbar />
-        <slot  />
+        <slot />
         <Footer />
       </div>
     </TooltipProvider>
@@ -38,3 +39,16 @@ const { title } = Astro.props;
     height: 100%;
   }
 </style>
+
+<script>
+  import { toast } from "@/hooks/useToast";
+  import { checkLogState } from "@/lib/checkLogState";
+  const isExpired = checkLogState();
+  if (isExpired) {
+    toast({
+      title: "Sesión Expirada",
+      description: "Su sesión ha expirado, por favor inicie sesión de nuevo.",
+    });
+    window.location.href = "/login";
+  }
+</script>

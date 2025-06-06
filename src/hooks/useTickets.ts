@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useToast } from "./useToast";
 import { stateManager } from "@/stores/stores";
+import { authStore } from "@/stores/authStore";
 
 type TicketStatus = "available" | "reserved" | "sold";
 
@@ -39,6 +40,9 @@ export const useTickets = ({
 }: {
   createdTickets: TicketItem[];
 }) => {
+  const { fullName, email } = authStore.getState();
+  console.log("fullName", fullName);
+  console.log("email", email);
   const tickets: TicketItem[] = useMemo(
     () => generateMissingTickets(createdTickets),
     []
@@ -82,7 +86,11 @@ export const useTickets = ({
       });
       return;
     }
-    window.location.href = "/checkout" + window.location.search;
+    console.log("authStore.getState()", authStore.getState());
+    window.location.href =
+      "/checkout" +
+      window.location.search +
+      `&auth=${authStore.getSerializedState()}`;
   };
   return {
     tickets,

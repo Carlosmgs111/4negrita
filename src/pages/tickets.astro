@@ -3,7 +3,8 @@ import Layout from "../layouts/Layout.astro";
 import { TicketsHUB } from "../components/Tickets/TicketsHUB";
 import { stateManager } from "@/stores/stores";
 import { supabase } from "@/lib/supabase";
-const { tickets, drawId } = stateManager.getState();
+let { tickets, drawId } = stateManager.getState();
+console.log({ tickets });
 let raffleId;
 if (!drawId) {
   const [drawData] = await Promise.all([
@@ -23,6 +24,7 @@ if (!tickets) {
       .eq("raffleId", raffleId),
   ]);
   stateManager.setState({ tickets: ticketsData.data });
+  tickets = ticketsData.data;
 }
 ---
 

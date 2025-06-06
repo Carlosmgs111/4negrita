@@ -101,9 +101,14 @@ export const Login = () => {
         title: "Ingreso exitoso",
         description: result.message,
       });
-
+      authStore.setSerializedState(
+        JSON.stringify({
+          fullName: participant?.fullName,
+          email: data.email,
+        })
+      );
       // Redirect to home page
-      window.location.href = "/";
+      window.location.href = "/?";
 
     } catch (error) {
       console.error('Login error:', error);
