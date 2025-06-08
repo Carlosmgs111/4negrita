@@ -1,22 +1,58 @@
 ---
-import { PaymentCheckout } from "@/components/Payment/PaymentCheckout";
 import Layout from "../layouts/Layout.astro";
-import {stateManager} from "@/stores/stores";
+import { stateManager } from "@/stores/stores";
+import { authStore } from "@/stores/authStore";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import { WompiPaymentButton } from "@/components/Payment/WompiPaymentButton";
+import { PaymentResume } from "@/components/Payment/PaymentResume";
 const app = Astro.url.searchParams.get("app");
-if(app){
+const auth = Astro.url.searchParams.get("auth");
+if (app) {
   stateManager.setSerializedState(app);
   console.log(stateManager.getState());
 }
-const {selectedTickets, fullName, email} = stateManager.getState();
-console.log({app});
+if (auth) {
+  authStore.setSerializedState(auth);
+}
+const { selectedTickets, referenceCode } = stateManager.getState();
+const { fullName, email, phone, document, documentType } = authStore.getState();
+
+const state = stateManager.getSerializedState();
+const totalAmount = selectedTickets.length * 10000;
+console.log({ app, auth });
 ---
 
 <Layout title="Checkout | 4Negrita">
   <div class="min-h-screen bg-background flex flex-col pt-32">
-    <PaymentCheckout
-      selectedTickets={selectedTickets}
-      fullName={fullName}
-      email={email}
-    />
+    <main class="flex-grow container mx-auto px-4 py-8">
+      <div class="max-w-2xl mx-auto">
+        <div class="flex justify-between items-center">
+          <h1 class="text-3xl font-bold mb-2 text-heart-600">
+            Finaliza tu compra
+          </h1>
+          <a href={`/tickets?app=${state}`}>
+            <Button variant="ghost" className="pt-2 pb-2 pl-4 pr-6 text-1xl">
+              <ArrowLeft className="mr-1 h-4 w-4" />
+              Volver
+            </Button>
+          </a>
+        </div>
+
+        <div class="flex flex-col gap-4">
+          <PaymentResume />
+          <WompiPaymentButton
+            totalAmount={totalAmount}
+            referenceCode={referenceCode}
+            currency="COP"
+            fullName={fullName}
+            email={email}
+            phone={phone}
+            document={document}
+            documentType={documentType}
+          />
+        </div>
+      </div>
+    </main>
   </div>
 </Layout>

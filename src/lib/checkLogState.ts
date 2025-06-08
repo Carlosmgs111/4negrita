@@ -1,3 +1,5 @@
+import { authStore } from "../stores/authStore";
+
 const checkoutExpiration = () => {
   const expiresAt = new Date(Number(sessionStorage.getItem("expires_at")));
   if (!expiresAt) return false;
@@ -19,6 +21,16 @@ export const checkLogState = () => {
   const isExpired = checkoutExpiration();
   if (isExpired) {
     cleanSession();
+  }
+  if (!isExpired) {
+    const { email } = JSON.parse(localStorage.getItem("user") || "{}");
+    const { fullName } = JSON.parse(
+      localStorage.getItem("participant") || "{}"
+    );
+    authStore.setState({
+      fullName,
+      email,
+    });
   }
   return isExpired;
 };

@@ -15,6 +15,7 @@ import { TicketsPurchaseConfirm } from "./TicketsPurchaseConfirm";
 import { useTickets } from "@/hooks/useTickets";
 import { URLManager } from "@/lib/URLManager";
 import type { TicketItem } from "@/hooks/useTickets";
+import { authStore } from "@/stores/authStore";
 
 export const TicketsHUB = ({
   createdTickets,
@@ -30,7 +31,8 @@ export const TicketsHUB = ({
     handleClearSelection,
     handleCheckout,
   } = useTickets({ createdTickets });
-
+const { fullName, email } = authStore.getState();
+console.log({ fullName, email });
   return (
     <main className="flex-grow container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">

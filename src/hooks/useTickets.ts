@@ -3,6 +3,18 @@ import { useToast } from "./useToast";
 import { stateManager } from "@/stores/stores";
 import { authStore } from "@/stores/authStore";
 
+function generateRandomString(length: number): string {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    const index = Math.floor(Math.random() * characters.length);
+    result += characters.charAt(index);
+  }
+  return result;
+}
+const referenceCode = generateRandomString(16);
+
 type TicketStatus = "available" | "reserved" | "sold";
 
 export interface TicketItem {
@@ -62,7 +74,7 @@ export const useTickets = ({
   }, []);
 
   useEffect(() => {
-    stateManager.setState({ selectedTickets }, true);
+    stateManager.setState({ selectedTickets, referenceCode }, true);
   }, [selectedTickets]);
 
   const handleClearSelection = () => {

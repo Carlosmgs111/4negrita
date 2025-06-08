@@ -22,13 +22,19 @@ export const WompiPaymentButton = ({
   referenceCode,
   currency,
   fullName,
-  document = "0",
+  email,
+  phone,
+  document,
+  documentType,
 }: {
   totalAmount: number;
   referenceCode: string;
   currency: string;
   fullName: string;
+  email: string;
+  phone: string;
   document: string;
+  documentType: string;
 }) => {
   const {
     SECRET_WOMPI_INTEGRITY_KEY: integrityKey,
@@ -40,20 +46,28 @@ export const WompiPaymentButton = ({
     currency,
     integrityKey,
   });
-  console.log({ integritySignature, publicKey, integrityKey });
+  console.log({ fullName });
   return (
-    <script
-      src="https://checkout.wompi.co/widget.js"
-      data-render="button"
-      data-public-key={publicKey}
-      data-currency="COP"
-      data-amount-in-cents={totalAmount * 100}
-      data-reference={referenceCode}
-      data-signature:integrity={integritySignature}
-      // data-customer-data:full-name={fullName}
-      // data-customer-data:legal-id={document}
-      // data-customer-data:legal-id-type="CC"
-      data-redirect-url="http://localhost:4321/payment/success"
-    ></script>
+    <form>
+      <script
+        src="https://checkout.wompi.co/widget.js"
+        data-render="button"
+        data-public-key={publicKey}
+        data-currency="COP"
+        data-amount-in-cents={totalAmount * 100}
+        data-reference={referenceCode}
+        data-phone-number={phone}
+        data-signature:integrity={integritySignature}
+        data-customer-data:full-name={fullName}
+        data-customer-data:email={email}
+        data-customer-data:phone-number-prefix={phone && "57"}
+        data-customer-data:phone-number={phone}
+        data-customer-data:legal-id={document && documentType ? document : null}
+        data-customer-data:legal-id-type={
+          document && documentType ? documentType : null
+        }
+        data-redirect-url="http://localhost:4321/payment/success"
+      ></script>
+    </form>
   );
 };

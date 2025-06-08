@@ -54,7 +54,7 @@ export const PaymentResume = () => {
             )}
           </div>
         </CardContent>
-        <CardFooter className="flex flex-col text-sm text-muted-foreground">
+        <CardFooter className="flex flex-col text-sm text-muted-foreground items-left">
           <p>
             Al hacer clic en "Pagar", serás redirigido a nuestra pasarela de
             pagos para completar la transacción de forma segura.
