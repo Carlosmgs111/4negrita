@@ -4,7 +4,6 @@ import { TicketsHUB } from "../components/Tickets/TicketsHUB";
 import { stateManager } from "@/stores/stores";
 import { supabase } from "@/lib/supabase";
 let { tickets, drawId } = stateManager.getState();
-console.log({ tickets });
 let raffleId;
 if (!drawId) {
   const [drawData] = await Promise.all([

@@ -16,7 +16,6 @@ import { useToast } from "@/hooks/useToast";
 import { Eye, EyeOff, LogIn, Phone } from "lucide-react";
 import { authStore } from "@/stores/authStore";
 
-// Form validation schema
 const loginFormSchema = z.object({
   email: z.string().email({ message: "Por favor, ingresa un correo válido" }),
   password: z
@@ -36,7 +35,6 @@ export const Login = () => {
     password: "",
   };
 
-  // Initialize react-hook-form with zod
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
     defaultValues,
@@ -50,7 +48,6 @@ export const Login = () => {
     authStore.setState({ email: defaultValues.email });
   }, []);
 
-  // Process the form
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
     
@@ -76,27 +73,17 @@ export const Login = () => {
         });
         return;
       }
-
-      // Success - handle client-side storage
       const { user, session, participant } = result.data;
-
-      // Store data in browser storage
       if (participant) {
         localStorage.setItem("participant", JSON.stringify(participant));
       }
-
       Object.entries(session).forEach(([key, value]) => {
         sessionStorage.setItem(key, JSON.stringify(value));
       });
-      
       localStorage.setItem("user", JSON.stringify(user));
-
-      // Update auth store
       authStore.setState({
         email: data.email,
       });
-
-      // Show success message
       toast({
         title: "Ingreso exitoso",
         description: result.message,
@@ -107,7 +94,6 @@ export const Login = () => {
           email: data.email,
         })
       );
-      // Redirect to home page
       window.location.href = "/?";
 
     } catch (error) {
@@ -121,8 +107,6 @@ export const Login = () => {
       setIsLoading(false);
     }
   };
-
-  console.log("authStore", authStore.getSerializedState());
   const authState = authStore.getSerializedState();
 
   return (
@@ -143,7 +127,6 @@ export const Login = () => {
                       {...field}
                       onChange={(e) => {
                         field.onChange(e); 
-                        console.log(e.target.value);
                         authStore.setState({
                           email: e.target.value,
                         }); 
@@ -200,7 +183,7 @@ export const Login = () => {
         </Button>
 
         <p className="text-center text-sm">
-          ¿No tienes una cuenta?{" "}
+          ¿No tienes una cuenta?&nbsp;
           <a
             href={`/auth/signup?auth=${authState}`}
             className="text-heart-500 hover:text-heart-600 font-medium"

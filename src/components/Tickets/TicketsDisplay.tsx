@@ -38,7 +38,6 @@ export const TicketsDisplay = ({
           : [...prev, ticket.number];
 
         if (prev.includes(ticket.number)) {
-          console.log("Boleto deseleccionado");
           toast({
             title: "Boleto deseleccionado",
             description: `Has quitado el boleto #${ticket.number} de tu selección`,

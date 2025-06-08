@@ -5,7 +5,6 @@ import { Menu, X, Ticket, User, LogIn } from "lucide-react";
 const validPaths = ["/", "/tickets"];
 
 export const Navbar = ({ pathname }: { pathname: string }) => {
-  console.log({pathname});
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isValidPath = validPaths.includes(pathname);
   const [token, setToken] = useState<{ name: string } | null>(null);

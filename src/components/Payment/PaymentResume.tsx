@@ -1,4 +1,3 @@
-
 import {
   Card,
   CardContent,
@@ -11,7 +10,8 @@ import { Ticket } from "lucide-react";
 import { stateManager } from "@/stores/stores";
 
 export const PaymentResume = () => {
-  const { totalAmount, referenceCode, selectedTickets } = stateManager.getState();
+  const { totalAmount, referenceCode, selectedTickets } =
+    stateManager.getState();
   return (
     <div>
       <Card>
@@ -56,8 +56,9 @@ export const PaymentResume = () => {
         </CardContent>
         <CardFooter className="flex flex-col text-sm text-muted-foreground items-left">
           <p>
-            Al hacer clic en "Pagar", serás redirigido a nuestra pasarela de
-            pagos para completar la transacción de forma segura.
+            Ahora haz clic en el botón "Paga con Wompi" para ser redirigido a la
+            pasarela de pagos de Wompi, donde podrás completar la transacción de
+            forma segura.
           </p>
         </CardFooter>
       </Card>

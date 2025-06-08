@@ -278,7 +278,7 @@ export const Signup = () => {
         </Button>
 
         <p className="text-center text-sm">
-          ¿Ya tienes una cuenta?{" "}
+          ¿Ya tienes una cuenta?&nbsp;
           <a
             href="/auth/login"
             className="text-heart-500 hover:text-heart-600 font-medium"

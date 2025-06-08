@@ -61,7 +61,7 @@ export const TicketsPurchaseConfirm = ({
           <div className="mt-4 font-medium">
             Total: {selectedTickets.length}{" "}
             {selectedTickets.length === 1 ? "boleto" : "boletos"} - $
-            {selectedTickets.length * 10000}
+            {selectedTickets.length * 5000}
           </div>
         </div>
 

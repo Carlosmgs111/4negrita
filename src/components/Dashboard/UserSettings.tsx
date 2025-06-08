@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/useToast";
 import { User, Phone, Mail, MapPin, Save } from "lucide-react";
+import { cleanSession } from "@/lib/checkLogState";
 // import { supabase } from "@/lib/supabase";
 
 export const UserSettings = () => {
@@ -20,7 +21,7 @@ export const UserSettings = () => {
   });
 
   const handleLogout = () => {
-    sessionStorage.removeItem("access_token");
+    cleanSession();
     window.location.href = "/";
   };
 
@@ -73,12 +74,11 @@ export const UserSettings = () => {
       body: JSON.stringify({ ...formData, participantId: participant.id }),
     });
     const result = await response.json();
-    console.log({ result });
     const { user: updatedUser, error } = result;
     if (error) {
       toast({
         title: "Error",
-        description: error.message,
+        description: error,
         variant: "destructive",
       });
       return;

@@ -10,17 +10,14 @@ const app = Astro.url.searchParams.get("app");
 const auth = Astro.url.searchParams.get("auth");
 if (app) {
   stateManager.setSerializedState(app);
-  console.log(stateManager.getState());
 }
 if (auth) {
   authStore.setSerializedState(auth);
 }
-const { selectedTickets, referenceCode } = stateManager.getState();
+const { referenceCode, totalAmount } = stateManager.getState();
 const { fullName, email, phone, document, documentType } = authStore.getState();
 
 const state = stateManager.getSerializedState();
-const totalAmount = selectedTickets.length * 10000;
-console.log({ app, auth });
 ---
 
 <Layout title="Checkout | 4Negrita">

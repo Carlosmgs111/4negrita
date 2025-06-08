@@ -52,9 +52,6 @@ export const useTickets = ({
 }: {
   createdTickets: TicketItem[];
 }) => {
-  const { fullName, email } = authStore.getState();
-  console.log("fullName", fullName);
-  console.log("email", email);
   const tickets: TicketItem[] = useMemo(
     () => generateMissingTickets(createdTickets),
     []
@@ -74,7 +71,8 @@ export const useTickets = ({
   }, []);
 
   useEffect(() => {
-    stateManager.setState({ selectedTickets, referenceCode }, true);
+    const totalAmount = selectedTickets.length * 5000;
+    stateManager.setState({ selectedTickets, referenceCode, totalAmount }, true);
   }, [selectedTickets]);
 
   const handleClearSelection = () => {
@@ -98,7 +96,6 @@ export const useTickets = ({
       });
       return;
     }
-    console.log("authStore.getState()", authStore.getState());
     window.location.href =
       "/checkout" +
       window.location.search +

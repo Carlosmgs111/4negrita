@@ -1,4 +1,5 @@
 import crypto from "crypto-js";
+import { Card, CardHeader } from "@/components/ui/card";
 
 const createIntegritySignature = ({
   amount,
@@ -46,28 +47,31 @@ export const WompiPaymentButton = ({
     currency,
     integrityKey,
   });
-  console.log({ fullName });
   return (
-    <form>
-      <script
-        src="https://checkout.wompi.co/widget.js"
-        data-render="button"
-        data-public-key={publicKey}
-        data-currency="COP"
-        data-amount-in-cents={totalAmount * 100}
-        data-reference={referenceCode}
-        data-phone-number={phone}
-        data-signature:integrity={integritySignature}
-        data-customer-data:full-name={fullName}
-        data-customer-data:email={email}
-        data-customer-data:phone-number-prefix={phone && "57"}
-        data-customer-data:phone-number={phone}
-        data-customer-data:legal-id={document && documentType ? document : null}
-        data-customer-data:legal-id-type={
-          document && documentType ? documentType : null
-        }
-        data-redirect-url="http://localhost:4321/payment/success"
-      ></script>
-    </form>
+    <Card>
+      <CardHeader>
+        <script
+          src="https://checkout.wompi.co/widget.js"
+          data-render="button"
+          data-public-key={publicKey}
+          data-currency="COP"
+          data-amount-in-cents={totalAmount * 100}
+          data-reference={referenceCode}
+          data-phone-number={phone}
+          data-signature:integrity={integritySignature}
+          data-customer-data:full-name={fullName}
+          data-customer-data:email={email}
+          data-customer-data:phone-number-prefix={phone && "57"}
+          data-customer-data:phone-number={phone}
+          data-customer-data:legal-id={
+            document && documentType ? document : null
+          }
+          data-customer-data:legal-id-type={
+            document && documentType ? documentType : null
+          }
+          data-redirect-url="http://localhost:4321/payment/success"
+        ></script>
+      </CardHeader>
+    </Card>
   );
 };

@@ -12,7 +12,6 @@ export const PATCH: APIRoute = async ({ request }) => {
     })
     .eq("id", participantId)
     .single();
-  console.log({ participant });
   const { data: updatedUser, error: userError } =
     await supabase.auth.updateUser({
       // phone: formData.phone,

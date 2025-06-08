@@ -63,11 +63,15 @@ export const SecuritySettings = () => {
       body: JSON.stringify({ password: passwords.newPassword }),
     });
     const result = await response.json();
-    const { data, error } = result;
-
-    console.log({ data, error });
-
-    // Clear form
+    const { error } = result;
+    if (error) {
+      toast({
+        title: "Error",
+        description: error,
+        variant: "destructive"
+      });
+      return;
+    }
     setPasswords({
       newPassword: "",
       confirmPassword: ""
