@@ -18,6 +18,8 @@ const { referenceCode, totalAmount } = stateManager.getState();
 const { fullName, email, phone, document, documentType } = authStore.getState();
 
 const state = stateManager.getSerializedState();
+const redirectUrl = Astro.url.origin + "/payment/success";
+console.log({ redirectUrl });
 ---
 
 <Layout title="Checkout | 4Negrita">
@@ -39,6 +41,7 @@ const state = stateManager.getSerializedState();
         <div class="flex flex-col gap-4">
           <PaymentResume />
           <WompiPaymentButton
+            redirectUrl={redirectUrl}
             totalAmount={totalAmount}
             referenceCode={referenceCode}
             currency="COP"

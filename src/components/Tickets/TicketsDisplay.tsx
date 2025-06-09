@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/useToast";
 import type { TicketItem } from "@/hooks/useTickets";
+import { authStore } from "@/stores/authStore";
 
 type TicketStatus = "available" | "reserved" | "sold";
 
@@ -21,7 +22,8 @@ export const TicketsDisplay = ({
   currentView: "grid" | "list";
 }) => {
   const isSelected = (numero: number) => selectedTickets.includes(numero);
-  const { toast } = useToast();
+  const { toast, dismiss } = useToast();
+  const isLogged = sessionStorage.getItem("logged") === "true";
   const getColorByStatus = (status: TicketStatus): string => {
     return {
       available: "bg-green-500 hover:bg-green-600",
@@ -31,6 +33,24 @@ export const TicketsDisplay = ({
   };
 
   const handleTicketClick = (ticket: TicketItem) => {
+    if (!isLogged) {
+      toast({
+        title: "No has iniciado sesión",
+        description: "Debes iniciar sesión para continuar.",
+        variant: "destructive",
+        className: "flex flex-col gap-2 items-start",
+        action: (
+          <a
+            href="/auth/login?redirect=/tickets"
+            onClick={(e) => dismiss()}
+            className="bg-white text-heart-500 px-4 py-2 rounded-md !m-0 w-full text-center"
+          >
+            Inicia sesión
+          </a>
+        ),
+      });
+      return;
+    }
     if (ticket.status === "available") {
       setSelectedTickets((prev) => {
         const newSelection = prev.includes(ticket.number)

@@ -19,6 +19,7 @@ const createIntegritySignature = ({
 };
 
 export const WompiPaymentButton = ({
+  redirectUrl,
   totalAmount,
   referenceCode,
   currency,
@@ -28,6 +29,7 @@ export const WompiPaymentButton = ({
   document,
   documentType,
 }: {
+  redirectUrl: string;
   totalAmount: number;
   referenceCode: string;
   currency: string;
@@ -69,7 +71,7 @@ export const WompiPaymentButton = ({
           data-customer-data:legal-id-type={
             document && documentType ? documentType : null
           }
-          data-redirect-url="http://localhost:4321/payment/success"
+          data-redirect-url={redirectUrl}
         ></script>
       </CardHeader>
     </Card>

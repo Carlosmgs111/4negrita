@@ -20,9 +20,11 @@ export class StateManager {
     this.namespace = namespace;
     this.useHash = useHash;
     this.useCompression = useCompression;
-    
-    this.state = serializedState ? this.deserialize(serializedState) || initialState : this.getFromURL() || initialState;
-    
+
+    this.state = serializedState
+      ? this.deserialize(serializedState) || initialState
+      : this.getFromURL() || initialState;
+
     this.unlisten = URLManager.listenURLChanges(() => {
       const newState = this.getFromURL();
       if (newState) {
@@ -37,7 +39,10 @@ export class StateManager {
   }
 
   setState(updater: any, replace = false) {
-    this.state = typeof updater === "function" ? updater(this.state) : { ...this.state, ...updater };
+    this.state =
+      typeof updater === "function"
+        ? updater(this.state)
+        : { ...this.state, ...updater };
     this.updateURL(replace);
     this.notifyListeners();
     return this.state;
@@ -45,7 +50,7 @@ export class StateManager {
 
   setSerializedState(serializedState: string, replace = false) {
     const newState = this.deserialize(serializedState);
-    if (newState && typeof newState === 'object' && !Array.isArray(newState)) {
+    if (newState && typeof newState === "object" && !Array.isArray(newState)) {
       this.state = newState;
       this.updateURL(replace);
       this.notifyListeners();
@@ -80,13 +85,13 @@ export class StateManager {
 
   private serialize(value: any): string {
     if (typeof value === "string" || !value) return String(value);
-    
+
     const serialized = URLON.stringify(value);
-    
+
     if (this.useCompression && LZString?.compressToEncodedURIComponent) {
       return LZString.compressToEncodedURIComponent(serialized);
     }
-    
+
     return serialized;
   }
 
@@ -101,7 +106,7 @@ export class StateManager {
           return URLON.parse(decompressed);
         }
       }
-      
+
       // Deserializar sin compresión
       return URLON.parse(value);
     } catch {
@@ -114,14 +119,16 @@ export class StateManager {
     if (!url) return null;
 
     try {
-      const stateParam = this.useHash 
-        ? new URLSearchParams(url.hash.replace('#', '')).get(this.namespace)
+      const stateParam = this.useHash
+        ? new URLSearchParams(url.hash.replace("#", "")).get(this.namespace)
         : url.params[this.namespace];
-      
+
       if (!stateParam) return null;
-      
+
       const state = this.deserialize(stateParam);
-      return (state && typeof state === 'object' && !Array.isArray(state)) ? state : null;
+      return state && typeof state === "object" && !Array.isArray(state)
+        ? state
+        : null;
     } catch {
       return null;
     }
@@ -130,20 +137,20 @@ export class StateManager {
   private updateURL(replace = false) {
     try {
       const stateStr = this.serialize(this.state);
-      
+
       if (this.useHash) {
         const url = URLManager.getURL();
         if (!url) return;
-        
-        const hashParams = new URLSearchParams(url.hash.replace('#', ''));
+
+        const hashParams = new URLSearchParams(url.hash.replace("#", ""));
         hashParams.set(this.namespace, stateStr);
-        
+
         URLManager.updateURL({ hash: hashParams.toString(), replace });
       } else {
         const currentParams = URLManager.getURL()?.params || {};
-        URLManager.updateURL({ 
-          params: { ...currentParams, [this.namespace]: stateStr }, 
-          replace 
+        URLManager.updateURL({
+          params: { ...currentParams, [this.namespace]: stateStr },
+          replace,
         });
       }
     } catch (error) {
@@ -152,7 +159,7 @@ export class StateManager {
   }
 
   private notifyListeners() {
-    this.listeners.forEach(listener => listener(this.getState()));
+    this.listeners.forEach((listener) => listener(this.getState()));
   }
 
   static create(options = {}) {

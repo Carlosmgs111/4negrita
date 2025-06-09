@@ -61,10 +61,11 @@ export const useTickets = ({
     stateManager.getState().selectedTickets
   );
   const { toast } = useToast();
+  const state = stateManager.getState();
 
   useEffect(() => {
     const handlePopState = () => {
-      setSelectedTickets(stateManager.getState().selectedTickets);
+      setSelectedTickets(state.selectedTickets);
     };
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
@@ -72,12 +73,14 @@ export const useTickets = ({
 
   useEffect(() => {
     const totalAmount = selectedTickets.length * 5000;
-    stateManager.setState({ selectedTickets, referenceCode, totalAmount }, true);
+    stateManager.setState(
+      { selectedTickets, referenceCode, totalAmount },
+      true
+    );
   }, [selectedTickets]);
 
   const handleClearSelection = () => {
     setSelectedTickets([]);
-
     toast({
       title: "Selección limpiada",
       description: "Se han eliminado todos los boletos de tu selección",
@@ -109,5 +112,6 @@ export const useTickets = ({
     setSelectedTickets,
     handleClearSelection,
     handleCheckout,
+    state,
   };
 };

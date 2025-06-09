@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/useToast";
 import { Eye, EyeOff, LogIn, Phone } from "lucide-react";
 import { authStore } from "@/stores/authStore";
+import { URLManager } from "@/lib/URLManager";
 
 const loginFormSchema = z.object({
   email: z.string().email({ message: "Por favor, ingresa un correo válido" }),
@@ -29,7 +30,7 @@ export const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  
+
   const defaultValues = {
     email: authStore.getState().email,
     password: "",
@@ -50,12 +51,11 @@ export const Login = () => {
 
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true);
-    
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email: data.email,
@@ -84,6 +84,7 @@ export const Login = () => {
       authStore.setState({
         email: data.email,
       });
+      sessionStorage.setItem("logged", "true");
       toast({
         title: "Ingreso exitoso",
         description: result.message,
@@ -92,12 +93,13 @@ export const Login = () => {
         JSON.stringify({
           fullName: participant?.fullName,
           email: data.email,
+          isLogged: true,
         })
       );
-      window.location.href = "/?";
-
+      const redirect = URLManager.getParam("redirect");
+      window.location.href = redirect || "/";
     } catch (error) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
       toast({
         title: "Error de conexión",
         description: "No se pudo conectar con el servidor",
@@ -126,10 +128,10 @@ export const Login = () => {
                       disabled={isLoading}
                       {...field}
                       onChange={(e) => {
-                        field.onChange(e); 
+                        field.onChange(e);
                         authStore.setState({
                           email: e.target.value,
-                        }); 
+                        });
                       }}
                     />
                   </FormControl>

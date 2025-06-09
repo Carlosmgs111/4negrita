@@ -8,14 +8,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Grid3x3, ListOrdered, ShoppingCart, X } from "lucide-react";
+import { Grid3x3, ListOrdered, LogIn, ShoppingCart, X } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TicketsDisplay } from "./TicketsDisplay";
 import { TicketsPurchaseConfirm } from "./TicketsPurchaseConfirm";
 import { useTickets } from "@/hooks/useTickets";
 import { URLManager } from "@/lib/URLManager";
 import type { TicketItem } from "@/hooks/useTickets";
-import { authStore } from "@/stores/authStore";
 
 export const TicketsHUB = ({
   createdTickets,
@@ -30,8 +29,11 @@ export const TicketsHUB = ({
     setSelectedTickets,
     handleClearSelection,
     handleCheckout,
+    state,
   } = useTickets({ createdTickets });
-const { fullName, email } = authStore.getState();
+  const isLogged = sessionStorage.getItem("logged") === "true";
+  // stateManager.setState({ selectedTickets });
+  console.log(state);
   return (
     <main className="flex-grow container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
@@ -130,7 +132,7 @@ const { fullName, email } = authStore.getState();
         </CardFooter>
       </Card>
 
-      {selectedTickets.length > 0 && (
+      {isLogged && selectedTickets.length > 0 && (
         <div className="fixed bottom-4 right-1 sm:bottom-8 sm:right-8 z-10">
           <TicketsPurchaseConfirm
             selectedTickets={selectedTickets}

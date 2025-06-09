@@ -136,7 +136,7 @@ function dispatch(action: Action) {
 
 type Toast = Omit<ToasterToast, "id">;
 
-function toast({ ...props }: Toast) {
+export function toast({ children, ...props }: Toast & { children?: React.ReactNode }) {
   const id = genId();
 
   const update = (props: ToasterToast) =>
@@ -155,6 +155,7 @@ function toast({ ...props }: Toast) {
       onOpenChange: (open: boolean) => {
         if (!open) dismiss();
       },
+      children,
     },
   });
 
@@ -165,7 +166,7 @@ function toast({ ...props }: Toast) {
   };
 }
 
-function useToast() {
+export function useToast() {
   const [state, setState] = React.useState<State>(memoryState);
 
   React.useEffect(() => {
@@ -185,4 +186,6 @@ function useToast() {
   };
 }
 
-export { useToast, toast };
+export function dismissToast() {
+  dispatch({ type: "DISMISS_TOAST" });
+}

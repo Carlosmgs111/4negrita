@@ -3,7 +3,12 @@ import Layout from "../layouts/Layout.astro";
 import { TicketsHUB } from "../components/Tickets/TicketsHUB";
 import { stateManager } from "@/stores/stores";
 import { supabase } from "@/lib/supabase";
+const state = Astro.url.searchParams.get("app");
+if (state) {
+  stateManager.setSerializedState(state);
+}
 let { tickets, drawId } = stateManager.getState();
+
 let raffleId;
 if (!drawId) {
   const [drawData] = await Promise.all([
@@ -24,6 +29,7 @@ if (!tickets) {
   ]);
   stateManager.setState({ tickets: ticketsData.data });
   tickets = ticketsData.data;
+  console.log(tickets);
 }
 ---
 

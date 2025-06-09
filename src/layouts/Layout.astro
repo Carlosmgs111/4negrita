@@ -44,8 +44,15 @@ const { title } = Astro.props;
 
 <script>
   import { checkLogState } from "@/lib/checkLogState";
+  import { toast } from "@/hooks/useToast";
   const isExpired = checkLogState();
   if (isExpired && window.location.pathname !== "/") {
+    toast({
+      title: "Sesión expirada",
+      description: "Tu sesión ha expirado. Por favor, inicia sesión de nuevo.",
+      variant: "destructive",
+      duration: 3000,
+    });
     window.location.href = "/";
   }
 </script>

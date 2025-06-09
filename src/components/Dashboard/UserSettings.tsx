@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/useToast";
 import { User, Phone, Mail, MapPin, Save } from "lucide-react";
 import { cleanSession } from "@/lib/checkLogState";
+import { authStore } from "@/stores/authStore";
 // import { supabase } from "@/lib/supabase";
 
 export const UserSettings = () => {
@@ -21,6 +22,7 @@ export const UserSettings = () => {
   });
 
   const handleLogout = () => {
+    authStore.setState({ isLogged: false });
     cleanSession();
     window.location.href = "/";
   };
