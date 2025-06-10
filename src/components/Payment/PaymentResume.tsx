@@ -8,10 +8,101 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Ticket } from "lucide-react";
 import { stateManager } from "@/stores/stores";
+import { supabase } from "@/lib/supabase";
+import { v4 as uuid } from "uuid";
 
-export const PaymentResume = () => {
+const queryExitingTickets = async (tickets: number[], raffleId: string) => {
+  const { data: existing, error } = await supabase
+    .from("ticket")
+    .select("raffleId, number, id, reservedUntil")
+    .eq("raffleId", raffleId)
+    .in("number", tickets);
+
+  if (error) {
+    return [null, error];
+  }
+  const numerosExistentes = existing.map((t: any) => {
+    const isReserved = t.reservedUntil > new Date();
+    if (!isReserved) {
+      supabase.from("ticket").update({ status: "available" }).eq("id", t.id);
+    }
+    return t.number;
+  });
+  const numerosNoExisten = tickets.filter(
+    (num) => !numerosExistentes.includes(num)
+  );
+  return [
+    {
+      existing,
+      notExisting: numerosNoExisten.map((num) => ({ raffleId, number: num })),
+    },
+    null,
+  ];
+};
+
+const createTickets = (notExisting: number[], expirationTime: string) => {
+  const reservedUntil = expirationTime;
+  const notExistingTickets = notExisting.map((ticket: any) => {
+    const digits = Number(ticket.number - 1)
+      .toString()
+      .padStart(3, "0");
+    return {
+      number: ticket.number,
+      digits: digits,
+      status: "reserved",
+      price: 5000,
+      issueDate: new Date().toISOString(),
+      soldAt: new Date().toISOString(),
+      id: uuid(),
+      raffleId: "4ea8cf0d-8152-4fae-8c50-bbda843aae44",
+      userId: "3d34bc76-de25-4b44-9daf-5f49d3613d00",
+      reservedUntil,
+    };
+  });
+  supabase
+    .from("ticket")
+    .upsert(notExistingTickets)
+    .select()
+    .then((res: any) => {
+      console.log("res:::\n", res);
+    })
+    .catch((err: any) => {
+      console.log({ err });
+    });
+};
+
+const updateTickets = (existing: any[], expirationTime: string) => {
+  const existingIds = existing.map((t: any) => t.id);
+  const reservedUntil = expirationTime;
+  supabase
+    .from("ticket")
+    .update({
+      status: "reserved",
+      reservedUntil,
+    })
+    .in("id", existingIds)
+    .then((res: any) => {
+      console.log("res:::\n", res);
+    })
+    .catch((err: any) => {
+      console.log({ err });
+    });
+};
+
+export const PaymentResume = async ({
+  expirationTime,
+}: {
+  expirationTime: string;
+}) => {
   const { totalAmount, referenceCode, selectedTickets } =
     stateManager.getState();
+
+  const [{ existing, notExisting }, error] = await queryExitingTickets(
+    selectedTickets,
+    "4ea8cf0d-8152-4fae-8c50-bbda843aae44"
+  );
+  createTickets(notExisting, expirationTime);
+  updateTickets(existing, expirationTime);
   return (
     <div>
       <Card>
@@ -27,7 +118,10 @@ export const PaymentResume = () => {
                   key={numero}
                   className="bg-green-500 text-white py-1 px-3 mb-1"
                 >
-                  <Ticket className="mr-1 h-3 w-3" />#{numero}
+                  <Ticket className="mr-1 h-3 w-3" />#
+                  {Number(numero - 1)
+                    .toString()
+                    .padStart(3, "0")}
                 </Badge>
               ))}
             </div>

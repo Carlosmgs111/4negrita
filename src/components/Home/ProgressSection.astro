@@ -1,7 +1,7 @@
 ---
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-
+import Countdown from "@/components/Countdown.astro";
 const {
   totalRaised = 0,
   ticketPrice = 0,
@@ -11,6 +11,9 @@ const {
 const currentAmount = totalRaised;
 const targetAmount = ticketPrice * totalTickets;
 const progressPercentage = (currentAmount / targetAmount) * 100;
+const targetDate = new Date(Date.now() + daysLeftToPlay * 24 * 60 * 60 * 1000)
+  .toISOString()
+  .split("T")[0];
 ---
 
 <section class="bg-accent py-16">
@@ -46,8 +49,8 @@ const progressPercentage = (currentAmount / targetAmount) * 100;
         </div>
 
         <span class="text-l font-thin">
-          Sin embargo también puedes aportar con cualquier pequeña donación si no
-          deseas adquirir un boleto.
+          Sin embargo también puedes aportar con cualquier pequeña donación si
+          no deseas adquirir un boleto.
         </span>
         <div class="flex flex-wrap gap-3 justify-center">
           {
@@ -73,14 +76,9 @@ const progressPercentage = (currentAmount / targetAmount) * 100;
           >
         </div>
       </div>
-
-      <div class="animate-pulse-gentle">
-        <div
-          class="inline-block bg-warmth-100 text-warmth-500 rounded-full px-4 py-2 text-sm font-semibold"
-        >
-          ¡Quedan solo {daysLeftToPlay} días para el sorteo!
-        </div>
-      </div>
+    </div>
+    <div class="animate-pulse-gentle">
+      <Countdown title="¡Quedan solo" footer="para el sorteo!" targetDate={targetDate} />
     </div>
   </div>
 </section>

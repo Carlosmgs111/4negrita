@@ -54,7 +54,9 @@ export const TicketsPurchaseConfirm = ({
                   key={numero}
                   className="bg-green-500 text-white py-1 px-3"
                 >
-                  Boleto #{numero}
+                  Boleto #{Number(numero - 1)
+                    .toString()
+                    .padStart(3, "0")}
                 </Badge>
               ))}
           </div>

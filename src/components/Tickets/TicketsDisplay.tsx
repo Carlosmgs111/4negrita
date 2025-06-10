@@ -4,7 +4,6 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/useToast";
 import type { TicketItem } from "@/hooks/useTickets";
-import { authStore } from "@/stores/authStore";
 
 type TicketStatus = "available" | "reserved" | "sold";
 

@@ -24,13 +24,33 @@ if (!tickets) {
   const [ticketsData] = await Promise.all([
     supabase
       .from("ticket")
-      .select("number, digits, status")
+      .select("number, digits, status, reservedUntil, id")
       .eq("raffleId", raffleId),
   ]);
   stateManager.setState({ tickets: ticketsData.data });
   tickets = ticketsData.data;
-  console.log(tickets);
 }
+const checkTicketsStatus = () => {
+  tickets.forEach((ticket: any) => {
+    if (ticket.status === "reserved") {
+      const reservedUntil = new Date(ticket.reservedUntil).getTime();
+      const now = new Date().getTime();
+      // if (!reservedUntil) return;
+      console.log({ reservedUntil, now });
+      if (reservedUntil < now || reservedUntil === null) {
+        console.log("reserved time expired");
+        ticket.status = "available";
+        console.log(ticket);
+        supabase
+          .from("ticket")
+          .update({ status: "available" })
+          .eq("id", ticket.id)
+          .then((res: any) => console.log({ res }));
+      }
+    }
+  });
+};
+checkTicketsStatus();
 ---
 
 <Layout title="Tickets | 4Negrita">

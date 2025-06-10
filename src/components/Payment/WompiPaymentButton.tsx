@@ -28,6 +28,7 @@ export const WompiPaymentButton = ({
   phone,
   document,
   documentType,
+  expirationTime,
 }: {
   redirectUrl: string;
   totalAmount: number;
@@ -38,6 +39,7 @@ export const WompiPaymentButton = ({
   phone: string;
   document: string;
   documentType: string;
+  expirationTime: string;
 }) => {
   const {
     SECRET_WOMPI_INTEGRITY_KEY: integrityKey,
@@ -72,6 +74,7 @@ export const WompiPaymentButton = ({
             document && documentType ? documentType : null
           }
           data-redirect-url={redirectUrl}
+          data-expiration-time={expirationTime}
         ></script>
       </CardHeader>
     </Card>

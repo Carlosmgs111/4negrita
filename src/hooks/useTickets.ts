@@ -33,11 +33,12 @@ const assignDigit = (numb: number, maxDigits = 3) => {
 
 const generateMissingTickets = (createdTickets: TicketItem[]): TicketItem[] => {
   return Array.from({ length: 1000 }, (_, i) => {
-    if (createdTickets.some((ticket) => ticket.number == i + 1))
+    const cretedTicket = createdTickets.find((ticket: any) => ticket.number == i + 1);
+    if (cretedTicket)
       return {
         number: i + 1,
-        digits: assignDigit(i, 3),
-        status: "sold",
+        digits: cretedTicket.digits,
+        status: cretedTicket.status,
       };
     return {
       number: i + 1,

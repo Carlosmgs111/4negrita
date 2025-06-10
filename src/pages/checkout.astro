@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { WompiPaymentButton } from "@/components/Payment/WompiPaymentButton";
 import { PaymentResume } from "@/components/Payment/PaymentResume";
+import Countdown from "@/components/Countdown.astro";
 const app = Astro.url.searchParams.get("app");
 const auth = Astro.url.searchParams.get("auth");
 if (app) {
@@ -19,7 +20,7 @@ const { fullName, email, phone, document, documentType } = authStore.getState();
 
 const state = stateManager.getSerializedState();
 const redirectUrl = Astro.url.origin + "/payment/success";
-console.log({ redirectUrl });
+const expirationTime = new Date(Date.now() + 10 * 60 * 1000).toISOString();
 ---
 
 <Layout title="Checkout | 4Negrita">
@@ -39,8 +40,9 @@ console.log({ redirectUrl });
         </div>
 
         <div class="flex flex-col gap-4">
-          <PaymentResume />
+          <PaymentResume expirationTime={expirationTime}/>
           <WompiPaymentButton
+            expirationTime={expirationTime}
             redirectUrl={redirectUrl}
             totalAmount={totalAmount}
             referenceCode={referenceCode}
@@ -51,6 +53,7 @@ console.log({ redirectUrl });
             document={document}
             documentType={documentType}
           />
+          <Countdown targetDate={expirationTime} />
         </div>
       </div>
     </main>
