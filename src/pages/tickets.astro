@@ -4,8 +4,26 @@ import { TicketsHUB } from "../components/Tickets/TicketsHUB";
 import { stateManager } from "@/stores/stores";
 import { supabase } from "@/lib/supabase";
 const state = Astro.url.searchParams.get("app");
+const wasCanceled = Astro.url.searchParams.get("canceled");
 if (state) {
   stateManager.setSerializedState(state);
+}
+let selectedTickets = stateManager.getState().selectedTickets;
+if (selectedTickets.length > 0 && wasCanceled === "true") {
+  console.log({ wasCanceled, selectedTickets });
+  supabase
+    .from("ticket")
+    .update({ status: "available" })
+    .in("number", selectedTickets)
+    .then((res: any) => {
+      console.log(res);
+    })
+    .catch((err: any) => {
+      console.log(err);
+    });
+  selectedTickets = [];
+  Astro.url.searchParams.toString().replace("?canceled=true", "");
+  stateManager.setState({ selectedTickets });
 }
 let { tickets, drawId } = stateManager.getState();
 
@@ -35,12 +53,8 @@ const checkTicketsStatus = () => {
     if (ticket.status === "reserved") {
       const reservedUntil = new Date(ticket.reservedUntil).getTime();
       const now = new Date().getTime();
-      // if (!reservedUntil) return;
-      console.log({ reservedUntil, now });
       if (reservedUntil < now || reservedUntil === null) {
-        console.log("reserved time expired");
         ticket.status = "available";
-        console.log(ticket);
         supabase
           .from("ticket")
           .update({ status: "available" })
@@ -58,3 +72,19 @@ checkTicketsStatus();
     <TicketsHUB client:only createdTickets={tickets} />
   </div>
 </Layout>
+
+<script>
+  import { stateManager } from "@/stores/stores";
+  const urlSearchParams = new URLSearchParams(window.location.search);
+  const wasCanceled = urlSearchParams.get("canceled");
+  if (wasCanceled === "true") {
+    console.log({ wasCanceled });
+    stateManager.setState({ selectedTickets: [] });
+    urlSearchParams.delete("canceled");
+    window.history.pushState(
+      null,
+      "",
+      window.location.pathname + "?" + urlSearchParams.toString()
+    );
+  }
+</script>

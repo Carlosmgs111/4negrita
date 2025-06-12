@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Grid3x3, ListOrdered, LogIn, ShoppingCart, X } from "lucide-react";
+import { Grid3x3, ListOrdered, ShoppingCart, X } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TicketsDisplay } from "./TicketsDisplay";
 import { TicketsPurchaseConfirm } from "./TicketsPurchaseConfirm";

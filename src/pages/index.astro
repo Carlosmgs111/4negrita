@@ -12,7 +12,9 @@ import { stateManager } from "@/stores/stores";
 const prodDrawId = "5156d678-bc45-45d1-aa30-847a57330626";
 const devDrawId = "7ea8c51c-f3ff-4c05-b15e-8d1975473bfc";
 const drawId =
-  import.meta.env.PUBLIC_SUPABASE_SCHEMA === "development" ? devDrawId : prodDrawId;
+  import.meta.env.PUBLIC_SUPABASE_SCHEMA === "development"
+    ? devDrawId
+    : prodDrawId;
 const playedLotteryDate = import.meta.env.PUBLIC_LOTTERY_PLAY_DATE;
 
 let totalSoldTickets;
@@ -23,52 +25,58 @@ let { playDate, limitDate, ticketPrice, totalTickets, tickets } =
 
 if (!playDate || !limitDate || !ticketPrice || !totalTickets || !tickets) {
   // Ejecutar todas las consultas en paralelo
-  const [lotteryData, drawData] = await Promise.all([
-    fetch(`https://api-resultadosloterias.com/api/results/${playedLotteryDate}`)
-      .then((res) => res.json())
-      .then((data) =>
-        data.data?.find(({ lottery }: any) => lottery === "BOYACA")
-      ),
-    supabase
-      .from("draw")
-      .select("raffleId, limitDate, playDate, raffle(*)")
-      .eq("id", drawId)
-      .single(),
-  ]);
-  const [ticketsData] = await Promise.all([
-    supabase
-      .from("ticket")
-      .select("number, digits, status")
-      .eq("raffleId", drawData?.data?.raffleId),
-  ]);
-  const { result, series } = lotteryData || {};
-  const { data: draw } = drawData;
-  const raffle = draw?.raffle;
-  tickets = ticketsData?.data;
-  totalSoldTickets = tickets?.length;
-  totalTickets = raffle?.totalTickets;
-  totalRaised = raffle?.ticketPrice * totalSoldTickets;
-  playDate = draw?.playDate;
-  limitDate = draw?.limitDate;
-  ticketPrice = raffle?.ticketPrice;
-  daysLeftToPlay = Math.floor(
-    (new Date(limitDate).getTime() - new Date().getTime()) /
-      (1000 * 60 * 60 * 24)
-  );
-  stateManager.setState({
-    totalTickets,
-    playDate,
-    limitDate,
-    ticketPrice,
-    tickets,
-    drawId,
-  });
+  try {
+    const [lotteryData, drawData] = await Promise.all([
+      fetch(
+        `https://api-resultadosloterias.com/api/results/${playedLotteryDate}`
+      )
+        .then((res) => res.json())
+        .then((data) =>
+          data.data?.find(({ lottery }: any) => lottery === "BOYACA")
+        ),
+      supabase
+        .from("draw")
+        .select("raffleId, limitDate, playDate, raffle(*)")
+        .eq("id", drawId)
+        .single(),
+    ]);
+    const [ticketsData] = await Promise.all([
+      supabase
+        .from("ticket")
+        .select("number, digits, status")
+        .eq("raffleId", drawData?.data?.raffleId),
+    ]);
+    const { result, series } = lotteryData || {};
+    const { data: draw } = drawData;
+    const raffle = draw?.raffle;
+    tickets = ticketsData?.data;
+    totalSoldTickets = tickets?.length;
+    totalTickets = raffle?.totalTickets;
+    totalRaised = raffle?.ticketPrice * totalSoldTickets;
+    playDate = draw?.playDate;
+    limitDate = draw?.limitDate;
+    ticketPrice = raffle?.ticketPrice;
+    daysLeftToPlay = Math.floor(
+      (new Date(limitDate).getTime() - new Date().getTime()) /
+        (1000 * 60 * 60 * 24)
+    );
+    stateManager.setState({
+      totalTickets,
+      playDate,
+      limitDate,
+      ticketPrice,
+      tickets,
+      drawId,
+    });
+  } catch (e) {
+    console.log(e);
+  }
 }
 totalSoldTickets = tickets?.length;
 totalRaised = ticketPrice * totalSoldTickets;
 daysLeftToPlay = Math.floor(
   (new Date(limitDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
-)
+);
 ---
 
 <Layout title="Home | 4Negrita">
@@ -93,8 +101,6 @@ daysLeftToPlay = Math.floor(
       daysLeftToPlay={daysLeftToPlay}
     />
     <FAQSection />
-    <CallToAction
-      playDate={playDate}
-    />
+    <CallToAction playDate={playDate} />
   </main>
 </Layout>

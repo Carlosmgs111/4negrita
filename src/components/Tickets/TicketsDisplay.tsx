@@ -119,7 +119,7 @@ export const TicketsDisplay = ({
                         }
                       `}
             >
-              {boleto.digits}
+              #{boleto.digits}
               {isSelected(boleto.number) && (
                 <div className="absolute -top-2 -right-2 bg-heart-500 rounded-full w-5 h-5 flex items-center justify-center text-xs">
                   ✓

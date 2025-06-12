@@ -57,6 +57,7 @@ export const useTickets = ({
     () => generateMissingTickets(createdTickets),
     []
   );
+  console.log(stateManager.getState());
   const [currentView, setCurrentView] = useState<"grid" | "list">("grid");
   const [selectedTickets, setSelectedTickets] = useState<number[]>(
     stateManager.getState().selectedTickets

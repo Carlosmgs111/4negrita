@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react";
 import { WompiPaymentButton } from "@/components/Payment/WompiPaymentButton";
 import { PaymentResume } from "@/components/Payment/PaymentResume";
 import Countdown from "@/components/Countdown.astro";
+import { Card, CardFooter } from "@/components/ui/card";
 const app = Astro.url.searchParams.get("app");
 const auth = Astro.url.searchParams.get("auth");
 if (app) {
@@ -31,7 +32,7 @@ const expirationTime = new Date(Date.now() + 10 * 60 * 1000).toISOString();
           <h1 class="text-3xl font-bold mb-2 text-heart-600">
             Finaliza tu compra
           </h1>
-          <a href={`/tickets?app=${state}`}>
+          <a href={`/tickets?app=${state}&canceled=true`}>
             <Button variant="ghost" className="pt-2 pb-2 pl-4 pr-6 text-1xl">
               <ArrowLeft className="mr-1 h-4 w-4" />
               Volver
@@ -40,7 +41,7 @@ const expirationTime = new Date(Date.now() + 10 * 60 * 1000).toISOString();
         </div>
 
         <div class="flex flex-col gap-4">
-          <PaymentResume expirationTime={expirationTime}/>
+          <PaymentResume expirationTime={expirationTime} />
           <WompiPaymentButton
             expirationTime={expirationTime}
             redirectUrl={redirectUrl}
@@ -53,9 +54,26 @@ const expirationTime = new Date(Date.now() + 10 * 60 * 1000).toISOString();
             document={document}
             documentType={documentType}
           />
-          <Countdown targetDate={expirationTime} />
+          <Card>
+            <Countdown
+              style="minimal"
+              size="compact"
+              units="minutes"
+              title={null}
+              targetDate={expirationTime}
+            />
+            <CardFooter className="text-center text-sm text-gray-600">
+              !Recuerda, dispones de 10 minutos para completar el pago,
+              apresurate y no pierdas la oportunidad de participar¡
+            </CardFooter>
+          </Card>
         </div>
       </div>
     </main>
   </div>
 </Layout>
+
+<script>
+  import { checkLogState } from "@/lib/checkLogState";
+  checkLogState();
+</script>

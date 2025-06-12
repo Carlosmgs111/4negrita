@@ -14,6 +14,7 @@ export const cleanSession = () => {
 };
 
 export const checkLogState = () => {
+  console.log("CHECKING LOG STATE");
   if (typeof window === "undefined" || !window.sessionStorage) return;
   const isExpired = checkoutExpiration();
   if (isExpired) {

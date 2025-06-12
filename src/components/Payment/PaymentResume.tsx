@@ -63,12 +63,8 @@ const createTickets = (notExisting: number[], expirationTime: string) => {
     .from("ticket")
     .upsert(notExistingTickets)
     .select()
-    .then((res: any) => {
-      console.log("res:::\n", res);
-    })
-    .catch((err: any) => {
-      console.log({ err });
-    });
+    .then((res: any) => {})
+    .catch((err: any) => {});
 };
 
 const updateTickets = (existing: any[], expirationTime: string) => {
@@ -81,12 +77,8 @@ const updateTickets = (existing: any[], expirationTime: string) => {
       reservedUntil,
     })
     .in("id", existingIds)
-    .then((res: any) => {
-      console.log("res:::\n", res);
-    })
-    .catch((err: any) => {
-      console.log({ err });
-    });
+    .then((res: any) => {})
+    .catch((err: any) => {});
 };
 
 export const PaymentResume = async ({
