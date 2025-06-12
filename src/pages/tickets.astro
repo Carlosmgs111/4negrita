@@ -80,6 +80,7 @@ checkTicketsStatus();
   if (wasCanceled === "true") {
     console.log({ wasCanceled });
     stateManager.setState({ selectedTickets: [] });
+    console.log({ selectedTickets: stateManager.getState().selectedTickets });
     urlSearchParams.delete("canceled");
     window.history.pushState(
       null,

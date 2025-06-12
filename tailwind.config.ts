@@ -127,6 +127,17 @@ export default {
   				'sans-serif'
   			]
   		}
+		,
+		"screens": {
+			"3xs": "320px",
+			"2xs": "430px",
+			"xs": "560px",
+			"sm": "670px",
+			"md": "768px",
+			"lg": "1024px",
+			"xl": "1280px",
+			"2xl": "1536px"
+		}
   	}
   },
   plugins: [require("tailwindcss-animate")],

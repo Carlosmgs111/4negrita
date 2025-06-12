@@ -51,6 +51,7 @@ export const WompiPaymentButton = ({
     currency,
     integrityKey,
   });
+  console.log({ integritySignature, referenceCode, publicKey });
   return (
     <Card>
       <CardHeader>
@@ -61,7 +62,6 @@ export const WompiPaymentButton = ({
           data-currency="COP"
           data-amount-in-cents={totalAmount * 100}
           data-reference={referenceCode}
-          data-phone-number={phone}
           data-signature:integrity={integritySignature}
           data-customer-data:full-name={fullName}
           data-customer-data:email={email}

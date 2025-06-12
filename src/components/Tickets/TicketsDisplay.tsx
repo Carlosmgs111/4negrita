@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/useToast";
 import type { TicketItem } from "@/hooks/useTickets";
+import { TicketButton } from "./TicketButton";
 
 type TicketStatus = "available" | "reserved" | "sold";
 
@@ -97,36 +98,38 @@ export const TicketsDisplay = ({
   return (
     <Tabs value={currentView}>
       <TabsContent value="grid" className="m-0">
-        <div className="grid grid-cols-5 sm:grid-cols-10 gap-2 sm:gap-3">
-          {tickets.map((boleto) => (
-            <button
-              key={boleto.number}
-              onClick={() => handleTicketClick(boleto)}
-              disabled={boleto.status === "sold"}
-              className={`
-                        relative flex items-center justify-center p-2 sm:p-4 rounded-lg font-bold text-white
-                        transition-all duration-200 hover:scale-105 
-                        ${getColorByStatus(boleto.status)}
-                        ${
-                          boleto.status === "sold"
-                            ? "opacity-60 cursor-not-allowed"
-                            : "cursor-pointer shadow-sm hover:shadow-md"
-                        }
-                        ${
-                          isSelected(boleto.number)
-                            ? "ring-4 ring-heart-500"
-                            : ""
-                        }
-                      `}
-            >
-              #{boleto.digits}
-              {isSelected(boleto.number) && (
-                <div className="absolute -top-2 -right-2 bg-heart-500 rounded-full w-5 h-5 flex items-center justify-center text-xs">
-                  ✓
-                </div>
-              )}
-            </button>
-          ))}
+        <div className="grid grid-cols-5 3xs:grid-cols-2 2xs:grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-2">
+          {tickets.map((boleto) => {
+            return (
+              <TicketButton
+                key={boleto.number}
+                onClick={() => handleTicketClick(boleto)}
+                disabled={boleto.status === "sold"}
+                backgroundColor={
+                  boleto.status === "available"
+                    ? "#4CAF50"
+                    : boleto.status === "reserved"
+                    ? "#FFEB3B"
+                    : "#9ca3af"
+                }
+                lineColor={
+                  boleto.status === "available"
+                    ? isSelected(boleto.number) ? "#F56565" : "#333333"
+                    : boleto.status === "reserved"
+                    ? "#f97316"
+                    : "#9ca3af"
+                }
+                lineWidth={isSelected(boleto.number) ? 5 : 2}
+              >
+                #{boleto.digits}
+                {isSelected(boleto.number) && (
+                  <div className="absolute -top-6 -right-12 bg-heart-500 rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                    ✓
+                  </div>
+                )}
+              </TicketButton>
+            );
+          })}
         </div>
       </TabsContent>
 
