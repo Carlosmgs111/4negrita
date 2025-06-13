@@ -75,5 +75,20 @@ const expirationTime = new Date(Date.now() + 10 * 60 * 1000).toISOString();
 
 <script>
   import { checkLogState } from "@/lib/checkLogState";
+  import { authStore } from "@/stores/authStore";
+  import { stateManager } from "@/stores/stores";
+  const { fullName, email, phone } = authStore.getState();
+  const { referenceCode, totalAmount, selectedTickets } = stateManager.getState();
   checkLogState();
+  const paymentData = {
+    customerName: fullName,
+    referenceCode,
+    email,
+    phone,
+    tickets: selectedTickets,
+    amount: totalAmount,
+    paymentMethod: "Wompi",
+  };
+
+  sessionStorage.setItem("paymentData", JSON.stringify(paymentData));
 </script>

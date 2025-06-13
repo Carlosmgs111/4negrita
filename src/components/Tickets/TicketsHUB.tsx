@@ -33,7 +33,6 @@ export const TicketsHUB = ({
   } = useTickets({ createdTickets });
   const isLogged = sessionStorage.getItem("logged") === "true";
   // stateManager.setState({ selectedTickets });
-  console.log(state);
   return (
     <main className="flex-grow container mx-auto px-4 py-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">

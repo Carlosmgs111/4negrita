@@ -20,10 +20,14 @@ interface PaymentData {
   amount: number;
   paymentMethod: string;
   transactionId?: string;
-  reference?: string;
+  referenceCode ?: string;
 }
 
-export const PaymentSuccess = () => {
+export const PaymentSuccess = ({
+  transactionId,
+}: {
+  transactionId: string;
+}) => {
   const { toast } = useToast();
   const [paymentData, setPaymentData] = useState<PaymentData | null>(null);
 
@@ -49,8 +53,8 @@ export const PaymentSuccess = () => {
     if (!paymentData) return;
 
     const ticketInfo = `
-Referencia de pago: ${paymentData.reference || "No disponible"}
-ID de transacción: ${paymentData.transactionId || "No disponible"}
+Referencia de pago: ${paymentData.referenceCode || "No disponible"}
+ID de transacción: ${paymentData.transactionId || transactionId || "No disponible"}
 Boletos: ${paymentData.tickets.join(", ")}
 Total: $${paymentData.amount.toLocaleString()}
     `;
@@ -120,20 +124,20 @@ Total: $${paymentData.amount.toLocaleString()}
                 Detalles de la compra:
               </h3>
               <div className="grid grid-cols-2 gap-4">
-                {paymentData.reference && (
+                {paymentData.referenceCode && (
                   <div>
                     <p className="text-sm text-muted-foreground">
                       Referencia de pago
                     </p>
-                    <p className="font-medium">{paymentData.reference}</p>
+                    <p className="font-medium">{paymentData.referenceCode}</p>
                   </div>
                 )}
-                {paymentData.transactionId && (
+                {(paymentData.transactionId || transactionId) && (
                   <div>
                     <p className="text-sm text-muted-foreground">
                       ID de Transacción
                     </p>
-                    <p className="font-medium">{paymentData.transactionId}</p>
+                    <p className="font-medium">{paymentData.transactionId || transactionId}</p>
                   </div>
                 )}
                 <div>
@@ -173,7 +177,8 @@ Total: $${paymentData.amount.toLocaleString()}
                     key={numero}
                     className="bg-heart-500 text-white py-1.5 px-3"
                   >
-                    <Ticket className="mr-1 h-3 w-3" />#{numero}
+                    <Ticket className="mr-1 h-3 w-3" />#
+                    {(numero - 1).toString().padStart(3, "0")}
                   </Badge>
                 ))}
               </div>
@@ -187,11 +192,12 @@ Total: $${paymentData.amount.toLocaleString()}
               </p>
             </div>
 
-            <div className="pt-2 flex justify-center">
+            <div className="pt-2 flex justify-center items-center">
+              Powered by &nbsp;
               <img
-                src="https://www.wompi.co/images/Powered-by-wompi-h.svg"
+                src="https://wompi.com/assets/downloadble/logos_wompi/Wompi_LogoPrincipal.svg"
                 alt="Powered by Wompi"
-                className="h-6"
+                className="h-16"
               />
             </div>
           </CardContent>

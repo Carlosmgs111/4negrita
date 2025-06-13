@@ -10,17 +10,12 @@ if (state) {
 }
 let selectedTickets = stateManager.getState().selectedTickets;
 if (selectedTickets.length > 0 && wasCanceled === "true") {
-  console.log({ wasCanceled, selectedTickets });
   supabase
     .from("ticket")
     .update({ status: "available" })
     .in("number", selectedTickets)
-    .then((res: any) => {
-      console.log(res);
-    })
-    .catch((err: any) => {
-      console.log(err);
-    });
+    .then((res: any) => {})
+    .catch((err: any) => {});
   selectedTickets = [];
   Astro.url.searchParams.toString().replace("?canceled=true", "");
   stateManager.setState({ selectedTickets });
@@ -59,7 +54,7 @@ const checkTicketsStatus = () => {
           .from("ticket")
           .update({ status: "available" })
           .eq("id", ticket.id)
-          .then((res: any) => console.log({ res }));
+          .then((res: any) => {});
       }
     }
   });
@@ -78,9 +73,8 @@ checkTicketsStatus();
   const urlSearchParams = new URLSearchParams(window.location.search);
   const wasCanceled = urlSearchParams.get("canceled");
   if (wasCanceled === "true") {
-    console.log({ wasCanceled });
     stateManager.setState({ selectedTickets: [] });
-    console.log({ selectedTickets: stateManager.getState().selectedTickets });
+    sessionStorage.setItem("paymentData", JSON.stringify({}));
     urlSearchParams.delete("canceled");
     window.history.pushState(
       null,

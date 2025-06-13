@@ -1,10 +1,11 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import { PaymentSuccess as PaymentSuccessComponent } from "@/components/Payment/PaymentSuccess";
+const transactionId = Astro.url.searchParams.get("id");
 ---
 
 <Layout title="Pago exitoso | 4Negrita">
   <div class="min-h-screen bg-background flex flex-col pt-16">
-    <PaymentSuccessComponent client:load />
+    <PaymentSuccessComponent client:load transactionId={transactionId || ""} />
   </div>
 </Layout>
