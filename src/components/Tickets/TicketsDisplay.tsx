@@ -98,7 +98,7 @@ export const TicketsDisplay = ({
   return (
     <Tabs value={currentView}>
       <TabsContent value="grid" className="m-0">
-        <div className="grid grid-cols-5 3xs:grid-cols-2 2xs:grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-2">
+        <div className="grid grid-cols-5 3xs:grid-cols-2 2xs:grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-2 justify-items-center w-fit mx-auto">
           {tickets.map((boleto) => {
             return (
               <TicketButton
@@ -107,14 +107,16 @@ export const TicketsDisplay = ({
                 disabled={boleto.status === "sold"}
                 backgroundColor={
                   boleto.status === "available"
-                    ? "#4CAF50"
+                    ? "#22c55e"
                     : boleto.status === "reserved"
-                    ? "#FFEB3B"
+                    ? "#eab308"
                     : "#9ca3af"
                 }
                 lineColor={
                   boleto.status === "available"
-                    ? isSelected(boleto.number) ? "#F56565" : "#333333"
+                    ? isSelected(boleto.number)
+                      ? "#F56565"
+                      : "#333333"
                     : boleto.status === "reserved"
                     ? "#f97316"
                     : "#9ca3af"

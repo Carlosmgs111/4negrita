@@ -126,7 +126,7 @@ export const Navbar = ({ pathname }: { pathname: string }) => {
                   className="border-heart-500 text-heart-500 hover:bg-heart-500 hover:text-white text-black w-full"
                 >
                   <User size={18} />
-                  {user?.name}, Ve A Tu Dashboard
+                  Configuraciones de Perfil
                 </Button>
               </a>
             ) : (

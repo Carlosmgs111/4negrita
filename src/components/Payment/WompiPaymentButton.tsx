@@ -6,14 +6,18 @@ const createIntegritySignature = ({
   referenceCode,
   currency,
   integrityKey,
+  expirationTime,
 }: {
   amount: number;
   referenceCode: string;
   currency: string;
   integrityKey: string;
+  expirationTime?: string;
 }) => {
   const hash = crypto.SHA256(
-    `${referenceCode}${amount}${currency}${integrityKey}`
+    `${referenceCode}${amount}${currency}${
+      expirationTime ? expirationTime : ""
+    }${integrityKey}`
   );
   return hash.toString();
 };
@@ -39,7 +43,7 @@ export const WompiPaymentButton = ({
   phone: string;
   document: string;
   documentType: string;
-  expirationTime: string;
+  expirationTime?: string;
 }) => {
   const {
     SECRET_WOMPI_INTEGRITY_KEY: integrityKey,
@@ -50,8 +54,8 @@ export const WompiPaymentButton = ({
     referenceCode,
     currency,
     integrityKey,
+    expirationTime,
   });
-  console.log({ integritySignature, referenceCode, publicKey });
   return (
     <Card>
       <CardHeader>
@@ -74,7 +78,7 @@ export const WompiPaymentButton = ({
             document && documentType ? documentType : null
           }
           data-redirect-url={redirectUrl}
-          data-expiration-time={expirationTime}
+          data-expiration-time={expirationTime || null}
         ></script>
       </CardHeader>
     </Card>
