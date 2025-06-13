@@ -62,17 +62,15 @@ export const Navbar = ({ pathname }: { pathname: string }) => {
             </a>
           )}
           {token ? (
-            <div className="flex items-center space-x-4">
-              <a href="/dashboard">
-                <Button
-                  variant="outline"
-                  className="border-heart-500 text-heart-500 hover:bg-heart-500 hover:text-white text-black"
-                >
-                  <User size={18} />
-                  {user?.name}
-                </Button>
-              </a>
-            </div>
+            <a href="/dashboard">
+              <Button
+                variant="outline"
+                className="border-heart-500 text-heart-500 hover:bg-heart-500 hover:text-white text-black"
+              >
+                <User size={18} />
+                {user?.name}
+              </Button>
+            </a>
           ) : (
             <a href="/auth/login">
               <Button
@@ -121,6 +119,27 @@ export const Navbar = ({ pathname }: { pathname: string }) => {
             >
               FAQ
             </a>
+            {token ? (
+              <a href="/dashboard">
+                <Button
+                  variant="outline"
+                  className="border-heart-500 text-heart-500 hover:bg-heart-500 hover:text-white text-black w-full"
+                >
+                  <User size={18} />
+                  {user?.name}, Ve A Tu Dashboard
+                </Button>
+              </a>
+            ) : (
+              <a href="/auth/login">
+                <Button
+                  variant="outline"
+                  className="border-heart-500 text-heart-500 hover:bg-heart-50 w-full"
+                >
+                  <LogIn size={18} className="mr-1" />
+                  Iniciar sesión
+                </Button>
+              </a>
+            )}
             {pathname !== "/tickets" && (
               <a href="/tickets">
                 <Button
@@ -128,7 +147,7 @@ export const Navbar = ({ pathname }: { pathname: string }) => {
                   onClick={toggleMenu}
                 >
                   <Ticket size={18} className="mr-1" />
-                 Comprar Boleto
+                  Comprar Boleto
                 </Button>
               </a>
             )}
