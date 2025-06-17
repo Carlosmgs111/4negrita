@@ -18,8 +18,12 @@ import type { TicketItem } from "@/hooks/useTickets";
 
 export const TicketsHUB = ({
   createdTickets,
+  drawId,
+  raffleId,
 }: {
   createdTickets: TicketItem[];
+  drawId: string;
+  raffleId: string;
 }) => {
   const {
     tickets,
@@ -30,7 +34,7 @@ export const TicketsHUB = ({
     handleClearSelection,
     handleCheckout,
     state,
-  } = useTickets({ createdTickets });
+  } = useTickets({ createdTickets, raffleId });
   const isLogged = sessionStorage.getItem("logged") === "true";
   // stateManager.setState({ selectedTickets });
   return (

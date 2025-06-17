@@ -1,5 +1,7 @@
 import crypto from "crypto-js";
-import { Card, CardHeader } from "@/components/ui/card";
+import { Card, CardFooter, CardHeader } from "@/components/ui/card";
+import { paymentStore } from "@/stores/payment";
+import { decodeRaffleReference } from "@/lib/genRefCode";
 
 const createIntegritySignature = ({
   amount,
@@ -25,18 +27,15 @@ const createIntegritySignature = ({
 export const WompiPaymentButton = ({
   redirectUrl,
   totalAmount,
-  referenceCode,
-  currency,
+  currency = "COP",
   fullName,
   email,
   phone,
   document,
   documentType,
-  expirationTime,
 }: {
   redirectUrl: string;
   totalAmount: number;
-  referenceCode: string;
   currency: string;
   fullName: string;
   email: string;
@@ -49,6 +48,29 @@ export const WompiPaymentButton = ({
     SECRET_WOMPI_INTEGRITY_KEY: integrityKey,
     SECRET_WOMPI_PUBLIC_KEY: publicKey,
   } = import.meta.env;
+  const { expirationTime, referenceCode } = paymentStore.getState();
+  const { raffleId, userId, tickets } = decodeRaffleReference(referenceCode)!;
+  if (
+    raffleId === "undefined" ||
+    userId === "undefined" ||
+    tickets.length === 0
+  ) {
+    return (
+      <Card>
+        <CardHeader>
+          <p className="text-center text-red-800 text-xs p-2">
+            ⚠️ Atención, Hubo un error al cargar el pago ⚠️
+          </p>
+          <a
+            href="/?clear=true"
+            className="text-center text-white text-sm bg-red-500 hover:bg-red-600 p-2 border border-red-500 rounded"
+          >
+            Regresar a la página principal
+          </a>
+        </CardHeader>
+      </Card>
+    );
+  }
   const integritySignature = createIntegritySignature({
     amount: totalAmount * 100,
     referenceCode,
@@ -63,7 +85,7 @@ export const WompiPaymentButton = ({
           src="https://checkout.wompi.co/widget.js"
           data-render="button"
           data-public-key={publicKey}
-          data-currency="COP"
+          data-currency={currency}
           data-amount-in-cents={totalAmount * 100}
           data-reference={referenceCode}
           data-signature:integrity={integritySignature}
@@ -81,6 +103,18 @@ export const WompiPaymentButton = ({
           data-expiration-time={expirationTime || null}
         ></script>
       </CardHeader>
+      <CardFooter>
+        <div className="flex justify-center items-center w-full text-xs">
+          Powered by &nbsp;
+          <a href="https://wompi.com/es/co/que-es-wompi">
+            <img
+              src="https://wompi.com/assets/downloadble/logos_wompi/Wompi_LogoPrincipal.svg"
+              alt="Powered by Wompi"
+              className="h-10 w-auto"
+            />
+          </a>
+        </div>
+      </CardFooter>
     </Card>
   );
 };

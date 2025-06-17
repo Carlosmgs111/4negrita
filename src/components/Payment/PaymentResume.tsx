@@ -8,8 +8,10 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Ticket } from "lucide-react";
 import { stateManager } from "@/stores/stores";
+import { paymentStore } from "@/stores/payment";
 import { supabase } from "@/lib/supabase";
 import { v4 as uuid } from "uuid";
+import { decodeRaffleReference } from "@/lib/genRefCode";
 
 const queryExitingTickets = async (tickets: number[], raffleId: string) => {
   const { data: existing, error } = await supabase
@@ -81,20 +83,19 @@ const updateTickets = (existing: any[], expirationTime: string) => {
     .catch((err: any) => {});
 };
 
-export const PaymentResume = async ({
-  expirationTime,
-}: {
-  expirationTime: string;
-}) => {
-  const { totalAmount, referenceCode, selectedTickets } =
-    stateManager.getState();
-
+export const PaymentResume = async () => {
+  const { totalAmount, selectedTickets } = stateManager.getState();
+  const { raffleId, userId, expirationTime, referenceCode } =
+    paymentStore.getState();
+  console.log(paymentStore.getState());
+  console.log(":::decoded:::\n",decodeRaffleReference(referenceCode));
   const [{ existing, notExisting }, error] = await queryExitingTickets(
     selectedTickets,
-    "4ea8cf0d-8152-4fae-8c50-bbda843aae44"
+    raffleId
   );
   createTickets(notExisting, expirationTime);
   updateTickets(existing, expirationTime);
+
   return (
     <div>
       <Card>
@@ -130,12 +131,22 @@ export const PaymentResume = async ({
                 ${totalAmount.toLocaleString()}
               </span>
             </div>
+            <div className="pt-2">
+              <span className="text-xs text-muted-foreground block">
+                ID de la rifa
+              </span>
+              <span className="font-mono text-xs">
+                {raffleId}
+              </span>
+            </div>
             {referenceCode && (
               <div className="pt-2">
                 <span className="text-xs text-muted-foreground block">
                   Referencia de pago
                 </span>
-                <span className="font-mono text-sm">{referenceCode}</span>
+                <span className="font-mono text-xs">
+                  ...{referenceCode.slice(-32)}
+                </span>
               </div>
             )}
           </div>

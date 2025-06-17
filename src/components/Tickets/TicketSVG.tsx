@@ -41,7 +41,7 @@ export const TicketSVG = ({
         strokeWidth={lineWidth}
       />
 
-      <g stroke={"#000"} strokeWidth={2 * 0.8} fill="none">
+      <g stroke={"#000"} strokeWidth={4 * 0.8} fill="none">
         <line
           x1={20 + padding}
           y1={10 + padding}

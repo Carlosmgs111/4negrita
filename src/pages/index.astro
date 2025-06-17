@@ -8,6 +8,7 @@ import FAQSection from "../components/Home/FAQSection.astro";
 import CallToAction from "../components/Home/CallToAction.astro";
 import { supabase } from "@/lib/supabase";
 import { stateManager } from "@/stores/stores";
+import { paymentStore } from "@/stores/payment";
 
 const prodDrawId = "5156d678-bc45-45d1-aa30-847a57330626";
 const devDrawId = "7ea8c51c-f3ff-4c05-b15e-8d1975473bfc";
@@ -67,8 +68,11 @@ if (!playDate || !limitDate || !ticketPrice || !totalTickets || !tickets) {
       ticketPrice,
       tickets,
       drawId,
+      raffleId: drawData?.data?.raffleId,
     });
-    console.log({ playDate, limitDate, ticketPrice, totalTickets, tickets });
+    paymentStore.setState({
+      raffleId: "drawData?.data?.raffleId",
+    });
   } catch (e) {
     console.log(e);
   }

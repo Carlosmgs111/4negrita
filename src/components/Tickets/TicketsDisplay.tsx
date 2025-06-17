@@ -116,12 +116,12 @@ export const TicketsDisplay = ({
                   boleto.status === "available"
                     ? isSelected(boleto.number)
                       ? "#F56565"
-                      : "#333333"
+                      : "#05a33f"
                     : boleto.status === "reserved"
                     ? "#f97316"
                     : "#9ca3af"
                 }
-                lineWidth={isSelected(boleto.number) ? 5 : 2}
+                lineWidth={isSelected(boleto.number) ? 5 : 2.5}
               >
                 #{boleto.digits}
                 {isSelected(boleto.number) && (

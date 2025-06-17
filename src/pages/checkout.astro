@@ -2,26 +2,51 @@
 import Layout from "../layouts/Layout.astro";
 import { stateManager } from "@/stores/stores";
 import { authStore } from "@/stores/authStore";
+import { paymentStore } from "@/stores/payment";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { WompiPaymentButton } from "@/components/Payment/WompiPaymentButton";
 import { PaymentResume } from "@/components/Payment/PaymentResume";
 import Countdown from "@/components/Countdown.astro";
 import { Card, CardFooter } from "@/components/ui/card";
+import { supabase } from "@/lib/supabase";
+
 const app = Astro.url.searchParams.get("app");
 const auth = Astro.url.searchParams.get("auth");
+const payment = Astro.url.searchParams.get("payment");
 if (app) {
   stateManager.setSerializedState(app);
 }
 if (auth) {
   authStore.setSerializedState(auth);
 }
+if (payment) {
+  paymentStore.setSerializedState(payment);
+}
 const { referenceCode, totalAmount } = stateManager.getState();
 const { fullName, email, phone, document, documentType } = authStore.getState();
+const { expirationTime } = paymentStore.getState();
+const {
+  data: { raffleId },
+} = await supabase.from("draw").select("raffleId").single();
+paymentStore.setState({ raffleId });
 
 const state = stateManager.getSerializedState();
 const redirectUrl = Astro.url.origin + "/payment/success";
-const expirationTime = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+const onCancel = () => {
+  console.log("Cancelado");
+  supabase
+    .from("payment")
+    .delete()
+    .eq("reference", referenceCode)
+    .then((data: any) => {
+      console.log(data);
+    })
+    .catch((err: any) => {
+      console.log(err);
+    });
+  return false;
+};
 ---
 
 <Layout title="Checkout | 4Negrita">
@@ -33,7 +58,7 @@ const expirationTime = new Date(Date.now() + 10 * 60 * 1000).toISOString();
             Finaliza tu compra
           </h1>
           <a href={`/tickets?app=${state}&canceled=true`}>
-            <Button variant="ghost" className="pt-2 pb-2 pl-4 pr-6 text-1xl">
+            <Button data-cancel-button onClick={onCancel} variant="ghost" className="pt-2 pb-2 pl-4 pr-6 text-1xl">
               <ArrowLeft className="mr-1 h-4 w-4" />
               Volver
             </Button>
@@ -41,12 +66,10 @@ const expirationTime = new Date(Date.now() + 10 * 60 * 1000).toISOString();
         </div>
 
         <div class="flex flex-col gap-4">
-          <PaymentResume expirationTime={expirationTime} />
+          <PaymentResume />
           <WompiPaymentButton
-            expirationTime={expirationTime}
             redirectUrl={redirectUrl}
             totalAmount={totalAmount}
-            referenceCode={referenceCode}
             currency="COP"
             fullName={fullName}
             email={email}
@@ -78,7 +101,8 @@ const expirationTime = new Date(Date.now() + 10 * 60 * 1000).toISOString();
   import { authStore } from "@/stores/authStore";
   import { stateManager } from "@/stores/stores";
   const { fullName, email, phone } = authStore.getState();
-  const { referenceCode, totalAmount, selectedTickets } = stateManager.getState();
+  const { referenceCode, totalAmount, selectedTickets } =
+    stateManager.getState();
   checkLogState();
   const paymentData = {
     customerName: fullName,

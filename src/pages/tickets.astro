@@ -23,7 +23,7 @@ if (selectedTickets.length > 0 && wasCanceled === "true") {
 let { tickets, drawId } = stateManager.getState();
 
 let raffleId;
-if (!drawId) {
+if (!drawId || !raffleId) {
   const [drawData] = await Promise.all([
     supabase
       .from("draw")
@@ -64,7 +64,12 @@ checkTicketsStatus();
 
 <Layout title="Tickets | 4Negrita">
   <div class="min-h-screen bg-background flex flex-col">
-    <TicketsHUB client:only createdTickets={tickets} />
+    <TicketsHUB
+      client:only
+      createdTickets={tickets}
+      drawId={drawId}
+      raffleId={raffleId}
+    />
   </div>
 </Layout>
 
@@ -72,6 +77,13 @@ checkTicketsStatus();
   import { stateManager } from "@/stores/stores";
   const urlSearchParams = new URLSearchParams(window.location.search);
   const wasCanceled = urlSearchParams.get("canceled");
+  const app = urlSearchParams.get("app");
+  if (app) {
+    stateManager.setSerializedState(app);
+  }
+  console.log("client", stateManager.getState());
+  const { drawId, raffleId, tickets, selectedTickets, userId } =
+    stateManager.getState();
   if (wasCanceled === "true") {
     stateManager.setState({ selectedTickets: [] });
     sessionStorage.setItem("paymentData", JSON.stringify({}));
@@ -81,5 +93,14 @@ checkTicketsStatus();
       "",
       window.location.pathname + "?" + urlSearchParams.toString()
     );
+  }
+  if (!drawId || !raffleId || !tickets || !selectedTickets || !userId) {
+    // stateManager.setState({
+    //   drawId: null,
+    //   raffleId: null,
+    //   tickets: null,
+    //   selectedTickets: [],
+    //   userId: null,
+    // });
   }
 </script>

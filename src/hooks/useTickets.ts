@@ -2,18 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useToast } from "./useToast";
 import { stateManager } from "@/stores/stores";
 import { authStore } from "@/stores/authStore";
-
-function generateRandomString(length: number): string {
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  for (let i = 0; i < length; i++) {
-    const index = Math.floor(Math.random() * characters.length);
-    result += characters.charAt(index);
-  }
-  return result;
-}
-const referenceCode = generateRandomString(16);
+import { paymentStore } from "@/stores/payment";
+import { decodeRaffleReference, generateRaffleReference } from "@/lib/genRefCode";
 
 type TicketStatus = "available" | "reserved" | "sold";
 
@@ -33,7 +23,9 @@ const assignDigit = (numb: number, maxDigits = 3) => {
 
 const generateMissingTickets = (createdTickets: TicketItem[]): TicketItem[] => {
   return Array.from({ length: 1000 }, (_, i) => {
-    const cretedTicket = createdTickets.find((ticket: any) => ticket.number == i + 1);
+    const cretedTicket = createdTickets.find(
+      (ticket: any) => ticket.number == i + 1
+    );
     if (cretedTicket)
       return {
         number: i + 1,
@@ -50,8 +42,10 @@ const generateMissingTickets = (createdTickets: TicketItem[]): TicketItem[] => {
 
 export const useTickets = ({
   createdTickets,
+  raffleId,
 }: {
   createdTickets: TicketItem[];
+  raffleId: string;
 }) => {
   const tickets: TicketItem[] = useMemo(
     () => generateMissingTickets(createdTickets),
@@ -76,7 +70,7 @@ export const useTickets = ({
   useEffect(() => {
     const totalAmount = selectedTickets.length * 5000;
     stateManager.setState(
-      { selectedTickets, referenceCode, totalAmount },
+      { selectedTickets, totalAmount },
       true
     );
   }, [selectedTickets]);
@@ -101,10 +95,25 @@ export const useTickets = ({
       });
       return;
     }
+    const userId = JSON.parse(sessionStorage.getItem("user") || "{}").id;
+    const expirationTime = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+    console.log(stateManager.getState());
+    console.log({raffleId, userId, tickets: selectedTickets});
+    const referenceCode = generateRaffleReference({
+      raffleId,
+      userId,
+      tickets: selectedTickets,
+    });
+    console.log(referenceCode);
+    paymentStore.setState({
+      referenceCode,
+      expirationTime,
+      userId,
+    });
     window.location.href =
       "/checkout" +
       window.location.search +
-      `&auth=${authStore.getSerializedState()}`;
+      `&auth=${authStore.getSerializedState()}&payment=${paymentStore.getSerializedState()}`;
   };
   return {
     tickets,

@@ -5,8 +5,21 @@ import Footer from "../components/Footer.astro";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ClientRouter } from "astro:transitions";
+import { stateManager } from "@/stores/stores";
 
 const { title } = Astro.props;
+const clear = Astro.url.searchParams.get("clear");
+if (clear) {
+  stateManager.setState({
+    drawId: null,
+    raffleId: null,
+    tickets: null,
+    selectedTickets: [],
+    userId: null,
+  });
+  Astro.url.searchParams.delete("clear");
+  Astro.url.toString().replace("?clear=true", "");
+}
 ---
 
 <!doctype html>

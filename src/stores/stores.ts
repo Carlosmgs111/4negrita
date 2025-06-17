@@ -12,6 +12,7 @@ export const stateManager = StateManager.create({
     playDate: "",
     limitDate: "",
     drawId: "",
+    raffleId: "",
   },
   useCompression: true,
 });

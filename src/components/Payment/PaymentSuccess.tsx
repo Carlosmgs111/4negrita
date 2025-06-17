@@ -11,6 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Home, Ticket, Copy, Share2 } from "lucide-react";
 import { useToast } from "@/hooks/useToast";
+import ConfettiExplosion from "react-confetti-explosion";
 
 interface PaymentData {
   customerName: string;
@@ -20,13 +21,15 @@ interface PaymentData {
   amount: number;
   paymentMethod: string;
   transactionId?: string;
-  referenceCode ?: string;
+  referenceCode?: string;
 }
 
 export const PaymentSuccess = ({
   transactionId,
+  paymentMethod,
 }: {
   transactionId: string;
+  paymentMethod: string;
 }) => {
   const { toast } = useToast();
   const [paymentData, setPaymentData] = useState<PaymentData | null>(null);
@@ -54,7 +57,9 @@ export const PaymentSuccess = ({
 
     const ticketInfo = `
 Referencia de pago: ${paymentData.referenceCode || "No disponible"}
-ID de transacción: ${paymentData.transactionId || transactionId || "No disponible"}
+ID de transacción: ${
+      paymentData.transactionId || transactionId || "No disponible"
+    }
 Boletos: ${paymentData.tickets.join(", ")}
 Total: $${paymentData.amount.toLocaleString()}
     `;
@@ -104,6 +109,13 @@ Total: $${paymentData.amount.toLocaleString()}
 
   return (
     <main className="flex-grow container mx-auto px-4 py-8">
+      <ConfettiExplosion
+        width={4000}
+        height={"100vh"}
+        particleCount={300}
+        duration={5000}
+        force={1}
+      />
       <div className="max-w-2xl mx-auto">
         <Card className="border-green-200">
           <CardHeader className="text-center border-b pb-6">
@@ -137,7 +149,9 @@ Total: $${paymentData.amount.toLocaleString()}
                     <p className="text-sm text-muted-foreground">
                       ID de Transacción
                     </p>
-                    <p className="font-medium">{paymentData.transactionId || transactionId}</p>
+                    <p className="font-medium">
+                      {paymentData.transactionId || transactionId}
+                    </p>
                   </div>
                 )}
                 <div>
@@ -145,9 +159,9 @@ Total: $${paymentData.amount.toLocaleString()}
                     Método de pago
                   </p>
                   <p className="font-medium">
-                    {paymentData.paymentMethod === "card"
+                    {paymentMethod === "card"
                       ? "Tarjeta de crédito"
-                      : paymentData.paymentMethod === "nequi"
+                      : paymentMethod === "nequi"
                       ? "Nequi"
                       : "PSE"}
                   </p>

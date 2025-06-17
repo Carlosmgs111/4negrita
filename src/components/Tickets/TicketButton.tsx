@@ -23,7 +23,7 @@ export const TicketButton = ({
       className={[
         "relative inline-block hover:scale-[1.05] transition-all duration-200 w-fit h-fit",
         disabled ? "opacity-50 cursor-not-allowed" : "",
-        className
+        className,
       ].join(" ")}
     >
       <TicketSVG
