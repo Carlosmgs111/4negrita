@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,28 +15,28 @@ import { Lock, Eye, EyeOff } from "lucide-react";
 
 export const SecuritySettings = () => {
   const { toast } = useToast();
-    const [passwords, setPasswords] = useState({
-      newPassword: "",
-    confirmPassword: ""
+  const [passwords, setPasswords] = useState({
+    newPassword: "",
+    confirmPassword: "",
   });
   const [showPasswords, setShowPasswords] = useState({
     current: false,
     new: false,
-    confirm: false
+    confirm: false,
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setPasswords(prev => ({
+    setPasswords((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const togglePasswordVisibility = (field: keyof typeof showPasswords) => {
-    setShowPasswords(prev => ({
+    setShowPasswords((prev) => ({
       ...prev,
-      [field]: !prev[field]
+      [field]: !prev[field],
     }));
   };
 
@@ -41,7 +47,7 @@ export const SecuritySettings = () => {
       toast({
         title: "Error",
         description: "La nueva contraseña debe tener al menos 6 caracteres",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -50,11 +56,11 @@ export const SecuritySettings = () => {
       toast({
         title: "Error",
         description: "Las contraseñas no coinciden",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
-    
+
     const response = await fetch("/api/user/security", {
       method: "PATCH",
       headers: {
@@ -68,13 +74,13 @@ export const SecuritySettings = () => {
       toast({
         title: "Error",
         description: error,
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
     setPasswords({
       newPassword: "",
-      confirmPassword: ""
+      confirmPassword: "",
     });
 
     toast({
@@ -84,14 +90,14 @@ export const SecuritySettings = () => {
   };
 
   return (
-    <Card>
+    <Card className="flex flex-col items-center justify-between w-full">
       <CardHeader>
         <CardTitle className="text-xl text-heart-600 flex items-center">
           <Lock className="mr-2" size={20} />
           Configuraciones de Seguridad
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 w-full h-full">
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="newPassword">Nueva contraseña *</Label>
@@ -104,9 +110,9 @@ export const SecuritySettings = () => {
                 onChange={handleInputChange}
                 placeholder="••••••••"
               />
-              <button 
-                type="button" 
-                onClick={() => togglePasswordVisibility('new')}
+              <button
+                type="button"
+                onClick={() => togglePasswordVisibility("new")}
                 className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
               >
                 {showPasswords.new ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -115,7 +121,9 @@ export const SecuritySettings = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirmar nueva contraseña *</Label>
+            <Label htmlFor="confirmPassword">
+              Confirmar nueva contraseña *
+            </Label>
             <div className="relative">
               <Input
                 id="confirmPassword"
@@ -125,31 +133,33 @@ export const SecuritySettings = () => {
                 onChange={handleInputChange}
                 placeholder="••••••••"
               />
-              <button 
-                type="button" 
-                onClick={() => togglePasswordVisibility('confirm')}
+              <button
+                type="button"
+                onClick={() => togglePasswordVisibility("confirm")}
                 className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
               >
-                {showPasswords.confirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                {showPasswords.confirm ? (
+                  <EyeOff size={16} />
+                ) : (
+                  <Eye size={16} />
+                )}
               </button>
             </div>
           </div>
         </div>
-
-        <div className="pt-4">
-          <Button 
-            onClick={handleChangePassword}
-            className="w-full bg-heart-500 hover:bg-heart-600"
-          >
-            <Lock className="mr-2" size={18} />
-            Cambiar contraseña
-          </Button>
-        </div>
-
+      </CardContent>
+      <CardFooter className="flex flex-col items-center justify-between w-full gap-2">
         <p className="text-sm text-gray-500">
           * Campos obligatorios. La contraseña debe tener al menos 6 caracteres.
         </p>
-      </CardContent>
+        <Button
+          onClick={handleChangePassword}
+          className="w-full bg-heart-500 hover:bg-heart-600"
+        >
+          <Lock className="mr-2" size={18} />
+          Cambiar contraseña
+        </Button>
+      </CardFooter>
     </Card>
   );
 };

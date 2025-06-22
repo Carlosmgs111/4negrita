@@ -1,0 +1,17 @@
+---
+import { OTPVerification } from "../../components/Auth/OTPVerification";
+import AuthLayout from "../../layouts/AuthLayout.astro";
+import { supabase } from "../../lib/supabase";
+---
+
+<AuthLayout label="Verificar Teléfono">
+  <div class="flex flex-col gap-4 items-center w-full max-w-md">
+    <OTPVerification client:only />
+    <span class="text-center text-xs">
+      Introduciste datos incorrectos, has click <a
+        class="text-heart-600"
+        href="/auth/signup">aqui para corregirlos</a
+      ></span
+    >
+  </div>
+</AuthLayout>

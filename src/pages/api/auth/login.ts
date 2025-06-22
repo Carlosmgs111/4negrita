@@ -3,10 +3,10 @@ import { supabase } from "../../../lib/supabase";
 
 export const POST: APIRoute = async ({ request }) => {
   try {
-    const { email, password } = await request.json();
+    const { phone, password } = await request.json();
 
     // Validate input
-    if (!email || !password) {
+    if (!phone || !password) {
       return new Response(
         JSON.stringify({
           success: false,
@@ -20,15 +20,18 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Authenticate with Supabase
+    const formatedPhone = `+57${phone}`;
+    console.log({ formatedPhone, password });
     const {
       data: { session, user },
       error: authError,
     } = await supabase.auth.signInWithPassword({
-      email,
+      phone: formatedPhone,
       password,
     });
 
     if (authError) {
+      console.error("Login error:", authError);
       return new Response(
         JSON.stringify({
           success: false,
@@ -61,7 +64,7 @@ export const POST: APIRoute = async ({ request }) => {
           session,
           participant: participant || null,
         },
-        message: `Bienvenido, ${email}`,
+        message: `Bienvenido, ${phone}`,
       }),
       {
         status: 200,

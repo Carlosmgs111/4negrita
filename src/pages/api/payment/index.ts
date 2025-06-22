@@ -34,8 +34,8 @@ interface WompiWebhookData {
 }
 
 export const POST: APIRoute = async ({ request }) => {
-  try {
     console.log("Webhook received");
+  try {
     const body = await request.text();
     const signature = request.headers.get("X-Event-Checksum") || "";
     const webhookSecret = import.meta.env.SECRET_WOMPI_EVENTS_KEY!;
@@ -65,12 +65,12 @@ export const POST: APIRoute = async ({ request }) => {
     const canceledStatuses: string[] = ["DECLINED", "VOIDED", "ERROR"];
     if (transaction.status === "APPROVED") {
       const { raffleId, userId, tickets } = decodedReference!;
+      console.log("Updating tickets to sold");
       console.log({ raffleId, userId, tickets });
       supabase
         .from("ticket")
-        .update({ status: "sold" })
+        .update({ status: "sold", userId })
         .eq("raffleId", raffleId)
-        .eq("userId", userId)
         .in("number", tickets)
         .then((data: any) => {
           console.log({ data });

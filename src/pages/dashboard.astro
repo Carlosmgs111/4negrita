@@ -3,7 +3,15 @@ import Layout from "../layouts/Layout.astro";
 import { UserSettings } from "@/components/Dashboard/UserSettings";
 import { SecuritySettings } from "@/components/Dashboard/SecuritySettings";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { HomeIcon } from "lucide-react";
+import { LogoutButton } from "@/components/Dashboard/LogoutButton";
+import { OwnedTickets } from "@/components/Dashboard/OwnedTickets";
+import { authStore } from "@/stores/authStore";
+const authState = Astro.url.searchParams.get("auth");
+if (authState) {
+  authStore.setSerializedState(authState);
+}
+console.log(authStore.getState());
 ---
 
 <Layout title="Perfil | 4Negrita">
@@ -11,15 +19,19 @@ import { ArrowLeft } from "lucide-react";
     <div
       class="flex-1 container mx-auto px-4 py-8 flex flex-col gap-4 items-center"
     >
-      <a href={`/`}>
-        <Button variant="ghost" className="pt-2 pb-2 pl-4 pr-6 text-1xl ">
-          <ArrowLeft className="mr-1 h-4 w-4" />
-          Volver
-        </Button>
-      </a>
-      <div class="flex flex-col max-w-2xl mx-auto gap-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+        <div class="col-span-full flex justify-between">
+          <a href={`/`}>
+            <Button variant="ghost" className="pt-2 pb-2 pl-4 pr-6 text-1xl ">
+              <HomeIcon className="mr-1 h-4 w-4" />
+              Inicio
+            </Button>
+          </a>
+          <LogoutButton client:load />
+        </div>
         <UserSettings client:load />
         <SecuritySettings client:load />
+        <OwnedTickets />
       </div>
     </div>
   </div>

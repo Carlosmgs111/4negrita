@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Ticket, User, LogIn } from "lucide-react";
+import { authStore } from "@/stores/authStore";
 
 const validPaths = ["/", "/tickets"];
 
@@ -62,7 +63,7 @@ export const Navbar = ({ pathname }: { pathname: string }) => {
             </a>
           )}
           {token ? (
-            <a href="/dashboard">
+            <a href={"/dashboard" + "?auth=" + authStore.getSerializedState()}>
               <Button
                 variant="outline"
                 className="border-heart-500 text-heart-500 hover:bg-heart-500 hover:text-white text-black"

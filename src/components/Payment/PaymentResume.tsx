@@ -56,8 +56,8 @@ const createTickets = (notExisting: number[], expirationTime: string) => {
       issueDate: new Date().toISOString(),
       soldAt: new Date().toISOString(),
       id: uuid(),
-      raffleId: "4ea8cf0d-8152-4fae-8c50-bbda843aae44",
-      userId: "3d34bc76-de25-4b44-9daf-5f49d3613d00",
+      raffleId: paymentStore.getState().raffleId,
+      userId: null,
       reservedUntil,
     };
   });
@@ -65,8 +65,12 @@ const createTickets = (notExisting: number[], expirationTime: string) => {
     .from("ticket")
     .upsert(notExistingTickets)
     .select()
-    .then((res: any) => {})
-    .catch((err: any) => {});
+    .then((res: any) => {
+      console.log({ res });
+    })
+    .catch((err: any) => {
+      console.log({ err });
+    });
 };
 
 const updateTickets = (existing: any[], expirationTime: string) => {
@@ -85,10 +89,9 @@ const updateTickets = (existing: any[], expirationTime: string) => {
 
 export const PaymentResume = async () => {
   const { totalAmount, selectedTickets } = stateManager.getState();
-  const { raffleId, userId, expirationTime, referenceCode } =
+  const { raffleId, expirationTime, referenceCode } =
     paymentStore.getState();
-  console.log(paymentStore.getState());
-  console.log(":::decoded:::\n",decodeRaffleReference(referenceCode));
+  console.log(":::decoded:::\n", decodeRaffleReference(referenceCode));
   const [{ existing, notExisting }, error] = await queryExitingTickets(
     selectedTickets,
     raffleId
@@ -135,9 +138,7 @@ export const PaymentResume = async () => {
               <span className="text-xs text-muted-foreground block">
                 ID de la rifa
               </span>
-              <span className="font-mono text-xs">
-                {raffleId}
-              </span>
+              <span className="font-mono text-xs">{raffleId}</span>
             </div>
             {referenceCode && (
               <div className="pt-2">

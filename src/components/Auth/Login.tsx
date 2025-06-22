@@ -18,7 +18,7 @@ import { authStore } from "@/stores/authStore";
 import { URLManager } from "@/lib/URLManager";
 
 const loginFormSchema = z.object({
-  email: z.string().email({ message: "Por favor, ingresa un correo válido" }),
+  phone: z.string().min(10, { message: "Por favor, ingresa un teléfono válido" }),
   password: z
     .string()
     .min(6, { message: "La contraseña debe tener al menos 6 caracteres" }),
@@ -32,7 +32,7 @@ export const Login = () => {
   const { toast } = useToast();
 
   const defaultValues = {
-    email: authStore.getState().email,
+    phone: authStore.getState().phone,
     password: "",
   };
 
@@ -46,7 +46,7 @@ export const Login = () => {
   };
 
   useEffect(() => {
-    authStore.setState({ email: defaultValues.email });
+    authStore.setState({ phone: defaultValues.phone });
   }, []);
 
   const onSubmit = async (data: LoginFormValues) => {
@@ -58,7 +58,7 @@ export const Login = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: data.email,
+          phone: data.phone,
           password: data.password,
         }),
       });
@@ -82,7 +82,7 @@ export const Login = () => {
       });
       localStorage.setItem("user", JSON.stringify(user));
       authStore.setState({
-        email: data.email,
+        phone: data.phone,
       });
       sessionStorage.setItem("logged", "true");
       toast({
@@ -92,8 +92,9 @@ export const Login = () => {
       authStore.setSerializedState(
         JSON.stringify({
           fullName: participant?.fullName,
-          email: data.email,
+          phone: data.phone,
           isLogged: true,
+          userId: user.id,
         })
       );
       const redirect = URLManager.getParam("redirect");
@@ -117,20 +118,20 @@ export const Login = () => {
         <div className="space-y-4">
           <FormField
             control={form.control}
-            name="email"
+            name="phone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Correo electrónico</FormLabel>
+                <FormLabel>Teléfono</FormLabel>
                 <div className="relative">
                   <FormControl>
                     <Input
-                      placeholder="example@email.com"
+                      placeholder="3211234567"
                       disabled={isLoading}
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
                         authStore.setState({
-                          email: e.target.value,
+                          phone: e.target.value,
                         });
                       }}
                     />

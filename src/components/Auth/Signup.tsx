@@ -22,7 +22,9 @@ const registerFormSchema = z
     fullName: z
       .string()
       .min(3, { message: "El nombre debe tener al menos 3 caracteres" }),
-    email: z.string().email({ message: "Por favor, ingresa un correo válido" }),
+    phone: z
+      .string()
+      .min(10, { message: "Por favor, ingresa un teléfono válido" }),
     password: z
       .string()
       .min(6, { message: "La contraseña debe tener al menos 6 caracteres" }),
@@ -42,18 +44,20 @@ export const Signup = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  
+
   const defaultValues = {
-    email: authStore.getState().email,
+    phone: authStore.getState().phone,
     fullName: authStore.getState().fullName,
+    userId: authStore.getState().userId,
     password: "",
     confirmPassword: "",
   };
 
   useEffect(() => {
     authStore.setState({
-      email: defaultValues.email,
+      phone: defaultValues.phone,
       fullName: defaultValues.fullName,
+      userId: defaultValues.userId,
     });
   }, []);
 
@@ -74,16 +78,16 @@ export const Signup = () => {
   // Process the form
   const onSubmit = async (data: RegisterFormValues) => {
     setIsLoading(true);
-    
+
     try {
-      const response = await fetch('/api/auth/signup', {
-        method: 'POST',
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           fullName: data.fullName,
-          email: data.email,
+          phone: data.phone,
           password: data.password,
           confirmPassword: data.confirmPassword,
         }),
@@ -105,7 +109,7 @@ export const Signup = () => {
 
       // Update auth store
       authStore.setState({
-        email: data.email,
+        phone: data.phone,
         fullName: data.fullName,
       });
 
@@ -127,14 +131,13 @@ export const Signup = () => {
       // Redirect based on verification status
       if (needsVerification) {
         // Redirect to verification page or login
-        window.location.href = "/auth/verify-email";
+        window.location.href = "/auth/verify-phone";
       } else {
         // Redirect to home page
         window.location.href = "/";
       }
-
     } catch (error) {
-      console.error('Signup error:', error);
+      console.error("Signup error:", error);
       toast({
         title: "Error de conexión",
         description: "No se pudo conectar con el servidor",
@@ -179,19 +182,19 @@ export const Signup = () => {
 
           <FormField
             control={form.control}
-            name="email"
+            name="phone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Correo electrónico</FormLabel>
+                <FormLabel>Teléfono</FormLabel>
                 <div className="relative">
                   <FormControl>
                     <Input
-                      placeholder="example@email.com"
+                      placeholder="3211234567"
                       disabled={isLoading}
                       {...field}
                       onChange={(e) => {
                         field.onChange(e);
-                        authStore.setState({ email: e.target.value });
+                        authStore.setState({ phone: e.target.value });
                       }}
                     />
                   </FormControl>

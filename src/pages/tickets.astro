@@ -10,19 +10,24 @@ if (state) {
 }
 let selectedTickets = stateManager.getState().selectedTickets;
 if (selectedTickets.length > 0 && wasCanceled === "true") {
+  console.log("canceled");
+  console.log({ selectedTickets });
   supabase
     .from("ticket")
     .update({ status: "available" })
     .in("number", selectedTickets)
-    .then((res: any) => {})
-    .catch((err: any) => {});
+    .then((res: any) => {
+      console.log({ res });
+    })
+    .catch((err: any) => {
+      console.log(err);
+    });
   selectedTickets = [];
   Astro.url.searchParams.toString().replace("?canceled=true", "");
   stateManager.setState({ selectedTickets });
 }
-let { tickets, drawId } = stateManager.getState();
+let { tickets, drawId, raffleId } = stateManager.getState();
 
-let raffleId;
 if (!drawId || !raffleId) {
   const [drawData] = await Promise.all([
     supabase
@@ -49,12 +54,21 @@ const checkTicketsStatus = () => {
       const reservedUntil = new Date(ticket.reservedUntil).getTime();
       const now = new Date().getTime();
       if (reservedUntil < now || reservedUntil === null) {
+        console.log({ reservedUntil, now, ticket });
         ticket.status = "available";
+        ticket.reservedUntil = null;
+        console.log("updating to available");
         supabase
           .from("ticket")
-          .update({ status: "available" })
-          .eq("id", ticket.id)
-          .then((res: any) => {});
+          .update({ status: "available", reservedUntil: null })
+          .eq("number", ticket.number)
+          .eq("raffleId", raffleId)
+          .then((res: any) => {
+            console.log({ res });
+          })
+          .catch((err: any) => {
+            console.log(err);
+          });
       }
     }
   });

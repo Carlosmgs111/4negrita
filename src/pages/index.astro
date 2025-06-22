@@ -24,7 +24,7 @@ let daysLeftToPlay;
 let { playDate, limitDate, ticketPrice, totalTickets, tickets } =
   stateManager.getState();
 
-if (!playDate || !limitDate || !ticketPrice || !totalTickets || !tickets) {
+if (!playDate || !limitDate || !ticketPrice || !totalTickets || !tickets.length) {
   // Ejecutar todas las consultas en paralelo
   try {
     const [lotteryData, drawData] = await Promise.all([
@@ -41,17 +41,20 @@ if (!playDate || !limitDate || !ticketPrice || !totalTickets || !tickets) {
         .eq("id", drawId)
         .single(),
     ]);
+    console.log({ drawData });
     const [ticketsData] = await Promise.all([
       supabase
         .from("ticket")
-        .select("number, digits, status")
+        .select("*")
         .eq("raffleId", drawData?.data?.raffleId),
     ]);
     const { result, series } = lotteryData || {};
     const { data: draw } = drawData;
     const raffle = draw?.raffle;
     tickets = ticketsData?.data;
-    totalSoldTickets = tickets?.length;
+    totalSoldTickets = tickets?.filter(
+      (ticket: any) => ticket.status === "sold"
+    )?.length;
     totalTickets = raffle?.totalTickets;
     totalRaised = raffle?.ticketPrice * totalSoldTickets;
     playDate = draw?.playDate;
@@ -77,7 +80,9 @@ if (!playDate || !limitDate || !ticketPrice || !totalTickets || !tickets) {
     console.log(e);
   }
 }
-totalSoldTickets = tickets?.length;
+totalSoldTickets = tickets?.filter(
+  (ticket: any) => ticket.status === "sold"
+)?.length;
 totalRaised = ticketPrice * totalSoldTickets;
 daysLeftToPlay = Math.floor(
   (new Date(limitDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)

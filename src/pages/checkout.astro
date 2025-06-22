@@ -33,20 +33,6 @@ paymentStore.setState({ raffleId });
 
 const state = stateManager.getSerializedState();
 const redirectUrl = Astro.url.origin + "/payment/success";
-const onCancel = () => {
-  console.log("Cancelado");
-  supabase
-    .from("payment")
-    .delete()
-    .eq("reference", referenceCode)
-    .then((data: any) => {
-      console.log(data);
-    })
-    .catch((err: any) => {
-      console.log(err);
-    });
-  return false;
-};
 ---
 
 <Layout title="Checkout | 4Negrita">
@@ -58,7 +44,7 @@ const onCancel = () => {
             Finaliza tu compra
           </h1>
           <a href={`/tickets?app=${state}&canceled=true`}>
-            <Button data-cancel-button onClick={onCancel} variant="ghost" className="pt-2 pb-2 pl-4 pr-6 text-1xl">
+            <Button variant="ghost" className="pt-2 pb-2 pl-4 pr-6 text-1xl">
               <ArrowLeft className="mr-1 h-4 w-4" />
               Volver
             </Button>

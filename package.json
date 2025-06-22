@@ -38,6 +38,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "crypto-js": "^4.2.0",
+    "input-otp": "^1.4.2",
     "lucide-react": "^0.508.0",
     "lz-string": "^1.5.0",
     "nanostores": "^1.0.1",

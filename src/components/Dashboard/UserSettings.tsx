@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/useToast";
 import { User, Phone, Mail, MapPin, Save } from "lucide-react";
-import { cleanSession } from "@/lib/checkLogState";
-import { authStore } from "@/stores/authStore";
 // import { supabase } from "@/lib/supabase";
 
 export const UserSettings = () => {
@@ -20,12 +24,6 @@ export const UserSettings = () => {
     address: "",
     city: "",
   });
-
-  const handleLogout = () => {
-    authStore.setState({ isLogged: false });
-    cleanSession();
-    window.location.href = "/";
-  };
 
   useEffect(() => {
     // Check if user is logged in
@@ -43,7 +41,7 @@ export const UserSettings = () => {
     // Initialize form with existing user data
     setFormData({
       name: storedParticipant.fullName || "",
-      phone: storedUser.phone || "",
+      phone: storedUser.phone.slice(2) || "",
       email: storedUser.email || "",
       address: storedParticipant.address || "",
       city: storedParticipant.city || "",
@@ -60,10 +58,10 @@ export const UserSettings = () => {
 
   const handleSave = async () => {
     // Validate required fields
-    if (!formData.name.trim() || !formData.email.trim()) {
+    if (!formData.name.trim() || !formData.phone.trim()) {
       toast({
         title: "Error",
-        description: "El nombre y correo son campos obligatorios",
+        description: "El nombre y teléfono son campos obligatorios",
         variant: "destructive",
       });
       return;
@@ -73,7 +71,11 @@ export const UserSettings = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ ...formData, participantId: participant.id }),
+      body: JSON.stringify({
+        ...formData,
+        phone: `+57${formData.phone}`,
+        participantId: participant.id,
+      }),
     });
     const result = await response.json();
     const { user: updatedUser, error } = result;
@@ -94,8 +96,11 @@ export const UserSettings = () => {
         city: formData.city,
       })
     );
-    localStorage.setItem("user", JSON.stringify({ ...user, ...updatedUser }));
-    setUser({ ...user, ...updatedUser });
+    localStorage.setItem(
+      "user",
+      JSON.stringify({ ...user, ...updatedUser, phone: `+57${formData.phone}` })
+    );
+    setUser({ ...user, ...updatedUser, phone: `+57${formData.phone}` });
     setParticipant({ ...participant });
     toast({
       title: "Información actualizada",
@@ -104,21 +109,14 @@ export const UserSettings = () => {
   };
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row justify-between items-center">
-        <CardTitle className="text-2xl text-heart-600 flex items-center">
+    <Card className="flex flex-col justify-between items-center w-full">
+      <CardHeader>
+        <CardTitle className="text-xl text-heart-600 flex items-center">
           <User className="mr-2" size={24} />
-          Mi Perfil
+          Configuraciones de Perfil
         </CardTitle>
-        <Button
-          variant="outline"
-          className="border-heart-500 text-heart-500 hover:bg-heart-50"
-          onClick={handleLogout}
-        >
-          Cerrar sesión
-        </Button>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 w-full">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="name">Nombre completo *</Label>
@@ -138,15 +136,16 @@ export const UserSettings = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone">Teléfono</Label>
+            <Label htmlFor="phone">Teléfono *</Label>
             <div className="relative">
               <Input
+                disabled
                 id="phone"
                 name="phone"
                 type="tel"
                 value={formData.phone}
                 onChange={handleInputChange}
-                placeholder="3001234567"
+                placeholder="3211234567"
               />
               <Phone
                 className="absolute right-3 top-3 text-gray-400"
@@ -157,10 +156,9 @@ export const UserSettings = () => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="email">Correo electrónico *</Label>
+          <Label htmlFor="email">Correo electrónico</Label>
           <div className="relative">
             <Input
-              disabled
               id="email"
               name="email"
               type="email"
@@ -201,21 +199,23 @@ export const UserSettings = () => {
             />
           </div>
         </div>
-
-        <div className="pt-4">
-          <Button
-            onClick={handleSave}
-            className="w-full bg-heart-500 hover:bg-heart-600"
-          >
-            <Save className="mr-2" size={18} />
-            Guardar cambios
-          </Button>
-        </div>
-
-        <p className="text-sm text-gray-500 text-center">
-          * Campos obligatorios
-        </p>
       </CardContent>
+      <CardFooter className="flex flex-col items-center justify-between w-full gap-2">
+        <p className="text-sm text-gray-500 text-center">
+          * Campos obligatorios.
+        </p>
+        <p className="text-sm text-gray-500 text-center">
+          El <b>correo electrónico</b>, el <b>nombre</b> y la <b>dirección</b>
+          &nbsp; son datos que pueden ser usados para completar la facturación.
+        </p>
+        <Button
+          onClick={handleSave}
+          className="w-full bg-heart-500 hover:bg-heart-600"
+        >
+          <Save className="mr-2" size={18} />
+          Guardar cambios
+        </Button>
+      </CardFooter>
     </Card>
   );
 };
