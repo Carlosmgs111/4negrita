@@ -78,8 +78,17 @@ export const Signup = () => {
   // Process the form
   const onSubmit = async (data: RegisterFormValues) => {
     setIsLoading(true);
-
     try {
+      const userId = JSON.parse(localStorage.getItem("user") || "{}").id;
+      if (userId) {
+        toast({
+          title: "Ya tienes una cuenta",
+          description: "Por favor, inicia sesión",
+          variant: "default",
+        });
+        window.location.href = "/auth/login";
+        return;
+      }
       const response = await fetch("/api/auth/signup", {
         method: "POST",
         headers: {
@@ -114,8 +123,11 @@ export const Signup = () => {
       });
 
       // Store user data if session exists (email verified immediately)
-      if (session && user) {
+      if (user) {
         localStorage.setItem("user", JSON.stringify(user));
+      }
+      console.log({ session });
+      if (session) {
         Object.entries(session).forEach(([key, value]) => {
           sessionStorage.setItem(key, JSON.stringify(value));
         });
@@ -131,7 +143,7 @@ export const Signup = () => {
       // Redirect based on verification status
       if (needsVerification) {
         // Redirect to verification page or login
-        window.location.href = "/auth/verify-phone";
+        window.location.href = "/auth/verify-phone?phone=" + data.phone;
       } else {
         // Redirect to home page
         window.location.href = "/";

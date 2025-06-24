@@ -36,6 +36,7 @@ export const POST: APIRoute = async ({ request }) => {
         JSON.stringify({
           success: false,
           error: authError.message,
+          code: authError.code,
         }),
         {
           status: 401,

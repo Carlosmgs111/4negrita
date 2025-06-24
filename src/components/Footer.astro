@@ -1,5 +1,13 @@
 ---
 import { Separator } from "@/components/ui/separator";
+
+const validPaths = ["/", "/tickets", "/beta-testing"];
+const pathname = Astro.url.pathname;
+
+if (!validPaths.includes(pathname)) {
+  return null;
+}
+
 ---
 
 <footer class="bg-gray-50 py-12">

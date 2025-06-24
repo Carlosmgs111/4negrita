@@ -23,7 +23,7 @@ export const TicketsDisplay = ({
 }) => {
   const isSelected = (numero: number) => selectedTickets.includes(numero);
   const { toast, dismiss } = useToast();
-  const isLogged = sessionStorage.getItem("logged") === "true";
+  const isLogged = sessionStorage.getItem("isLogged") === "true";
   const getColorByStatus = (status: TicketStatus): string => {
     return {
       available: "bg-green-500 hover:bg-green-600",

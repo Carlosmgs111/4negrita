@@ -35,7 +35,7 @@ export const TicketsHUB = ({
     handleCheckout,
     state,
   } = useTickets({ createdTickets, raffleId });
-  const isLogged = sessionStorage.getItem("logged") === "true";
+  const isLogged = sessionStorage.getItem("isLogged") === "true";
   // stateManager.setState({ selectedTickets });
   return (
     <main className="flex-grow container mx-auto px-4 py-8">

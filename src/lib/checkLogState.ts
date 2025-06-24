@@ -10,7 +10,7 @@ export const checkoutExpiration = () => {
 export const cleanSession = () => {
   sessionStorage.clear();
   localStorage.clear();
-  sessionStorage.setItem("logged", "false");
+  sessionStorage.setItem("isLogged", "false");
 };
 
 export const checkLogState = () => {

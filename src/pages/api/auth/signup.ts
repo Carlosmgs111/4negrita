@@ -21,7 +21,6 @@ const validateData = (data: any) => {
 export const POST: APIRoute = async ({ request }) => {
   try {
     const { fullName, phone, password, confirmPassword } = await request.json();
-    // Validate input
     const errors = validateData({ fullName, phone, password, confirmPassword });
     if (errors.length > 0) {
       return new Response(
@@ -36,7 +35,6 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
     const formatedPhone = `+57${phone}`;
-    // Register with Supabase
     const { data: signUpData, error: signUpError } = await supabase.auth.signUp(
       {
         phone: formatedPhone,
@@ -49,7 +47,8 @@ export const POST: APIRoute = async ({ request }) => {
         },
       }
     );
-    console.log(signUpData, signUpError);
+    console.log({ signUpData });
+    const warnings = [];
     if (signUpError) {
       return new Response(
         JSON.stringify({
@@ -63,31 +62,7 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    const { data: participantData, error: participantError } = await supabase
-      .from("participant")
-      .insert({
-        fullName: fullName.trim(),
-        userId: signUpData.user.id,
-      })
-      .single();
-
-    if (participantError) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: participantError.message,
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
-
-    // Check if user needs to verify phone
     const needsVerification = !signUpData.user?.phone_confirmed_at;
-
-    // Return success response
     return new Response(
       JSON.stringify({
         success: true,

@@ -1,0 +1,98 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "./Header.astro";
+import Sidebar from "./Sidebar.astro";
+import AboutSignup from "./sections/AboutSignup.astro";
+import AboutLogin from "./sections/AboutLogin.astro";
+import AboutNavigation from "./sections/AboutNavigation.astro";
+import AboutLimitations from "./sections/AboutLimitations.astro";
+---
+
+<Layout title="Beta Testing | 4Negrita">
+  <div class="min-h-screen flex flex-col bg-background">
+    <Header />
+    <div class="container mx-auto px-4 py-6 flex flex-col md:flex-row">
+      <Sidebar />
+      <main class="md:ml-0 w-full">
+          <AboutSignup />
+          <AboutLogin />
+          <AboutNavigation />
+          <AboutLimitations />
+      </main>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const navItems = document.querySelectorAll(".guide-nav-item");
+    const contentSections = document.querySelectorAll(".content-section");
+    const sidebarMenu = document.getElementById("sidebar-menu");
+
+    // Función para mostrar la sección activa
+    function showSection(sectionId: string) {
+      contentSections.forEach((section) => {
+        section.classList.add("hidden");
+      });
+      const targetElement = document.getElementById(sectionId);
+      if (targetElement) {
+        targetElement.classList.remove("hidden");
+      }
+
+      // Cerrar el menú en móviles después de seleccionar una opción
+      if (window.innerWidth < 768 && sidebarMenu) {
+        const toggleButton = document.getElementById("sidebar-toggle");
+        if (toggleButton) {
+          toggleButton.setAttribute("aria-expanded", "false");
+          sidebarMenu.classList.add("hidden");
+          const icon = toggleButton.querySelector("svg");
+          if (icon) {
+            icon.style.transform = "rotate(0deg)";
+          }
+        }
+      }
+    }
+
+    // Configurar los eventos de clic para los ítems del menú
+    navItems.forEach((item) => {
+      item.addEventListener("click", function (this: HTMLButtonElement) {
+        const targetSection: string = this.getAttribute(
+          "data-section"
+        ) as string;
+
+        // Actualizar el estado activo
+        navItems.forEach((nav) => {
+          nav.classList.remove(
+            "active",
+            "bg-sidebar-accent",
+            "text-sidebar-accent-foreground"
+          );
+          nav.classList.add(
+            "text-sidebar-foreground",
+            "hover:bg-sidebar-accent",
+            "hover:text-sidebar-accent-foreground"
+          );
+        });
+
+        this.classList.add(
+          "active",
+          "bg-sidebar-accent",
+          "text-sidebar-accent-foreground"
+        );
+        this.classList.remove(
+          "text-sidebar-foreground",
+          "hover:bg-sidebar-accent",
+          "hover:text-sidebar-accent-foreground"
+        );
+
+        // Mostrar la sección seleccionada
+        showSection(targetSection);
+      });
+    });
+
+    // Mostrar la primera sección por defecto
+    if (contentSections.length > 0) {
+      showSection("registro");
+    }
+  });
+</script>

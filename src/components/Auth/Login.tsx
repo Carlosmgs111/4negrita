@@ -13,12 +13,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/useToast";
-import { Eye, EyeOff, LogIn, Phone } from "lucide-react";
+import { Eye, EyeOff, LogIn, Phone, UserPlus } from "lucide-react";
 import { authStore } from "@/stores/authStore";
 import { URLManager } from "@/lib/URLManager";
 
 const loginFormSchema = z.object({
-  phone: z.string().min(10, { message: "Por favor, ingresa un teléfono válido" }),
+  phone: z
+    .string()
+    .min(10, { message: "Por favor, ingresa un teléfono válido" }),
   password: z
     .string()
     .min(6, { message: "La contraseña debe tener al menos 6 caracteres" }),
@@ -29,7 +31,7 @@ type LoginFormValues = z.infer<typeof loginFormSchema>;
 export const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
+  const { toast, dismiss } = useToast();
 
   const defaultValues = {
     phone: authStore.getState().phone,
@@ -66,10 +68,45 @@ export const Login = () => {
       const result = await response.json();
 
       if (!result.success) {
+        console.log({ error: result.error });
+        const phoneComfirmationRequired = result.code === "phone_not_confirmed";
         toast({
           title: "Error al iniciar sesión",
           description: result.error,
           variant: "destructive",
+          className: "flex flex-col gap-2 items-start",
+          action: (
+            <a
+              href={
+                phoneComfirmationRequired
+                  ? "/auth/verify-phone?phone=" + data.phone
+                  : "/auth/signup"
+              }
+              onClick={() => {
+                if (phoneComfirmationRequired) {
+                  const phone = "+57" + data.phone;
+                  fetch("/api/auth/requestOtp", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      phone,
+                    }),
+                  });
+                }
+                dismiss();
+              }}
+              className="bg-white text-heart-500 px-4 py-2 rounded-md !m-0 w-full text-center flex items-center justify-center"
+            >
+              {phoneComfirmationRequired ? (
+                <Phone className="mr-2" size={16} />
+              ) : (
+                <UserPlus className="mr-2" size={16} />
+              )}
+              {phoneComfirmationRequired ? "Verificar teléfono" : "Registrarte"}
+            </a>
+          ),
         });
         return;
       }
@@ -81,10 +118,10 @@ export const Login = () => {
         sessionStorage.setItem(key, JSON.stringify(value));
       });
       localStorage.setItem("user", JSON.stringify(user));
+      sessionStorage.setItem("isLogged", "true");
       authStore.setState({
         phone: data.phone,
       });
-      sessionStorage.setItem("logged", "true");
       toast({
         title: "Ingreso exitoso",
         description: result.message,
