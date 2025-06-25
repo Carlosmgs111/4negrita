@@ -134,13 +134,16 @@ const limitDateFormated = new Intl.DateTimeFormat("es-CO", {
               >
               <span class="text-sm text-gray-500">por boleto</span>
             </div>
-            <Button
-              client:visible
-              className="btn-primary flex gap-2 items-center min-w-[200px] animate-pulse-gentle"
-            >
-              <Ticket client:visible size={18} />
-              <span>Comprar Boleto</span>
-            </Button>
+
+            <a href="/tickets">
+              <Button
+                client:visible
+                className="btn-primary flex gap-2 items-center min-w-[200px] animate-pulse-gentle"
+              >
+                <Ticket client:visible size={18} />
+                <span>Comprar Boleto</span>
+              </Button>
+            </a>
           </div>
         </CardContent>
       </Card>
