@@ -11,10 +11,15 @@ export const OwnedTickets = async () => {
     return null;
   }
   const userId = user?.id;
+  if (!userId) {
+    return null;
+  }
+  console.log({ userId });
   const { data: myTickets } = await supabase
     .from("ticket")
     .select("*")
     .eq("userId", userId);
+  console.log({ myTickets });
   if (!myTickets) {
     return null;
   }

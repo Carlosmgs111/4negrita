@@ -24,6 +24,7 @@ if (payment) {
   paymentStore.setSerializedState(payment);
 }
 const { fullName, email, phone, document, documentType } = authStore.getState();
+console.log({ fullName, email, phone, document, documentType });
 const { expirationTime } = paymentStore.getState();
 const {
   data: { raffleId },

@@ -37,7 +37,8 @@ export const UserSettings = () => {
     }
     setUser(storedUser);
     setParticipant(storedParticipant);
-
+    console.log({storedUser});
+    console.log({storedParticipant});
     // Initialize form with existing user data
     setFormData({
       name: storedParticipant.fullName || "",
