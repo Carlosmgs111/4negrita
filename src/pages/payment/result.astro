@@ -7,7 +7,7 @@ import { decodeRaffleReference } from "@/lib/genRefCode";
 const transactionId = Astro.url.searchParams.get("id");
 const canceledStatuses: string[] = ["DECLINED", "VOIDED", "ERROR"];
 let maxPollingRetries = 3;
-const { status, payment_method, status_message, reference, ...result }: any =
+const { status, payment_method, status_message, reference, amount_in_cents, ...result }: any =
   await new Promise((resolve, reject) => {
     const intervalId = setInterval(() => {
       maxPollingRetries--;
@@ -30,6 +30,7 @@ const { status, payment_method, status_message, reference, ...result }: any =
     }, 1000);
   });
 const selectedTickets = decodeRaffleReference(reference)?.tickets || [];
+
 console.log({ result });
 ---
 
@@ -44,8 +45,9 @@ console.log({ result });
           paymentMethod={payment_method.type || ""}
           referenceCode={result.reference_code || ""}
           selectedTickets={selectedTickets}
-          totalAmount={result.amount || 0}
-          email={result.merchant.email || ""}
+          totalAmount={amount_in_cents / 100 || 0}
+          /* ! Hay que revisar la obtencion del email */
+          email={result.customer_email || ""}
         />
       )
     }

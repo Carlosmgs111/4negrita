@@ -3,7 +3,11 @@ import { useToast } from "./useToast";
 import { stateManager } from "@/stores/stores";
 import { authStore } from "@/stores/authStore";
 import { paymentStore } from "@/stores/payment";
-import { decodeRaffleReference, generateRaffleReference } from "@/lib/genRefCode";
+import { Button } from "@/components/ui/button";
+import {
+  decodeRaffleReference,
+  generateRaffleReference,
+} from "@/lib/genRefCode";
 
 type TicketStatus = "available" | "reserved" | "sold";
 
@@ -47,13 +51,17 @@ export const useTickets = ({
   createdTickets: TicketItem[];
   raffleId: string;
 }) => {
-  const tickets: TicketItem[] = useMemo(
-    () => generateMissingTickets(createdTickets),
-    []
+  const [tickets, setTickets] = useState<TicketItem[]>(
+    generateMissingTickets(createdTickets)
   );
+  const memoizedTickets: TicketItem[] = useMemo(() => tickets, [tickets]);
   const [currentView, setCurrentView] = useState<"grid" | "list">("grid");
   const [selectedTickets, setSelectedTickets] = useState<number[]>(
     stateManager.getState().selectedTickets
+  );
+  const memoizedSelectedTickets = useMemo(
+    () => selectedTickets,
+    [selectedTickets]
   );
   const { toast } = useToast();
   const state = stateManager.getState();
@@ -67,12 +75,12 @@ export const useTickets = ({
   }, []);
 
   useEffect(() => {
-    const totalAmount = selectedTickets.length * 5000;
+    const totalAmount = memoizedSelectedTickets.length * 5000;
     stateManager.setState(
-      { selectedTickets, totalAmount },
+      { selectedTickets: memoizedSelectedTickets, totalAmount },
       true
     );
-  }, [selectedTickets]);
+  }, [memoizedSelectedTickets]);
 
   const handleClearSelection = () => {
     setSelectedTickets([]);
@@ -84,22 +92,51 @@ export const useTickets = ({
     });
   };
 
-  const handleCheckout = () => {
-    if (selectedTickets.length === 0) {
+  const handleCheckout = async () => {
+    if (memoizedSelectedTickets.length === 0) {
       toast({
         title: "No hay boletos seleccionados",
         description: "Debes seleccionar al menos un boleto para continuar",
         variant: "destructive",
         duration: 3000,
       });
+
       return;
     }
+    const availability = await fetch(
+      "/api/ticket/" +
+        raffleId +
+        "/" +
+        memoizedSelectedTickets.join(",") +
+        "?properties=status,number"
+    ).then((res) => res.json());
+    console.log({ availability });
+    if (
+      availability.data.some((ticket: any) => ticket.status !== "available")
+    ) {
+      toast({
+        title: "Boletos no disponibles",
+        description:
+          "Algunos de los boletos que intentas comprar no estan disponibles 🤔, por favor verifica de nuevo la disponibilidad ✅ de los boletos 🎫  y selecciona de nuevo.",
+        variant: "destructive",
+        duration: 5000,
+      });
+      fetch("/api/ticket")
+        .then((res) => res.json())
+        .then((data) => {
+          console.log({ data });
+          setTickets(generateMissingTickets(data));
+          setTimeout(() => setSelectedTickets([]), 1000);
+        });
+      return;
+    }
+
     const userId = JSON.parse(sessionStorage.getItem("user") || "{}").id;
     const expirationTime = new Date(Date.now() + 10 * 60 * 1000).toISOString();
     const referenceCode = generateRaffleReference({
       raffleId,
       userId,
-      tickets: selectedTickets,
+      tickets: memoizedSelectedTickets,
     });
     paymentStore.setState({
       referenceCode,
@@ -112,10 +149,10 @@ export const useTickets = ({
       `&auth=${authStore.getSerializedState()}&payment=${paymentStore.getSerializedState()}`;
   };
   return {
-    tickets,
+    tickets: memoizedTickets,
     currentView,
     setCurrentView,
-    selectedTickets,
+    selectedTickets: memoizedSelectedTickets,
     setSelectedTickets,
     handleClearSelection,
     handleCheckout,

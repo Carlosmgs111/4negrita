@@ -150,14 +150,17 @@ const handleShare = async () => {
           </div>
         </div>
 
-        <div class="bg-green-50 p-4 rounded-md border border-green-100">
-          <p class="text-green-800 text-sm">
-            Se ha enviado un correo electrónico a{" "}
-            <strong>{email}</strong> con los detalles de tu compra. Guarda esta información
-            para futuras referencias.
-          </p>
-        </div>
-
+        {
+          email && (
+            <div class="bg-green-50 p-4 rounded-md border border-green-100">
+              <p class="text-green-800 text-sm">
+                Se ha enviado un correo electrónico a &nbsp;
+                <strong>{email}</strong> &nbsp; con los detalles de tu compra.
+                Guarda esta información para futuras referencias.
+              </p>
+            </div>
+          )
+        }
         <div class="pt-2 flex justify-center items-center">
           Powered by &nbsp;
           <img
