@@ -1,0 +1,162 @@
+---
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Ticket } from "lucide-react";
+import { stateManager } from "@/stores/stores";
+import { paymentStore } from "@/stores/payment";
+import { supabase } from "@/lib/supabase";
+import { v4 as uuid } from "uuid";
+
+const queryExitingTickets = async (tickets: number[], raffleId: string) => {
+  const { data: existing, error } = await supabase
+    .from("ticket")
+    .select("raffleId, number, id, reservedUntil")
+    .eq("raffleId", raffleId)
+    .in("number", tickets);
+
+  if (error) {
+    return [null, error];
+  }
+  const numerosExistentes = existing.map((t: any) => {
+    const isReserved = t.reservedUntil > new Date();
+    if (!isReserved) {
+      supabase.from("ticket").update({ status: "available" }).eq("id", t.id);
+    }
+    return t.number;
+  });
+  const numerosNoExisten = tickets.filter(
+    (num) => !numerosExistentes.includes(num)
+  );
+  return [
+    {
+      existing,
+      notExisting: numerosNoExisten.map((num) => ({ raffleId, number: num })),
+    },
+    null,
+  ];
+};
+
+const createTickets = (notExisting: number[], expirationTime: string) => {
+  const reservedUntil = expirationTime;
+  const notExistingTickets = notExisting.map((ticket: any) => {
+    const digits = Number(ticket.number - 1)
+      .toString()
+      .padStart(3, "0");
+    return {
+      number: ticket.number,
+      digits: digits,
+      status: "reserved",
+      price: 5000,
+      issueDate: new Date().toISOString(),
+      soldAt: new Date().toISOString(),
+      id: uuid(),
+      raffleId: paymentStore.getState().raffleId,
+      userId: null,
+      reservedUntil,
+    };
+  });
+  supabase
+    .from("ticket")
+    .upsert(notExistingTickets)
+    .select()
+    .then((res: any) => {
+      console.log({ res });
+    })
+    .catch((err: any) => {
+      console.log({ err });
+    });
+};
+
+const updateTickets = (existing: any[], expirationTime: string) => {
+  const existingIds = existing.map((t: any) => t.id);
+  const reservedUntil = expirationTime;
+  supabase
+    .from("ticket")
+    .update({
+      status: "reserved",
+      reservedUntil,
+    })
+    .in("id", existingIds)
+    .then((res: any) => {})
+    .catch((err: any) => {});
+};
+const { totalAmount, selectedTickets } = stateManager.getState();
+const { raffleId, expirationTime, referenceCode } = paymentStore.getState();
+const [{ existing, notExisting }, error] = await queryExitingTickets(
+  selectedTickets,
+  raffleId
+);
+createTickets(notExisting, expirationTime);
+updateTickets(existing, expirationTime);
+---
+
+<div>
+  <Card>
+    <CardHeader>
+      <CardTitle>Resumen de compra</CardTitle>
+    </CardHeader>
+    <CardContent className="space-y-4">
+      <div>
+        <h3 class="font-medium mb-2">Tus boletos:</h3>
+        <div class="flex flex-wrap gap-2 max-h-40 overflow-y-auto">
+          {
+            selectedTickets.map((numero: number) => (
+              <Badge className="bg-green-500 text-white py-1 px-3 mb-1">
+                <Ticket className="mr-1 h-3 w-3" />#
+                {Number(numero - 1)
+                  .toString()
+                  .padStart(3, "0")}
+              </Badge>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="border-t pt-4 space-y-2">
+        <div class="flex justify-between">
+          <span>Subtotal</span>
+          <span>${totalAmount.toLocaleString()}</span>
+        </div>
+        <div class="flex justify-between font-bold text-lg">
+          <span>Total</span>
+          <span class="text-heart-600">
+            ${totalAmount.toLocaleString()}
+          </span>
+        </div>
+        <div class="pt-2">
+          <span class="text-xs text-muted-foreground block">
+            ID de la rifa
+          </span>
+          <span class="font-mono text-xs">{raffleId}</span>
+        </div>
+        {
+          referenceCode && (
+            <div class="pt-2">
+              <span class="text-xs text-muted-foreground block">
+                Referencia de pago
+              </span>
+              <span class="font-mono text-xs">
+                ...{referenceCode.slice(-32)}
+              </span>
+            </div>
+          )
+        }
+      </div>
+    </CardContent>
+    <CardFooter
+      className="flex flex-col text-sm text-muted-foreground items-left"
+    >
+      <p>
+        Ahora haz clic en el botón "Paga con Wompi" para ser redirigido a la
+        pasarela de pagos de Wompi, donde podrás completar la transacción de
+        forma segura.
+      </p>
+    </CardFooter>
+  </Card>
+</div>

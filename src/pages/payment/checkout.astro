@@ -1,12 +1,12 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import Layout from "../../layouts/Layout.astro";
 import { stateManager } from "@/stores/stores";
 import { authStore } from "@/stores/authStore";
 import { paymentStore } from "@/stores/payment";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { WompiPaymentButton } from "@/components/Payment/WompiPaymentButton";
-import { PaymentResume } from "@/components/Payment/PaymentResume";
+import WompiPaymentButton from "@/components/Payment/WompiPaymentButton.astro";
+import PaymentResume from "@/components/Payment/PaymentResume.astro";
 import Countdown from "@/components/Countdown.astro";
 import { Card, CardFooter } from "@/components/ui/card";
 import { supabase } from "@/lib/supabase";
@@ -23,7 +23,6 @@ if (auth) {
 if (payment) {
   paymentStore.setSerializedState(payment);
 }
-const { referenceCode, totalAmount } = stateManager.getState();
 const { fullName, email, phone, document, documentType } = authStore.getState();
 const { expirationTime } = paymentStore.getState();
 const {
@@ -32,7 +31,7 @@ const {
 paymentStore.setState({ raffleId });
 
 const state = stateManager.getSerializedState();
-const redirectUrl = Astro.url.origin + "/payment/success";
+const redirectUrl = Astro.url.origin + "/payment/result";
 ---
 
 <Layout title="Checkout | 4Negrita">
@@ -55,7 +54,6 @@ const redirectUrl = Astro.url.origin + "/payment/success";
           <PaymentResume />
           <WompiPaymentButton
             redirectUrl={redirectUrl}
-            totalAmount={totalAmount}
             currency="COP"
             fullName={fullName}
             email={email}

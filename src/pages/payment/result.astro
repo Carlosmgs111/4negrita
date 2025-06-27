@@ -1,0 +1,62 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import TransactionLoader from "../../components/TransactionLoader.astro";
+import PaymentSuccess from "@/components/Payment/PaymentSuccess.astro";
+import PaymentCanceled from "@/components/Payment/PaymentCanceled.astro";
+import { decodeRaffleReference } from "@/lib/genRefCode";
+const transactionId = Astro.url.searchParams.get("id");
+const canceledStatuses: string[] = ["DECLINED", "VOIDED", "ERROR"];
+let maxPollingRetries = 3;
+const { status, payment_method, status_message, reference, ...result }: any =
+  await new Promise((resolve, reject) => {
+    const intervalId = setInterval(() => {
+      maxPollingRetries--;
+      if (maxPollingRetries === 0) {
+        clearInterval(intervalId);
+      }
+      fetch("https://sandbox.wompi.co/v1/transactions/" + transactionId).then(
+        (res: any) =>
+          res
+            .json()
+            .then(({ data }: any) => {
+              clearInterval(intervalId);
+              resolve(data);
+            })
+            .catch((err: any) => {
+              clearInterval(intervalId);
+              reject(err);
+            })
+      );
+    }, 1000);
+  });
+const selectedTickets = decodeRaffleReference(reference)?.tickets || [];
+console.log({ result });
+---
+
+<Layout title="Resultado del pago | 4Negrita"
+  ><div
+    class="min-h-screen bg-background flex flex-col pt-16 justify-center items-center"
+  >
+    {
+      status === "APPROVED" && (
+        <PaymentSuccess
+          transactionId={transactionId || ""}
+          paymentMethod={payment_method.type || ""}
+          referenceCode={result.reference_code || ""}
+          selectedTickets={selectedTickets}
+          totalAmount={result.amount || 0}
+          email={result.merchant.email || ""}
+        />
+      )
+    }
+    {
+      canceledStatuses.includes(status) && (
+        <PaymentCanceled
+          transactionId={transactionId || ""}
+          paymentMethod={payment_method.type || ""}
+          statusMessage={status_message || ""}
+        />
+      )
+    }
+  </div>
+</Layout>

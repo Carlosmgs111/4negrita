@@ -9,13 +9,10 @@ const nodeAdapter = node({
 });
 
 const vercelAdapter = vercel({
-  // webAnalytics: { enabled: true },
-  // edgeMiddleware: false,
-  // functionPerRoute: false,
 });
 
 const adapter =
-  process.env.PUBLIC_ENV === "production" ? vercelAdapter : nodeAdapter;
+  process.env.PUBLIC_VERCEL_ENV === "production" ? vercelAdapter : nodeAdapter;
 
 export default defineConfig({
   integrations: [tailwind({}), react()],

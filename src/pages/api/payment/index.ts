@@ -34,17 +34,13 @@ interface WompiWebhookData {
 }
 
 export const POST: APIRoute = async ({ request }) => {
-    console.log("Webhook received");
+  console.log("Webhook received");
   try {
     const body = await request.text();
     const signature = request.headers.get("X-Event-Checksum") || "";
     const webhookSecret = import.meta.env.SECRET_WOMPI_EVENTS_KEY!;
     const webhookData: WompiWebhookData = JSON.parse(body);
     const transaction = webhookData.data.transaction;
-    const paymentMethod = transaction.payment_method_type;
-    // if (paymentMethod) {
-    //   sessionStorage.setItem("paymentMethod", paymentMethod);
-    // }
     const { reference } = webhookData.data.transaction;
     const decodedReference = decodeRaffleReference(reference);
     console.log({ decodedReference });
@@ -63,43 +59,24 @@ export const POST: APIRoute = async ({ request }) => {
       return Response.json({ error: "Invalid signature" }, { status: 200 });
     }
     const canceledStatuses: string[] = ["DECLINED", "VOIDED", "ERROR"];
-    if (transaction.status === "APPROVED") {
-      const { raffleId, userId, tickets } = decodedReference!;
-      console.log("Updating tickets to sold");
-      console.log({ raffleId, userId, tickets });
-      supabase
-        .from("ticket")
-        .update({ status: "sold", userId })
-        .eq("raffleId", raffleId)
-        .in("number", tickets)
-        .then((data: any) => {
-          console.log({ data });
-        })
-        .catch((err: any) => {
-          console.log(err);
-        });
-    }
-    if (canceledStatuses.includes(transaction.status)) {
-      console.log("Redirecting to canceled page");
-      return Response.json({ received: true }, { status: 302 });
-    }
+    const { raffleId, userId, tickets } = decodedReference!;
+    let status: string = "available";
 
-    // if (webhookData.event === "transaction.updated") {
-    //   const transaction = webhookData.data.transaction;
+    if (transaction.status === "APPROVED") status = "sold";
+    if (canceledStatuses.includes(transaction.status)) status = "available";
 
-    //   // Actualizar estado en tu base de datos
-    //   await updateTransactionInDatabase(transaction);+
+    supabase
+      .from("ticket")
+      .update({ status, userId })
+      .eq("raffleId", raffleId)
+      .in("number", tickets)
+      .then((data: any) => {
+        console.log({ data });
+      })
+      .catch((err: any) => {
+        console.log(err);
+      });
 
-    //   // Notificar a los clientes conectados via WebSocket/SSE
-    //   await notifyClients(transaction);
-
-    //   // Enviar email/SMS si es necesario
-    //   if (transaction.status === "APPROVED") {
-    //     await sendPaymentConfirmation(transaction);
-    //   } else if (transaction.status === "DECLINED") {
-    //     await sendPaymentFailure(transaction);
-    //   }
-    // }
     return Response.json({ received: true }, { status: 200 });
   } catch (error) {
     console.error("Webhook error:", error);

@@ -51,7 +51,6 @@ export const useTickets = ({
     () => generateMissingTickets(createdTickets),
     []
   );
-  console.log(stateManager.getState());
   const [currentView, setCurrentView] = useState<"grid" | "list">("grid");
   const [selectedTickets, setSelectedTickets] = useState<number[]>(
     stateManager.getState().selectedTickets
@@ -97,21 +96,18 @@ export const useTickets = ({
     }
     const userId = JSON.parse(sessionStorage.getItem("user") || "{}").id;
     const expirationTime = new Date(Date.now() + 10 * 60 * 1000).toISOString();
-    console.log(stateManager.getState());
-    console.log({raffleId, userId, tickets: selectedTickets});
     const referenceCode = generateRaffleReference({
       raffleId,
       userId,
       tickets: selectedTickets,
     });
-    console.log(referenceCode);
     paymentStore.setState({
       referenceCode,
       expirationTime,
       userId,
     });
     window.location.href =
-      "/checkout" +
+      "/payment/checkout" +
       window.location.search +
       `&auth=${authStore.getSerializedState()}&payment=${paymentStore.getSerializedState()}`;
   };

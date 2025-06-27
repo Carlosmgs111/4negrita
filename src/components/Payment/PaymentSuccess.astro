@@ -1,0 +1,197 @@
+---
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { CheckCircle, Home, Ticket, Copy, Share2 } from "lucide-react";
+import { useToast } from "@/hooks/useToast";
+import { ConfettiWrapper } from "../ConfettiWrapper";
+
+interface PaymentData {
+  customerName: string;
+  email: string;
+  phone: string;
+  tickets: number[];
+  amount: number;
+  paymentMethod: string;
+  transactionId?: string;
+  referenceCode?: string;
+}
+
+const {
+  transactionId,
+  paymentMethod,
+  referenceCode,
+  selectedTickets,
+  totalAmount,
+  email,
+} = Astro.props;
+
+// const { toast } = useToast();
+
+const copyToClipboard = () => {
+  const ticketInfo = `
+Referencia de pago: ${referenceCode || "No disponible"}
+ID de transacción: ${transactionId || "No disponible"}
+Boletos: ${selectedTickets.join(", ")}
+Total: $${totalAmount.toLocaleString()}
+    `;
+
+  navigator.clipboard.writeText(ticketInfo);
+
+  // toast({
+  //   title: "¡Copiado!",
+  //   description:
+  //     "La información de tus boletos ha sido copiada al portapapeles",
+  //   duration: 3000,
+  // });
+};
+
+const handleShare = async () => {
+  const shareText = `¡He comprado ${selectedTickets.length} boleto(s) para la rifa benéfica! 🎟️`;
+
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: "Mis boletos para la rifa benéfica",
+        text: shareText,
+        url: window.location.origin,
+      });
+    } catch (error) {
+      console.error("Error sharing", error);
+    }
+  } else {
+    navigator.clipboard.writeText(shareText + " " + window.location.origin);
+    // toast({
+    //   title: "¡Enlace copiado!",
+    //   description: "Ahora puedes compartirlo con tus amigos",
+    //   duration: 3000,
+    // });
+  }
+};
+---
+
+<main class="flex-grow container mx-auto px-4 py-8">
+  <ConfettiWrapper client:load />
+  <div class="max-w-2xl mx-auto">
+    <Card className="border-green-200">
+      <CardHeader className="text-center border-b pb-6">
+        <div
+          class="mx-auto bg-green-100 w-20 h-20 flex items-center justify-center rounded-full mb-4"
+        >
+          <CheckCircle className="h-10 w-10 text-green-600" />
+        </div>
+        <CardTitle className="text-2xl text-green-700">
+          ¡Pago exitoso!
+        </CardTitle>
+        <CardDescription className="text-base">
+          Tu compra ha sido procesada correctamente
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent className="pt-6 space-y-6">
+        <div>
+          <h3 class="font-semibold mb-2 text-lg">Detalles de la compra:</h3>
+          <div class="grid grid-cols-2 gap-4">
+            {
+              referenceCode && (
+                <div>
+                  <p class="text-sm text-muted-foreground">
+                    Referencia de pago
+                  </p>
+                  <p class="font-medium">{referenceCode}</p>
+                </div>
+              )
+            }
+            {
+              transactionId && (
+                <div>
+                  <p class="text-sm text-muted-foreground">ID de Transacción</p>
+                  <p class="font-medium">{transactionId}</p>
+                </div>
+              )
+            }
+            <div>
+              <p class="text-sm text-muted-foreground">Método de pago</p>
+              <p class="font-medium">{paymentMethod}</p>
+            </div>
+            <div>
+              <p class="text-sm text-muted-foreground">Total pagado</p>
+              <p class="font-medium">
+                ${totalAmount.toLocaleString()}
+              </p>
+            </div>
+            <div>
+              <p class="text-sm text-muted-foreground">Fecha</p>
+              <p class="font-medium">
+                {new Date().toLocaleDateString()}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="font-semibold mb-2 text-lg">Boletos adquiridos:</h3>
+          <div class="flex flex-wrap gap-2 p-3 bg-gray-50 rounded-md">
+            {
+              selectedTickets.map((numero: any) => (
+                <Badge className="bg-heart-500 text-white py-1.5 px-3">
+                  <Ticket className="mr-1 h-3 w-3" />#
+                  {(numero - 1).toString().padStart(3, "0")}
+                </Badge>
+              ))
+            }
+          </div>
+        </div>
+
+        <div class="bg-green-50 p-4 rounded-md border border-green-100">
+          <p class="text-green-800 text-sm">
+            Se ha enviado un correo electrónico a{" "}
+            <strong>{email}</strong> con los detalles de tu compra. Guarda esta información
+            para futuras referencias.
+          </p>
+        </div>
+
+        <div class="pt-2 flex justify-center items-center">
+          Powered by &nbsp;
+          <img
+            src="https://wompi.com/assets/downloadble/logos_wompi/Wompi_LogoPrincipal.svg"
+            alt="Powered by Wompi"
+            class="h-16"
+          />
+        </div>
+      </CardContent>
+
+      <CardFooter className="flex flex-wrap gap-3 pt-2 border-t justify-center">
+        <Button
+          variant="outline"
+          onClick={copyToClipboard}
+          className="flex-1 sm:flex-none"
+        >
+          <Copy className="mr-2 h-4 w-4" />
+          Copiar información
+        </Button>
+        <Button
+          variant="outline"
+          onClick={handleShare}
+          className="flex-1 sm:flex-none"
+        >
+          <Share2 className="mr-2 h-4 w-4" />
+          Compartir
+        </Button>
+        <a href="/">
+          <Button className="w-full bg-heart-500 hover:bg-heart-600">
+            <Home className="mr-2 h-4 w-4" />
+            Volver al inicio
+          </Button>
+        </a>
+      </CardFooter>
+    </Card>
+  </div>
+</main>

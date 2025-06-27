@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ClientRouter } from "astro:transitions";
 import { stateManager } from "@/stores/stores";
-import AnimatedBanner from "../components/AnimatedBanner.astro";
+import WarningBanner from "../components/WarningBanner.astro";
 
 const { title } = Astro.props;
 const clear = Astro.url.searchParams.get("clear");
@@ -39,15 +39,15 @@ if (clear) {
     <TooltipProvider>
       <Toaster client:only />
       <div class="min-h-screen bg-background">
-        <AnimatedBanner
-          message="⚠️ APLICACIÓN EN MODO PRUEBA ⚠️"
+       {import.meta.env.PUBLIC_APP_MODE === "testing" && <WarningBanner
+          message="⚠️ APLICACIÓN EN MODO DE PRUEBA ⚠️"
           backgroundColor="#ffeb3b88"
           textColor="#000000cc"
           stripeColor="#ff572288"
           animationSpeed="3s"
           height="60px"
           zIndex={9999}
-        />
+        />}
         <Navbar />
         <slot />
         <Footer />
