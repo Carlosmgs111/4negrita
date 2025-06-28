@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/useToast";
 import { Eye, EyeOff, UserPlus, Phone, User } from "lucide-react";
 import { authStore } from "@/stores/authStore";
+import { Tooltip } from "../Utilities/Tooltip";
 
 // Form validation schema
 const registerFormSchema = z
@@ -200,15 +201,38 @@ export const Signup = () => {
                 <FormLabel>Teléfono</FormLabel>
                 <div className="relative">
                   <FormControl>
-                    <Input
-                      placeholder="3211234567"
-                      disabled={isLoading}
-                      {...field}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        authStore.setState({ phone: e.target.value });
-                      }}
-                    />
+                    <Tooltip
+                      className="w-full"
+                      content={
+                        <div className="flex flex-col text-xs p-2 gap-2">
+                          <p>
+                            Los números de teléfono permitidos son las
+                            permutaciones de:
+                          </p>
+                          <ul>
+                            <li className="mb-1 text-xs">
+                              377 284 70 [XX] =&#62; 00-99
+                            </li>
+                            <li className="mb-1 text-xs">
+                              388 593 60 [XX] =&#62; 00-99
+                            </li>
+                            <li className="mb-1 text-xs">
+                              399 174 20 [XX] =&#62; 00-99
+                            </li>
+                          </ul>
+                        </div>
+                      }
+                    >
+                      <Input
+                        placeholder="3211234567"
+                        disabled={isLoading}
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          authStore.setState({ phone: e.target.value });
+                        }}
+                      />
+                    </Tooltip>
                   </FormControl>
                   <Phone
                     className="absolute right-3 top-3 text-gray-400"

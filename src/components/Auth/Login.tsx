@@ -13,9 +13,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/useToast";
-import { Eye, EyeOff, LogIn, Phone, UserPlus } from "lucide-react";
+import { Eye, EyeOff, Info, LogIn, Phone, UserPlus } from "lucide-react";
 import { authStore } from "@/stores/authStore";
 import { URLManager } from "@/lib/URLManager";
+import { Tooltip } from "../Utilities/Tooltip";
 
 const loginFormSchema = z.object({
   phone: z
@@ -161,17 +162,54 @@ export const Login = () => {
                 <FormLabel>Teléfono</FormLabel>
                 <div className="relative">
                   <FormControl>
-                    <Input
-                      placeholder="3211234567"
-                      disabled={isLoading}
-                      {...field}
-                      onChange={(e) => {
-                        field.onChange(e);
-                        authStore.setState({
-                          phone: e.target.value,
-                        });
-                      }}
-                    />
+                    <Tooltip
+                      className="w-full"
+                      allowHover
+                      content={
+                        <div className="flex flex-col text-xs p-2 gap-2 relative">
+                            <p>
+                              ⚠️ Los números de teléfono permitidos son las
+                              permutaciones de:
+                            </p>
+
+                            <ul>
+                              <li className="mb-1 text-xs">
+                                377 284 70 [XX] =&#62; 00-99
+                              </li>
+                              <li className="mb-1 text-xs">
+                                388 593 60 [XX] =&#62; 00-99
+                              </li>
+                              <li className="mb-1 text-xs">
+                                399 174 20 [XX] =&#62; 00-99
+                              </li>
+                            </ul>
+                          <div className="absolute top-0 right-[-5px]">
+                            <Tooltip
+                              className="animate-pulse-gentle"
+                              distance={10}
+                              position="right"
+                              content="Haz click para saber más"
+                            >
+                              <a href="/beta-testing">
+                                <Info size={16} />
+                              </a>
+                            </Tooltip>
+                          </div>
+                        </div>
+                      }
+                    >
+                      <Input
+                        placeholder="3211234567"
+                        disabled={isLoading}
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          authStore.setState({
+                            phone: e.target.value,
+                          });
+                        }}
+                      />
+                    </Tooltip>
                   </FormControl>
                   <Phone
                     className="absolute right-3 top-3 text-gray-400"

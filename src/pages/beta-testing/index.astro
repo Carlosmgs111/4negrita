@@ -24,8 +24,9 @@ import AboutLimitations from "./sections/AboutLimitations.astro";
 </Layout>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("DOMContentLoaded", async function () {
     const navItems = document.querySelectorAll(".guide-nav-item");
+    console.log(navItems);
     const contentSections = document.querySelectorAll(".content-section");
     const sidebarMenu = document.getElementById("sidebar-menu");
 

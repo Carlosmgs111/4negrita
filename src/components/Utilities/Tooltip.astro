@@ -1,0 +1,240 @@
+---
+// Tooltip.astro
+export interface Props {
+  content?: string | HTMLElement;
+  position?: 'top' | 'bottom' | 'left' | 'right';
+  delay?: number;
+  class?: string;
+  // Mantener compatibilidad con la prop 'text'
+  text?: string;
+  // Nuevo parámetro: permitir hover sobre el tooltip
+  allowHover?: boolean;
+  // Distancia desde el componente envuelto al tooltip (en píxeles)
+  distance?: number;
+}
+
+const { 
+  content,
+  position = 'top', 
+  delay = 300,
+  class: className = '',
+  text, // Para compatibilidad hacia atrás
+  allowHover = false, // Por defecto deshabilitado para mantener comportamiento actual
+  distance = 8 // Distancia por defecto de 8px
+} = Astro.props;
+
+// Usar 'text' si se proporciona para compatibilidad, sino usar 'content'
+const tooltipContent = text || content;
+---
+
+<div class={`tooltip-container ${className}`} data-allow-hover={allowHover} data-delay={delay}>
+  <slot />
+  <div 
+    class={`tooltip tooltip-${position}`} 
+    data-content={tooltipContent}
+    style={`--distance: ${distance}px`}
+  >
+    <div class="tooltip-content">
+      {typeof tooltipContent === 'string' ? tooltipContent : ''}
+    </div>
+    <div class="tooltip-arrow"></div>
+  </div>
+</div>
+
+<style>
+  .tooltip-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  .tooltip {
+    position: absolute;
+    background-color: rgb(17, 24, 39); /* bg-gray-900 */
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    white-space: nowrap;
+  }
+
+  .tooltip.visible {
+    opacity: 1;
+    z-index: 50;
+  }
+
+  .tooltip.allow-hover {
+    pointer-events: auto;
+  }
+
+  .tooltip-content {
+    position: relative;
+  }
+
+  /* Flecha del tooltip */
+  .tooltip-arrow {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border: 4px solid transparent;
+  }
+
+  /* Posiciones */
+  .tooltip-top {
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: var(--distance);
+  }
+
+  .tooltip-top .tooltip-arrow {
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-top-color: rgb(17, 24, 39);
+  }
+
+  .tooltip-bottom {
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: var(--distance);
+  }
+
+  .tooltip-bottom .tooltip-arrow {
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-bottom-color: rgb(17, 24, 39);
+  }
+
+  .tooltip-left {
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-right: var(--distance);
+  }
+
+  .tooltip-left .tooltip-arrow {
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border-left-color: rgb(17, 24, 39);
+  }
+
+  .tooltip-right {
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: var(--distance);
+  }
+
+  .tooltip-right .tooltip-arrow {
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border-right-color: rgb(17, 24, 39);
+  }
+
+  /* Responsive - soporte para dispositivos táctiles */
+  @media (hover: none) {
+    .tooltip-container:active .tooltip {
+      opacity: 1;
+      z-index: 50;
+    }
+  }
+</style>
+
+<script>
+  interface TooltipManager {
+    timeoutId: number | null;
+    isVisible: boolean;
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const tooltipContainers = document.querySelectorAll('.tooltip-container');
+    
+    tooltipContainers.forEach(container => {
+      const tooltip = container.querySelector('.tooltip') as HTMLElement;
+      const allowHover = container.getAttribute('data-allow-hover') === 'true';
+      const delay = parseInt(container.getAttribute('data-delay') || '300');
+      
+      const manager: TooltipManager = {
+        timeoutId: null,
+        isVisible: false
+      };
+
+      const showTooltip = () => {
+        if (manager.timeoutId) clearTimeout(manager.timeoutId);
+        manager.timeoutId = window.setTimeout(() => {
+          tooltip?.classList.add('visible');
+          if (allowHover) {
+            tooltip?.classList.add('allow-hover');
+          }
+          manager.isVisible = true;
+        }, delay);
+      };
+
+      const hideTooltip = () => {
+        if (manager.timeoutId) clearTimeout(manager.timeoutId);
+        tooltip?.classList.remove('visible', 'allow-hover');
+        manager.isVisible = false;
+      };
+
+      const handleContainerMouseEnter = () => {
+        showTooltip();
+      };
+
+      const handleContainerMouseLeave = () => {
+        if (!allowHover) {
+          hideTooltip();
+        } else {
+          // Si allowHover está habilitado, agregamos un pequeño delay antes de ocultar
+          // para dar tiempo al usuario de mover el cursor al tooltip
+          if (manager.timeoutId) clearTimeout(manager.timeoutId);
+          manager.timeoutId = window.setTimeout(() => {
+            // Verificar si el cursor no está sobre el tooltip antes de ocultarlo
+            if (tooltip && !tooltip.matches(':hover')) {
+              hideTooltip();
+            }
+          }, 100);
+        }
+      };
+
+      const handleTooltipMouseEnter = () => {
+        if (allowHover && manager.isVisible && manager.timeoutId) {
+          clearTimeout(manager.timeoutId);
+          manager.timeoutId = null;
+        }
+      };
+
+      const handleTooltipMouseLeave = () => {
+        if (allowHover && manager.isVisible) {
+          hideTooltip();
+        }
+      };
+
+      // Event listeners para el container
+      container.addEventListener('mouseenter', handleContainerMouseEnter);
+      container.addEventListener('mouseleave', handleContainerMouseLeave);
+
+      // Event listeners para el tooltip (solo si allowHover está habilitado)
+      if (allowHover && tooltip) {
+        tooltip.addEventListener('mouseenter', handleTooltipMouseEnter);
+        tooltip.addEventListener('mouseleave', handleTooltipMouseLeave);
+      }
+
+      // Cleanup al desmontar (no es necesario en Astro pero es buena práctica)
+      const cleanup = () => {
+        if (manager.timeoutId) clearTimeout(manager.timeoutId);
+      };
+
+      // Guardar cleanup en el elemento para posible uso futuro
+      (container as any)._tooltipCleanup = cleanup;
+    });
+  });
+</script>

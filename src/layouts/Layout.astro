@@ -6,10 +6,11 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ClientRouter } from "astro:transitions";
 import { stateManager } from "@/stores/stores";
-import WarningBanner from "../components/WarningBanner.astro";
+import WarningBanner from "../components/Utilities/WarningBanner.astro";
 
 const { title } = Astro.props;
 const clear = Astro.url.searchParams.get("clear");
+const pathname = Astro.url.pathname;
 if (clear) {
   stateManager.setState({
     drawId: null,
@@ -39,7 +40,7 @@ if (clear) {
     <TooltipProvider>
       <Toaster client:only />
       <div class="min-h-screen bg-background">
-       {import.meta.env.PUBLIC_APP_MODE === "testing" && <WarningBanner
+       {import.meta.env.PUBLIC_APP_MODE === "testing" && pathname !== "/beta-testing" && <WarningBanner
           message="⚠️ APLICACIÓN EN MODO DE PRUEBA ⚠️"
           backgroundColor="#ffeb3b88"
           textColor="#000000cc"
