@@ -13,15 +13,48 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/useToast";
-import { Eye, EyeOff, Info, LogIn, Phone, UserPlus } from "lucide-react";
+import {
+  ArrowUpRightFromCircle,
+  ArrowUpRightSquare,
+  Eye,
+  EyeOff,
+  Info,
+  LogIn,
+  Phone,
+  UserPlus,
+} from "lucide-react";
 import { authStore } from "@/stores/authStore";
 import { URLManager } from "@/lib/URLManager";
 import { Tooltip } from "../Utilities/Tooltip";
+import validMobilePrefix from "@/mocks/validMobilePrefix.json";
+import testValidMobilePrefix from "@/mocks/testValidMobilePrefix.json";
+
+const validPrefix =
+  import.meta.env.PUBLIC_APP_MODE === "testing"
+    ? testValidMobilePrefix
+    : validMobilePrefix;
+const phoneMessage =
+  import.meta.env.PUBLIC_APP_MODE === "testing"
+    ? "Esta en modo de pruebas, por lo que el número no debe corresponder con un operador móvil real, deberia empezar con 377, 388 o 399"
+    : "El número debe corresponder con un operador móvil válido";
 
 const loginFormSchema = z.object({
   phone: z
     .string()
-    .min(10, { message: "Por favor, ingresa un teléfono válido" }),
+    .min(10, { message: "Por favor, ingresa un teléfono válido" })
+    .regex(/^3[0-9]{9}$/, {
+      message:
+        "Ingresa un número de celular válido (debe comenzar con 3 y tener 10 dígitos)",
+    })
+    .refine(
+      (phone) => {
+        const prefix = phone.substring(0, 3);
+        return validPrefix.includes(prefix);
+      },
+      {
+        message: phoneMessage,
+      }
+    ),
   password: z
     .string()
     .min(6, { message: "La contraseña debe tener al menos 6 caracteres" }),
@@ -167,22 +200,22 @@ export const Login = () => {
                       allowHover
                       content={
                         <div className="flex flex-col text-xs p-2 gap-2 relative">
-                            <p>
-                              ⚠️ Los números de teléfono permitidos son las
-                              permutaciones de:
-                            </p>
+                          <p>
+                            ⚠️ Los números de teléfono permitidos son las
+                            permutaciones de:
+                          </p>
 
-                            <ul>
-                              <li className="mb-1 text-xs">
-                                377 284 70 [XX] =&#62; 00-99
-                              </li>
-                              <li className="mb-1 text-xs">
-                                388 593 60 [XX] =&#62; 00-99
-                              </li>
-                              <li className="mb-1 text-xs">
-                                399 174 20 [XX] =&#62; 00-99
-                              </li>
-                            </ul>
+                          <ul>
+                            <li className="mb-1 text-xs">
+                              377 284 70 [XX] =&#62; 00-99
+                            </li>
+                            <li className="mb-1 text-xs">
+                              388 593 60 [XX] =&#62; 00-99
+                            </li>
+                            <li className="mb-1 text-xs">
+                              399 174 20 [XX] =&#62; 00-99
+                            </li>
+                          </ul>
                           <div className="absolute top-0 right-[-5px]">
                             <Tooltip
                               className="animate-pulse-gentle"
@@ -191,7 +224,7 @@ export const Login = () => {
                               content="Haz click para saber más"
                             >
                               <a href="/beta-testing">
-                                <Info size={16} />
+                                <ArrowUpRightFromCircle size={16} />
                               </a>
                             </Tooltip>
                           </div>

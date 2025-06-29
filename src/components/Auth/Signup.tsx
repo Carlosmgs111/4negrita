@@ -16,7 +16,17 @@ import { useToast } from "@/hooks/useToast";
 import { Eye, EyeOff, UserPlus, Phone, User } from "lucide-react";
 import { authStore } from "@/stores/authStore";
 import { Tooltip } from "../Utilities/Tooltip";
+import validMobilePrefix from "@/mocks/validMobilePrefix.json";
+import testValidMobilePrefix from "@/mocks/testValidMobilePrefix.json";
 
+const validPrefix =
+  import.meta.env.PUBLIC_APP_MODE === "testing"
+    ? testValidMobilePrefix
+    : validMobilePrefix;
+const phoneMessage =
+  import.meta.env.PUBLIC_APP_MODE === "testing"
+    ? "Esta en modo de pruebas, por lo que el número no debe corresponder con un operador móvil real, deberia empezar con 377, 388 o 399"
+    : "El número debe corresponder con un operador móvil válido";
 // Form validation schema
 const registerFormSchema = z
   .object({
@@ -25,7 +35,20 @@ const registerFormSchema = z
       .min(3, { message: "El nombre debe tener al menos 3 caracteres" }),
     phone: z
       .string()
-      .min(10, { message: "Por favor, ingresa un teléfono válido" }),
+      .min(10, { message: "Por favor, ingresa un teléfono válido" })
+      .regex(/^3[0-9]{9}$/, {
+        message:
+          "Ingresa un número de celular válido (debe comenzar con 3 y tener 10 dígitos)",
+      })
+      .refine(
+        (phone) => {
+          const prefix = phone.substring(0, 3);
+          return validPrefix.includes(prefix);
+        },
+        {
+          message: phoneMessage,
+        }
+      ),
     password: z
       .string()
       .min(6, { message: "La contraseña debe tener al menos 6 caracteres" }),
