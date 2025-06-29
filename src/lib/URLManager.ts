@@ -29,92 +29,74 @@ interface URLInfo {
 }
 
 export class URLManager {
-  private static isClient(): boolean {
-    return typeof window !== "undefined" && typeof window.location !== "undefined";
-  }
+  private static isClient = (): boolean => 
+    typeof window !== "undefined" && typeof window.location !== "undefined";
 
-  private static getDefaultURL(): string {
-    return "http://localhost:3000/";
+  private static getDefaultURL = (): string => "http://localhost:3000/";
+
+  private static createURLInfo(url: URL): URLInfo {
+    return {
+      protocol: url.protocol.replace(":", ""),
+      host: url.host,
+      hostname: url.hostname,
+      port: url.port || "",
+      pathname: url.pathname,
+      search: url.search,
+      hash: url.hash,
+      params: Object.fromEntries(url.searchParams),
+      toString: () => url.toString(),
+    };
   }
 
   /**
    * Obtiene la información de la URL actual
-   * En SSR, devuelve información por defecto o la URL proporcionada
    */
   static getURL(fallbackURL?: string): URLInfo | null {
-    let urlString: string;
+    const urlString = this.isClient() 
+      ? window.location.href 
+      : fallbackURL || null;
 
-    if (this.isClient()) {
-      urlString = window.location.href;
-    } else if (fallbackURL) {
-      urlString = fallbackURL;
-    } else {
-      // En SSR sin URL de respaldo, devolvemos null
-      return null;
-    }
+    if (!urlString) return null;
 
     try {
-      const url = new URL(urlString);
-      
-      return {
-        protocol: url.protocol.replace(":", ""),
-        host: url.host,
-        hostname: url.hostname,
-        port: url.port || "",
-        pathname: url.pathname,
-        search: url.search,
-        hash: url.hash,
-        params: Object.fromEntries(url.searchParams),
-        toString: () => url.toString(),
-      };
-    } catch (error) {
-      console.warn("URLManager: Error parsing URL", error);
+      return this.createURLInfo(new URL(urlString));
+    } catch {
+      console.log("URLManager: Error parsing URL");
       return null;
     }
   }
 
   /**
-   * Actualiza la URL del navegador (solo funciona en cliente)
+   * Actualiza la URL del navegador
    */
-  static updateURL({
-    pathname,
-    params = {},
-    hash = "",
-    replace = false,
-  }: UpdateURLParams): string | null {
+  static updateURL(params: UpdateURLParams): string | null {
     if (!this.isClient()) {
-      console.warn("URLManager.updateURL: No disponible en SSR");
+      console.log("URLManager.updateURL: Solo disponible en cliente");
       return null;
     }
 
     try {
       const url = new URL(window.location.href);
+      const { pathname, params: urlParams = {}, hash = "", replace = false } = params;
 
       if (pathname !== undefined) {
         url.pathname = pathname.startsWith("/") ? pathname : `/${pathname}`;
       }
 
-      // Procesar parámetros
-      if (params) {
-        Object.entries(params).forEach(([key, value]) => {
-          if (value !== null && value !== undefined && value !== "") {
-            url.searchParams.set(key, String(value));
-          } else {
-            url.searchParams.delete(key);
-          }
-        });
-      }
+      Object.entries(urlParams).forEach(([key, value]) => {
+        if (value !== null && value !== undefined && value !== "") {
+          url.searchParams.set(key, String(value));
+        } else {
+          url.searchParams.delete(key);
+        }
+      });
 
       if (hash !== undefined) {
-        if (hash === "") {
-          url.hash = "";
-        } else {
-          url.hash = hash.startsWith("#") ? hash : `#${hash}`;
-        }
+        url.hash = hash === "" ? "" : hash.startsWith("#") ? hash : `#${hash}`;
       }
 
       const newURL = url.toString();
-
+      
       if (replace) {
         window.history.replaceState({}, "", newURL);
       } else {
@@ -122,38 +104,25 @@ export class URLManager {
       }
 
       return newURL;
-    } catch (error) {
-      console.error("URLManager.updateURL: Error updating URL", error);
+    } catch {
+      console.log("URLManager.updateURL: Error actualizando URL");
       return null;
     }
   }
 
   /**
    * Construye una URL completa
-   * Funciona tanto en cliente como en servidor
    */
-  static buildURL({
-    pathname = "/",
-    params = {},
-    hash = "",
-    baseURL,
-  }: BuildURLParams): string {
+  static buildURL(params: BuildURLParams): string {
+    const { pathname = "/", params: urlParams = {}, hash = "", baseURL } = params;
+
     try {
-      let origin: string;
-
-      if (baseURL) {
-        origin = baseURL;
-      } else if (this.isClient()) {
-        origin = window.location.origin;
-      } else {
-        origin = this.getDefaultURL();
-      }
-
+      const origin = baseURL || (this.isClient() ? window.location.origin : this.getDefaultURL());
       const url = new URL(origin);
+      
       url.pathname = pathname.startsWith("/") ? pathname : `/${pathname}`;
 
-      // Procesar parámetros
-      Object.entries(params).forEach(([key, value]) => {
+      Object.entries(urlParams).forEach(([key, value]) => {
         if (value !== null && value !== undefined && value !== "") {
           url.searchParams.set(key, String(value));
         }
@@ -164,45 +133,34 @@ export class URLManager {
       }
 
       return url.toString();
-    } catch (error) {
-      console.error("URLManager.buildURL: Error building URL", error);
+    } catch {
+      console.log("URLManager.buildURL: Error construyendo URL");
       return this.getDefaultURL();
     }
   }
 
   /**
-   * Escucha cambios en la URL (solo funciona en cliente)
+   * Escucha cambios en la URL
    */
   static listenURLChanges(callback: (url: URL) => void): () => void {
     if (!this.isClient()) {
-      console.warn("URLManager.listenURLChanges: No disponible en SSR");
+      console.log("URLManager.listenURLChanges: Solo disponible en cliente");
       return () => {};
     }
 
-    const handlePopState = () => {
+    const handleChange = () => {
       try {
-        const url = new URL(window.location.href);
-        callback(url);
-      } catch (error) {
-        console.error("URLManager.listenURLChanges: Error in callback", error);
+        callback(new URL(window.location.href));
+      } catch {
+        console.log("URLManager.listenURLChanges: Error en callback");
       }
     };
 
-    // También escuchar cambios programáticos
-    const handlePushState = () => {
-      setTimeout(() => {
-        try {
-          const url = new URL(window.location.href);
-          callback(url);
-        } catch (error) {
-          console.error("URLManager.listenURLChanges: Error in pushstate callback", error);
-        }
-      }, 0);
-    };
+    const handlePopState = () => handleChange();
+    const handlePushState = () => setTimeout(handleChange, 0);
 
     window.addEventListener("popstate", handlePopState);
     
-    // Interceptar pushState y replaceState para detectar cambios programáticos
     const originalPushState = window.history.pushState;
     const originalReplaceState = window.history.replaceState;
 
@@ -216,7 +174,6 @@ export class URLManager {
       handlePushState();
     };
 
-    // Función de limpieza
     return () => {
       window.removeEventListener("popstate", handlePopState);
       window.history.pushState = originalPushState;
@@ -225,11 +182,11 @@ export class URLManager {
   }
 
   /**
-   * Navega a una URL específica (solo funciona en cliente)
+   * Navega a una URL específica
    */
   static navigate(url: string, replace: boolean = false): boolean {
     if (!this.isClient()) {
-      console.warn("URLManager.navigate: No disponible en SSR");
+      console.log("URLManager.navigate: Solo disponible en cliente");
       return false;
     }
 
@@ -240,8 +197,8 @@ export class URLManager {
         window.location.href = url;
       }
       return true;
-    } catch (error) {
-      console.error("URLManager.navigate: Error navigating", error);
+    } catch {
+      console.log("URLManager.navigate: Error navegando");
       return false;
     }
   }
@@ -255,51 +212,30 @@ export class URLManager {
   }
 
   /**
-   * Verifica si estamos en el cliente (útil para componentes)
+   * Verifica si estamos en el cliente
    */
-  static isClientSide(): boolean {
-    return this.isClient();
-  }
+  static isClientSide = (): boolean => this.isClient();
 
   /**
    * Parsea una URL string y devuelve información estructurada
    */
   static parseURL(urlString: string): URLInfo | null {
     try {
-      const url = new URL(urlString);
-      
-      return {
-        protocol: url.protocol.replace(":", ""),
-        host: url.host,
-        hostname: url.hostname,
-        port: url.port || "",
-        pathname: url.pathname,
-        search: url.search,
-        hash: url.hash,
-        params: Object.fromEntries(url.searchParams),
-        toString: () => url.toString(),
-      };
-    } catch (error) {
-      console.warn("URLManager.parseURL: Error parsing URL", error);
+      return this.createURLInfo(new URL(urlString));
+    } catch {
+      console.log("URLManager.parseURL: Error parseando URL");
       return null;
     }
   }
 }
 
-// Hook personalizado para React (opcional)
+// Hook personalizado para React
 export function useURLManager(fallbackURL?: string) {
-  if (typeof window === "undefined") {
-    // En SSR, devolver valores por defecto
-    return {
-      urlInfo: URLManager.getURL(fallbackURL),
-      updateURL: () => null,
-      isClient: false,
-    };
-  }
-
+  const isClient = URLManager.isClientSide();
+  
   return {
-    urlInfo: URLManager.getURL(),
+    urlInfo: URLManager.getURL(fallbackURL),
     updateURL: URLManager.updateURL,
-    isClient: true,
+    isClient,
   };
 }
