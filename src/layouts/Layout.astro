@@ -40,15 +40,20 @@ if (clear) {
     <TooltipProvider>
       <Toaster client:only />
       <div class="min-h-screen bg-background">
-       {import.meta.env.PUBLIC_APP_MODE === "testing" && pathname !== "/beta-testing" && <WarningBanner
-          message="⚠️ APLICACIÓN EN MODO DE PRUEBA ⚠️"
-          backgroundColor="#ffeb3b88"
-          textColor="#000000cc"
-          stripeColor="#ff572288"
-          animationSpeed="3s"
-          height="60px"
-          zIndex={9999}
-        />}
+        {
+          import.meta.env.PUBLIC_APP_MODE === "testing" &&
+            pathname !== "/beta-testing" && (
+              <WarningBanner
+                message="⚠️ APLICACIÓN EN MODO DE PRUEBA ⚠️"
+                backgroundColor="#ffeb3b88"
+                textColor="#000000cc"
+                stripeColor="#ff572288"
+                animationSpeed="3s"
+                height="60px"
+                zIndex={9999}
+              />
+            )
+        }
         <Navbar />
         <slot />
         <Footer />
