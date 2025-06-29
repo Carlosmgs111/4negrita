@@ -2,5 +2,10 @@
     "buildCommand": "npm run build",
     "outputDirectory": "dist",
     "framework": "astro",
-    "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+    "rewrites": [
+        {
+          "source": "/api/webhook",
+          "destination": "/api/webhook"
+        }
+      ]
 }

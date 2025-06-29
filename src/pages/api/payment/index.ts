@@ -1,3 +1,7 @@
+export const config = {
+  runtime: 'edge',
+}
+
 import type { APIRoute } from "astro";
 import crypto from "crypto";
 import { decodeRaffleReference } from "@/lib/genRefCode";
