@@ -38,7 +38,7 @@ if (!drawId || !raffleId) {
   stateManager.setState({ drawId: drawData?.data?.id });
   raffleId = drawData?.data?.raffleId;
 }
-console.log({ tickets });
+// console.log({ tickets });
 if (!tickets) {
   const [ticketsData] = await Promise.all([
     supabase
@@ -48,10 +48,11 @@ if (!tickets) {
   ]);
   stateManager.setState({ tickets: ticketsData.data });
   tickets = ticketsData.data;
-  console.log({ tickets });
+  // console.log({ tickets });
 }
-console.log({ tickets });
+// console.log({ tickets });
 const checkTicketsStatus = () => {
+  if (!tickets) return;
   tickets.forEach((ticket: any) => {
     if (ticket.status === "reserved") {
       const reservedUntil = new Date(ticket.reservedUntil).getTime();

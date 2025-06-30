@@ -7,4 +7,8 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   db: {
     schema: import.meta.env.PUBLIC_SUPABASE_SCHEMA || "public",
   },
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false,
+  },
 });
