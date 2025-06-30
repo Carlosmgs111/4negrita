@@ -1,6 +1,6 @@
 export const config = {
-  runtime: 'edge',
-}
+  runtime: "edge",
+};
 
 import type { APIRoute } from "astro";
 import crypto from "crypto";
