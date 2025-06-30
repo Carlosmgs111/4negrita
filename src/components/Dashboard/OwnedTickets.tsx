@@ -14,10 +14,11 @@ export const OwnedTickets = async () => {
   if (!userId) {
     return null;
   }
-  const { data: myTickets } = await supabase
+  const { data: myTickets, error } = await supabase
     .from("ticket")
     .select("*")
     .eq("userId", userId);
+  console.log({ myTickets, error });
   if (!myTickets) {
     return null;
   }
