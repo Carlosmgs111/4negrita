@@ -52,6 +52,7 @@ if (!tickets) {
 }
 console.log({ tickets });
 const checkTicketsStatus = () => {
+  if (!tickets) return;
   tickets.forEach((ticket: any) => {
     if (ticket.status === "reserved") {
       const reservedUntil = new Date(ticket.reservedUntil).getTime();
