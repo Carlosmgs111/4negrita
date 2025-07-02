@@ -26,6 +26,7 @@ if (selectedTickets.length > 0 && wasCanceled === "true") {
   Astro.url.searchParams.toString().replace("?canceled=true", "");
   stateManager.setState({ selectedTickets });
 }
+// ! Check if tickets, drawId and raffleId are in stateManager
 let { tickets, drawId, raffleId } = stateManager.getState();
 
 if (!drawId || !raffleId) {
@@ -40,14 +41,15 @@ if (!drawId || !raffleId) {
 }
 console.log({ tickets });
 if (!tickets) {
-  const [ticketsData] = await Promise.all([
+  const [{data:ticketsData}] = await Promise.all([
     supabase
       .from("ticket")
       .select("number, digits, status, reservedUntil, id")
       .eq("raffleId", raffleId),
   ]);
-  stateManager.setState({ tickets: ticketsData.data });
-  tickets = ticketsData.data;
+  console.log({ ticketsData });
+  stateManager.setState({ tickets: ticketsData });
+  tickets = ticketsData;
   console.log({ tickets });
 }
 console.log({ tickets });

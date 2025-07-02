@@ -11,6 +11,9 @@ import Countdown from "@/components/Utilities/Countdown.astro";
 import { Card, CardFooter } from "@/components/ui/card";
 import { supabase } from "@/lib/supabase";
 
+const { data: session } = await supabase.auth.getSession();
+console.log({ session });
+
 const app = Astro.url.searchParams.get("app");
 const auth = Astro.url.searchParams.get("auth");
 const payment = Astro.url.searchParams.get("payment");

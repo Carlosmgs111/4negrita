@@ -8,8 +8,7 @@ const nodeAdapter = node({
   mode: "standalone",
 });
 
-const vercelAdapter = vercel({
-});
+const vercelAdapter = vercel({});
 
 const adapter =
   process.env.PUBLIC_VERCEL_ENV === "production" ? vercelAdapter : nodeAdapter;
@@ -29,5 +28,8 @@ export default defineConfig({
     "src/pages/**/*.astro": {
       memory: 1024,
     },
+  },
+  security: {
+    checkOrigin: false,
   },
 });
