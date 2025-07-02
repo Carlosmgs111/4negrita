@@ -45,9 +45,10 @@ export const POST: APIRoute = async ({ request }) => {
     const webhookSecret = import.meta.env.SECRET_WOMPI_EVENTS_KEY!;
     const webhookData: WompiWebhookData = JSON.parse(body);
     const transaction = webhookData.data.transaction;
-    const { reference } = webhookData.data.transaction;
+    const { reference } = transaction;
     const decodedReference = decodeRaffleReference(reference);
     console.log({ decodedReference });
+    console.log({ transaction });
     const sum = [
       transaction.id,
       transaction.status,
@@ -57,9 +58,12 @@ export const POST: APIRoute = async ({ request }) => {
     ].join("");
     const checksum = crypto.createHash("sha256").update(sum).digest("hex");
     console.log({ checksum, signature });
-    if (
-      !crypto.timingSafeEqual(Buffer.from(checksum), Buffer.from(signature))
-    ) {
+    const areEqual = crypto.timingSafeEqual(
+      Buffer.from(checksum),
+      Buffer.from(signature)
+    );
+    console.log({ areEqual });
+    if (!areEqual) {
       return Response.json({ error: "Invalid signature" }, { status: 200 });
     }
     const canceledStatuses: string[] = ["DECLINED", "VOIDED", "ERROR"];
@@ -68,19 +72,16 @@ export const POST: APIRoute = async ({ request }) => {
 
     if (transaction.status === "APPROVED") status = "sold";
     if (canceledStatuses.includes(transaction.status)) status = "available";
-
-    supabase
+    console.log(await supabase.auth.getSession());
+    const { data, error } = await supabase
       .from("ticket")
       .update({ status, userId })
       .eq("raffleId", raffleId)
-      .in("number", tickets)
-      .then((data: any) => {
-        console.log({ data });
-      })
-      .catch((err: any) => {
-        console.log(err);
-      });
-
+      .in("number", tickets);
+    console.log({ data, error });
+    if (error) {
+      return Response.json({ error: error.message }, { status: 400 });
+    }
     return Response.json({ received: true }, { status: 200 });
   } catch (error) {
     console.error("Webhook error:", error);

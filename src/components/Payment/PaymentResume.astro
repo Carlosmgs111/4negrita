@@ -42,7 +42,8 @@ const queryExitingTickets = async (tickets: number[], raffleId: string) => {
   ];
 };
 
-const createTickets = (notExisting: number[], expirationTime: string) => {
+const createTickets = async (notExisting: number[], expirationTime: string) => {
+  console.log("creando tickets");
   const reservedUntil = expirationTime;
   const notExistingTickets = notExisting.map((ticket: any) => {
     const digits = Number(ticket.number - 1)
@@ -61,30 +62,26 @@ const createTickets = (notExisting: number[], expirationTime: string) => {
       reservedUntil,
     };
   });
-  supabase
+  console.log(await supabase.auth.getSession());
+  const { data, error } = await supabase
     .from("ticket")
     .upsert(notExistingTickets)
-    .select()
-    .then((res: any) => {
-      console.log({ res });
-    })
-    .catch((err: any) => {
-      console.log({ err });
-    });
+    .select();
+  console.log({ data, error });
 };
 
-const updateTickets = (existing: any[], expirationTime: string) => {
+const updateTickets = async (existing: any[], expirationTime: string) => {
   const existingIds = existing.map((t: any) => t.id);
   const reservedUntil = expirationTime;
-  supabase
+  const { data, error } = await supabase
     .from("ticket")
     .update({
-      status: "reserved",
+      status: "reserved", 
       reservedUntil,
     })
     .in("id", existingIds)
-    .then((res: any) => {})
-    .catch((err: any) => {});
+    .select();
+  console.log({ data, error });
 };
 const { totalAmount, selectedTickets } = stateManager.getState();
 const { raffleId, expirationTime, referenceCode } = paymentStore.getState();
@@ -92,8 +89,9 @@ const [{ existing, notExisting }, error] = await queryExitingTickets(
   selectedTickets,
   raffleId
 );
-createTickets(notExisting, expirationTime);
-updateTickets(existing, expirationTime);
+console.log({ existing, notExisting });
+await createTickets(notExisting, expirationTime);
+await updateTickets(existing, expirationTime);
 ---
 
 <div>
