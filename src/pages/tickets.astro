@@ -39,7 +39,7 @@ if (!drawId || !raffleId) {
   stateManager.setState({ drawId: drawData?.data?.id });
   raffleId = drawData?.data?.raffleId;
 }
-console.log({ tickets });
+// console.log({ tickets });
 if (!tickets) {
   const [{data:ticketsData}] = await Promise.all([
     supabase
@@ -47,12 +47,11 @@ if (!tickets) {
       .select("number, digits, status, reservedUntil, id")
       .eq("raffleId", raffleId),
   ]);
-  console.log({ ticketsData });
-  stateManager.setState({ tickets: ticketsData });
-  tickets = ticketsData;
-  console.log({ tickets });
+  stateManager.setState({ tickets: ticketsData.data });
+  tickets = ticketsData.data;
+  // console.log({ tickets });
 }
-console.log({ tickets });
+// console.log({ tickets });
 const checkTicketsStatus = () => {
   if (!tickets) return;
   tickets.forEach((ticket: any) => {

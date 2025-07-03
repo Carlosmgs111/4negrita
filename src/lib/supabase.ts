@@ -8,9 +8,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     schema: import.meta.env.PUBLIC_SUPABASE_SCHEMA || "public",
   },
   auth: {
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
-    persistSession: true,
-    flowType: "pkce",
+    autoRefreshToken: false,
+    persistSession: false,
   },
 });
