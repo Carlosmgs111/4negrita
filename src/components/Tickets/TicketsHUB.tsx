@@ -78,8 +78,9 @@ export const TicketsHUB = ({
         <CardHeader className="pb-4">
           <CardTitle>Selecciona tu número de la suerte</CardTitle>
           <CardDescription>
-            Cada boleto tiene un valor de $10.000 y todo lo recaudado ayudará a
-            Sofía.
+            Cada boleto tiene un valor de $5.000 y todo lo recaudado sera
+            destinado a cubrir los gastos medicos veterinarios y tratamientos
+            posteriores de Negrita.
           </CardDescription>
           <div className="flex gap-2 pt-2">
             <div className="flex items-center gap-1">

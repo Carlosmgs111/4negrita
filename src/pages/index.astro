@@ -61,7 +61,7 @@ if (!playDate || !limitDate || !ticketPrice || !totalTickets || !tickets.length)
     limitDate = draw?.limitDate;
     ticketPrice = raffle?.ticketPrice;
     daysLeftToPlay = Math.floor(
-      (new Date(limitDate).getTime() - new Date().getTime()) /
+      (new Date(playDate + "T00:00:00").getTime() - new Date().getTime()) /
         (1000 * 60 * 60 * 24)
     );
     stateManager.setState({
@@ -85,7 +85,7 @@ totalSoldTickets = tickets?.filter(
 )?.length;
 totalRaised = ticketPrice * totalSoldTickets;
 daysLeftToPlay = Math.floor(
-  (new Date(limitDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+  (new Date(playDate + "T00:00:00").getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
 );
 ---
 
@@ -103,6 +103,7 @@ daysLeftToPlay = Math.floor(
       playDate={playDate}
       limitDate={limitDate}
       ticketPrice={ticketPrice}
+      totalRaised={totalRaised}
     />
     <ProgressSection
       totalRaised={totalRaised}

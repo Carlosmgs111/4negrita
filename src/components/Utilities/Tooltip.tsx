@@ -7,8 +7,6 @@ interface TooltipProps {
   delay?: number;
   children: React.ReactNode;
   className?: string;
-  // Opcional: mantener compatibilidad con la prop 'text'
-  text?: string;
   // Nuevo parámetro: permitir hover sobre el tooltip
   allowHover?: boolean;
   // Distancia desde el componente envuelto al tooltip (en píxeles)
@@ -21,7 +19,6 @@ export const Tooltip: React.FC<TooltipProps> = ({
   delay = 300,
   children,
   className = "",
-  text, // Para compatibilidad hacia atrás
   allowHover = false, // Por defecto deshabilitado para mantener comportamiento actual
   distance = 8, // Distancia por defecto de 8px (2 en Tailwind = 8px)
 }) => {
@@ -31,7 +28,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   const tooltipRef = useRef<HTMLDivElement>(null);
 
   // Usar 'text' si se proporciona para compatibilidad, sino usar 'content'
-  const tooltipContent = text || content;
+  const tooltipContent = content;
 
   const showTooltip = () => {
     if (timeoutId) clearTimeout(timeoutId);

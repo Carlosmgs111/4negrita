@@ -1,75 +1,102 @@
 ---
 import { Separator } from "@/components/ui/separator";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Ticket } from "lucide-react";
-const { playDate, limitDate, ticketPrice } = Astro.props;
+import { Info, Ticket } from "lucide-react";
+import Tooltip from "../Utilities/Tooltip.astro";
+const { playDate, limitDate, ticketPrice, totalRaised } = Astro.props;
+console.log({ playDate });
 const playDateFormated = new Intl.DateTimeFormat("es-CO", {
   year: "numeric",
   month: "long",
   day: "2-digit",
-}).format(new Date(playDate));
+}).format(new Date(playDate + "T00:00:00"));
+const shortPlayDateFormated = new Intl.DateTimeFormat("es-CO", {
+  month: "long",
+  day: "2-digit",
+}).format(new Date(playDate + "T00:00:00"));
+
 const limitDateFormated = new Intl.DateTimeFormat("es-CO", {
   year: "numeric",
   month: "long",
   day: "2-digit",
-}).format(new Date(limitDate));
+}).format(new Date(limitDate + "T00:00:00"));
+const prizePercentage = 20;
+const prize = (totalRaised * prizePercentage) / 100;
 ---
 
 <section id="rifa" class="bg-white py-16">
-  <div class="container-section">
+  <div class="container-section max-w-4xl mx-auto">
     <div class="text-center mb-10">
       <h2 class="text-2xl md:text-3xl font-bold mb-4">Detalles de la Rifa</h2>
       <p class="text-gray-600 max-w-2xl mx-auto">
         Tu participación nos acerca a la meta. Cada boleto cuenta y tú podrías
-        ser el ganador de estos increíbles premios.
+        ser el ganador de hasta <span class="font-semibold text-heart-600"
+          >{prize.toLocaleString()}</span
+        > de pesos.
       </p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-      <Card client:visible className="card-highlight">
-        <CardContent className="p-6">
-          <h3 class="text-xl font-semibold mb-4">¿Qué se sortea?</h3>
+      <Card className="border-none shadow-none pt-12">
+        <CardContent className="p-0 ">
+          <h3 class="text-xl font-semibold mb-4 pl-6">Sobre El Premio</h3>
 
-          <div class="space-y-6">
-            <div class="flex gap-4 items-start">
-              <div class="bg-warmth-100 rounded-lg p-2 text-warmth-500">
-                <span class="font-semibold text-xl">1°</span>
-              </div>
-              <div>
-                <h4 class="font-medium text-lg">Premio Principal</h4>
-                <p class="text-gray-600">
-                  Un viaje para dos personas a Cancún, con estancia de 5 días
-                  todo incluido.
-                </p>
-              </div>
-            </div>
+          <div class="">
+            <Tooltip content="Haz clic para saber más">
+              <a
+                class="flex gap-2 items-start cursor-pointer hover:bg-warmth-200 p-4 rounded-lg transition-colors duration-200 ease-in-out"
+              >
+                <div class="bg-warmth-100 rounded-lg p-2 text-warmth-500">
+                  <span class="font-semibold text-xl"><Info /></span>
+                </div>
+                <div>
+                  <h4 class="font-medium text-lg">
+                    ¿El Premio es en efectivo?
+                  </h4>
+                  <p class="text-gray-600">
+                    Si, el premio sera entregado en efectivo.
+                  </p>
+                </div>
+              </a></Tooltip
+            >
 
-            <div class="flex gap-4 items-start">
-              <div class="bg-warmth-100 rounded-lg p-2 text-warmth-500">
-                <span class="font-semibold text-xl">2°</span>
-              </div>
-              <div>
-                <h4 class="font-medium text-lg">Segundo Premio</h4>
-                <p class="text-gray-600">
-                  Una laptop última generación para apoyar tus proyectos
-                  personales.
-                </p>
-              </div>
-            </div>
+            <Tooltip content="Haz clic para saber más">
+              <a
+                class="flex gap-2 items-start cursor-pointer hover:bg-warmth-200 p-4 rounded-lg transition-colors duration-200 ease-in-out"
+              >
+                <div class="bg-warmth-100 rounded-lg p-2 text-warmth-500">
+                  <span class="font-semibold text-xl"><Info /></span>
+                </div>
+                <div>
+                  <h4 class="font-medium text-lg">
+                    ¿De cuanto sera el premio?
+                  </h4>
+                  <p class="text-gray-600">
+                    El premio sera del {prizePercentage}% del total recaudado.
+                  </p>
+                </div>
+              </a></Tooltip
+            >
 
-            <div class="flex gap-4 items-start">
-              <div class="bg-warmth-100 rounded-lg p-2 text-warmth-500">
-                <span class="font-semibold text-xl">3°</span>
-              </div>
-              <div>
-                <h4 class="font-medium text-lg">Tercer Premio</h4>
-                <p class="text-gray-600">
-                  Una cena para cuatro personas en un restaurante de primera
-                  categoría.
-                </p>
-              </div>
-            </div>
+            <Tooltip content="Haz clic para saber más">
+              <a
+                class="flex gap-2 items-start cursor-pointer hover:bg-warmth-200 p-4 rounded-lg transition-colors duration-200 ease-in-out"
+              >
+                <div class="bg-warmth-100 rounded-lg p-2 text-warmth-500">
+                  <span class="font-semibold text-xl"><Info /></span>
+                </div>
+                <div>
+                  <h4 class="font-medium text-lg">
+                    ¿Como se entregara el premio?
+                  </h4>
+                  <p class="text-gray-600">
+                    El premio sera entregado por medio de transferencia
+                    bancaria.
+                  </p>
+                </div>
+              </a></Tooltip
+            >
           </div>
         </CardContent>
       </Card>
@@ -77,13 +104,21 @@ const limitDateFormated = new Intl.DateTimeFormat("es-CO", {
       <Card client:visible className="card-highlight">
         <CardContent className="p-6">
           <h3 class="text-xl font-semibold mb-4">¿Cómo participar?</h3>
-
           <div class="space-y-6">
             <div class="flex gap-4 items-start">
-              <div
-                class="bg-heart-100 rounded-lg p-2 text-heart-500 flex items-center justify-center h-10 w-10"
-              >
-                <span class="font-semibold">1</span>
+              <div>
+                <span class="font-bold text-2xl text-heart-600">1</span>
+              </div>
+              <div>
+                <h4 class="font-medium">Registrate</h4>
+                <p class="text-gray-600">
+                  Crea un usuario con tu número de teléfono movil y contraseña.
+                </p>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <div>
+                <span class="font-bold text-2xl text-heart-600">2</span>
               </div>
               <div>
                 <h4 class="font-medium">Compra tu boleto</h4>
@@ -94,11 +129,8 @@ const limitDateFormated = new Intl.DateTimeFormat("es-CO", {
             </div>
 
             <div class="flex gap-4 items-start">
-              <div
-                class="bg-heart-100 rounded-lg p-2 text-heart-500 flex items-center justify-center h-10 w-10"
-              >
-                <span class="font-semibold">2</span>
-              </div>
+              <span class="font-bold text-2xl text-heart-600">3</span>
+
               <div>
                 <h4 class="font-medium">Recibe tu confirmación</h4>
                 <p class="text-gray-600">
@@ -106,18 +138,14 @@ const limitDateFormated = new Intl.DateTimeFormat("es-CO", {
                 </p>
               </div>
             </div>
-
             <div class="flex gap-4 items-start">
-              <div
-                class="bg-heart-100 rounded-lg p-2 text-heart-500 flex items-center justify-center h-10 w-10"
-              >
-                <span class="font-semibold">3</span>
-              </div>
+              <span class="font-bold text-2xl text-heart-600">4</span>
+
               <div>
                 <h4 class="font-medium">Espera el sorteo</h4>
                 <p class="text-gray-600">
-                  El sorteo será el 15 de julio a las 19:00 horas en vivo por
-                  nuestras redes sociales.
+                  El sorteo será el {shortPlayDateFormated} realizado por la Lotería
+                  de Boyacá.
                 </p>
               </div>
             </div>
@@ -125,26 +153,15 @@ const limitDateFormated = new Intl.DateTimeFormat("es-CO", {
 
           <Separator client:visible className="my-6" />
 
-          <div
-            class="flex flex-col sm:flex-row gap-4 items-center justify-between"
-          >
-            <div class="text-center sm:text-left">
-              <span class="block text-xl font-bold text-heart-600"
-                >${ticketPrice} COP</span
-              >
-              <span class="text-sm text-gray-500">por boleto</span>
-            </div>
-
-            <a href="/tickets">
-              <Button
-                client:visible
-                className="btn-primary flex gap-2 items-center min-w-[200px] animate-pulse-gentle"
-              >
-                <Ticket client:visible size={18} />
-                <span>Comprar Boleto</span>
-              </Button>
-            </a>
-          </div>
+          <a href="/tickets">
+            <Button
+              client:visible
+              className="btn-primary flex gap-2 items-center min-w-[200px] animate-pulse-gentle w-full"
+            >
+              <Ticket client:visible size={18} />
+              <span>¡Quiero Mi Boleto!</span>
+            </Button>
+          </a>
         </CardContent>
       </Card>
     </div>
@@ -167,11 +184,19 @@ const limitDateFormated = new Intl.DateTimeFormat("es-CO", {
             ></span
           >
           que jugará el día
-          <span class="font-semibold">{playDateFormated}</span>. El resultado
-          será publicado aquí, en nuestra web y se notificará por correo
-          electrónico, teléfono o WhatsApp al ganador.
+          <span class="font-semibold">{shortPlayDateFormated}</span>. El
+          resultado será publicado aquí, en nuestra web y se notificará por
+          correo electrónico, teléfono o WhatsApp al ganador.
         </p>
       </CardContent>
+      <CardFooter className="flex justify-center">
+        <Button
+          variant="ghost"
+          className="text-heart-700 w-full hover:bg-heart-600 hover:text-white text-m font-thin"
+        >
+          <Info /> Ver Las Reglas y Condiciones</Button
+        >
+      </CardFooter>
     </Card>
   </div>
 </section>

@@ -1,6 +1,7 @@
 ---
 import { BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Tooltip from "../Utilities/Tooltip.astro";
 export interface Props {
   message?: string;
   backgroundColor?: string;
@@ -37,13 +38,18 @@ const {
     <span class="banner-text">{message}</span>
   </div>
   <div class="animate-pulse-gentle">
-    <a href="/beta-testing">
-      <Button
-        variant="outline"
-        className="flex items-center gap-2 cursor-pointer text-sm border border-heart-700 bg-heart-100 text-heart-700 hover:bg-heart-600 hover:text-white pointer-events-auto"
-        ><BookOpen size={20} />Guia de Uso
-      </Button>
-    </a>
+    <Tooltip
+      content="ℹ️ Haz clic para redirigirte a la guia de uso del modo prueba."
+      position="bottom"
+    >
+      <a href="/beta-testing">
+        <Button
+          variant="outline"
+          className="flex items-center gap-2 cursor-pointer text-sm border border-heart-700 bg-heart-100 text-heart-700 hover:bg-heart-600 hover:text-white pointer-events-auto"
+          ><BookOpen size={20} />Guia de Uso
+        </Button>
+      </a></Tooltip
+    >
   </div>
 </div>
 

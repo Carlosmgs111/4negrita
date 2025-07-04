@@ -11,7 +11,7 @@ const {
 
 <div class="relative bg-gradient-to-b from-warmth-100 to-white py-20 md:py-28">
   <div class="container-section">
-    <div class="text-center max-w-3xl mx-auto">
+    <div class="text-center max-w-4xl mx-auto">
       <span
         class="inline-block bg-heart-100 text-heart-600 rounded-full px-4 py-1 text-sm font-semibold mb-4"
       >
@@ -24,22 +24,22 @@ const {
         Ayúdanos a que nuestro angelito de cuatro patas se recupere y vuelva a
         tener una vida normal y sana con su familia.
       </p>
-      <div class="flex flex-col sm:flex-row justify-center gap-4 mb-8">
-        <Button client:visible className="btn-primary text-lg" size="lg">
+      <div class="flex flex-col sm:flex-row justify-center gap-4 mb-8 ">
+        <Button client:visible className="btn-primary text-lg transition-all duration-300" size="lg">
           ¡Quiero Ayudar!
         </Button>
         <Button
           client:visible
           variant="outline"
           size="lg"
-          className="border-heart-300 text-heart-700 hover:bg-heart-50 text-lg"
+          className="border-heart-300 text-heart-700 hover:bg-heart-600 hover:text-white text-lg transition-all duration-300"
         >
           Conoce a Negrita
         </Button>
       </div>
 
       <div
-        class="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-sm inline-flex flex-wrap justify-center gap-x-6 gap-y-2"
+        class="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-xl w-full inline-flex flex-wrap justify-center gap-x-6 gap-y-2 "
       >
         <div class="text-center px-2">
           <p class="text-sm text-gray-500">Boletos Vendidos</p>
