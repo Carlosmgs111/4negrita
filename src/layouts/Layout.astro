@@ -42,7 +42,7 @@ if (clear) {
       <div class="min-h-screen bg-background">
         {
           import.meta.env.PUBLIC_APP_MODE === "testing" &&
-            pathname !== "/beta-testing" && (
+            !pathname.includes("/guide") && (
               <WarningBanner
                 message="⚠️ APLICACIÓN EN MODO DE PRUEBA ⚠️"
                 backgroundColor="#ffeb3b88"

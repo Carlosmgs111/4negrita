@@ -1,0 +1,130 @@
+---
+import GuideLayout from "@/layouts/GuideLayout.astro";
+---
+
+<GuideLayout title="Registro de Usuario">
+  <div class="content-section" id="registro">
+    <div class="bg-card border border-border rounded-lg p-2 md:p-6">
+      <h2 class="text-2xl font-montserrat font-bold text-card-foreground mb-4">
+        Registro de Usuario
+      </h2>
+      <div class="space-y-6">
+        <div class="flex items-start gap-4">
+          <div
+            class="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+          >
+            1
+          </div>
+          <div>
+            <h3 class="font-semibold text-card-foreground mb-2">
+              Accede al formulario de registro
+            </h3>
+            <p class="text-muted-foreground mb-3">
+              Haz clic en <b>Registrarse</b> desde el formulario de
+              <i>Inicio de Sesión</i>.
+            </p>
+            <div class="bg-muted rounded-lg p-3">
+              <code class="text-sm text-muted-foreground"
+                >💡 Tip: La página de <i>Inicio de Sesión</i> está disponible dando
+                click en <b>[Iniciar Sesión]</b> desde la barra de navegación.</code
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-4">
+          <div
+            class="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+          >
+            2
+          </div>
+          <div>
+            <h3 class="font-semibold text-card-foreground mb-2">
+              Completa los datos
+            </h3>
+            <p class="text-muted-foreground mb-3">
+              En el modo prueba solo puedes usar datos de prueba, es decir,
+              datos ficticios, de los cuales, los mas importantes son el <b
+                >telefono</b
+              >
+              y la <b>contraseña</b>:
+            </p>
+            <ul class="space-y-1 text-sm text-muted-foreground ml-4">
+              <li>• Nombre completo (cualquier nombre)</li>
+              <li>
+                • Phone (formato válido para prueba, ej: 3772847029) <a
+                  href="#"
+                  class="text-warmth-500 hover:underline"
+                  >ℹ️ Consulta aquí los números de prueba</a>
+              </li>
+              <li>• Contraseña (mínimo 6 caracteres)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-4">
+          <div
+            class="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+          >
+            3
+          </div>
+          <div>
+            <h3 class="font-semibold text-card-foreground mb-2">
+              Verificacion de numero
+            </h3>
+            <p class="text-muted-foreground mb-3">
+              Toda cuenta para completar registro requiere verificar el numero
+              proporcionado, por lo que normamente se le envia un codigo de
+              verificacion al numero proporcionado.
+            </p>
+            <p class="text-muted-foreground mb-3">
+              En este caso, en modo prueba, el codigo de verificacion son los
+              ultimos <b>6 digitos</b> del numero usado.
+            </p>
+            <div class="bg-muted rounded-lg p-3 mb-3">
+              <code class="text-sm text-muted-foreground">
+                <span class="font-bold">telefono:</span> 3772[8][4][7][0][2][9]<br
+                />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓&nbsp;&nbsp;↓&nbsp;&nbsp;↓&nbsp;&nbsp;↓&nbsp;&nbsp;↓&nbsp;&nbsp;↓<br
+                />
+                <span class="font-bold">codigo:</span
+                >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[8][4][7][0][2][9]
+              </code>
+            </div>
+            <div class="bg-muted rounded-lg p-3 text-xs text-muted-foreground">
+              ☝️ Sugerencia: Para la contraseña en modo prueba, puedes usar el
+              mismo codigo de verificacion. <br /><br />
+              <b class="bg-heart-300 text-[#23282b] px-1 rounded-[6px] p-2"
+                >⚠️ ! IMPORTANTE !, No hacer esto en modo producción</b
+              >
+            </div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4">
+          <div
+            class="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+          >
+            4
+          </div>
+          <div>
+            <h3 class="font-semibold text-card-foreground mb-2">¡Y listo!</h3>
+            <p class="text-muted-foreground mb-3">
+              Ahora puedes acceder a la web y realizar el proceso de compra de
+              boletas.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 p-4 bg-accent rounded-lg">
+        <h4 class="font-medium text-accent-foreground mb-2">💡 Ejemplo:</h4>
+        <div class="text-sm text-accent-foreground space-y-1">
+          <div><strong>Telefono:</strong> 3772847029</div>
+          <div><strong>OTP:</strong> 847029</div>
+          <div><strong>Contraseña:</strong> 123456</div>
+          <div><strong>Nombre:</strong> Usuario de Prueba</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</GuideLayout>

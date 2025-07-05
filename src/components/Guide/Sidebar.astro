@@ -1,3 +1,10 @@
+---
+const pathname = Astro.url.pathname.split("/guide/")[1];
+console.log({ pathname });
+const activeClass = "guide-nav-item active w-full text-left px-4 py-3 rounded-lg bg-sidebar-accent text-sidebar-accent-foreground font-medium transition-colors";
+const inactiveClass = "guide-nav-item w-full text-left px-4 py-3 rounded-lg text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors";
+---
+
 <aside
   class="w-full md:w-fit md:max-w-[300px] md:mr-8 mb-6 md:mb-0 md:h-[calc(100vh-12rem)] md:sticky md:top-[16.2rem] fixed left-0"
 >
@@ -32,9 +39,9 @@
       Guía de Uso
     </h2>
     <nav class="flex flex-col space-y-2">
-      <button
-        class="guide-nav-item active w-full text-left px-4 py-3 rounded-lg bg-sidebar-accent text-sidebar-accent-foreground font-medium transition-colors"
-        data-section="registro"
+      <a
+        href="/guide/signup"
+        class={pathname === "signup" ? activeClass : inactiveClass}
       >
         <div class="flex items-center gap-3">
           <svg
@@ -52,11 +59,11 @@
           </svg>
           Registro de Usuario
         </div>
-      </button>
+      </a>
 
-      <button
-        class="guide-nav-item w-full text-left px-4 py-3 rounded-lg text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
-        data-section="login"
+      <a
+        href="/guide/login"
+        class={pathname === "login" ? activeClass : inactiveClass}
       >
         <div class="flex items-center gap-3">
           <svg
@@ -74,11 +81,11 @@
           </svg>
           Iniciar Sesión
         </div>
-      </button>
+      </a>
 
-      <button
-        class="guide-nav-item w-full text-left px-4 py-3 rounded-lg text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
-        data-section="navegacion"
+      <a
+        href="/guide/navigation"
+        class={pathname === "navigation" ? activeClass : inactiveClass}
       >
         <div class="flex items-center gap-3">
           <svg
@@ -96,11 +103,11 @@
           </svg>
           Navegación Básica
         </div>
-      </button>
+      </a>
 
-      <button
-        class="guide-nav-item w-full text-left px-4 py-3 rounded-lg text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
-        data-section="limitaciones"
+      <a
+        href="/guide/limitations"
+        class={pathname === "limitations" ? activeClass : inactiveClass}
       >
         <div class="flex items-center gap-3">
           <svg
@@ -118,7 +125,7 @@
           </svg>
           Limitaciones de Prueba
         </div>
-      </button>
+      </a>
     </nav>
 
     <div class="mt-8">

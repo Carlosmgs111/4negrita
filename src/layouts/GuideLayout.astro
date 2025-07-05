@@ -1,0 +1,15 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Guide/Header.astro";
+import Sidebar from "@/components/Guide/Sidebar.astro";
+---
+
+<Layout title="Guía de Uso | 4Negrita">
+  <div class="min-h-screen flex flex-col bg-background">
+    <Header />
+    <div class="container mx-auto px-4 py-6 flex flex-col md:flex-row">
+      <Sidebar />
+      <slot />
+    </div>
+  </div>
+</Layout>
