@@ -1,0 +1,18 @@
+---
+const { path } = Astro.props;
+const pathname = Astro.url.pathname.split("/guide/")[1];
+console.log({ pathname });
+const activeClass =
+  "guide-nav-item active w-full text-left px-4 py-3 rounded-lg bg-sidebar-accent text-sidebar-accent-foreground font-medium transition-colors";
+const inactiveClass =
+  "guide-nav-item w-full text-left px-4 py-3 rounded-lg text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors";
+---
+
+<a
+  href={`/guide/${path}`}
+  class={pathname === path ? activeClass : inactiveClass}
+>
+  <div class="flex items-center gap-3">
+    <slot />
+  </div>
+</a>
