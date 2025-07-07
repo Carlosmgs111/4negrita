@@ -1,0 +1,117 @@
+---
+import GuideLayout from "@/layouts/GuideLayout.astro";
+import IconTicket from "@/components/Guide/Icons/ticket.astro";
+---
+
+<GuideLayout title="Selección de Boletos | 4Negrita">
+  <div class="content-section" id="tickets">
+    <div class="bg-card border border-border rounded-lg p-6">
+      <h2 class="text-2xl font-montserrat font-bold text-card-foreground mb-4">
+        Selección de Boletos
+      </h2>
+      <div class="space-y-6">
+        <div class="flex items-start gap-4">
+          <div
+            class="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+          >
+            1
+          </div>
+          <div>
+            <h3 class="font-semibold text-card-foreground mb-2">
+              Navega hasta la sección de boletos
+            </h3>
+            <p class="text-muted-foreground mb-3">
+              Haz clic en <b>Boletos</b> desde la barra de navegación.
+            </p>
+            <div class="bg-muted rounded-lg p-3">
+              <code class="text-sm text-muted-foreground"
+                >💡 Tip: La página de <i>Boletos</i> está disponible dando click
+                en <b>[Boletos]</b> desde la barra de navegación.</code
+              >
+            </div>
+          </div>
+        </div>
+        <div class="flex items-start gap-4">
+          <div
+            class="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+          >
+            2
+          </div>
+          <div>
+            <h3 class="font-semibold text-card-foreground mb-2">
+              Selecciona los boletos que deseas adquirir.
+            </h3>
+            <p class="text-muted-foreground mb-3">
+              Haz clic sobre los boletos que deseas para ir añadiendolos ti
+              carrito de compras.
+            </p>
+            <p class="text-muted-foreground mb-3">
+              Los boletos presentan 3 estados diferentes:
+            </p>
+            <div class="bg-muted rounded-lg p-3 mb-3">
+              <code class="text-sm text-muted-foreground">
+                <ul class="space-y-1 text-sm text-muted-foreground ml-4">
+                  <li class="flex items-center gap-2 text-green-500">
+                    <IconTicket /> Disponible
+                  </li>
+                  <li class="flex items-center gap-2 text-yellow-500">
+                    <IconTicket /> Reservado
+                  </li>
+                  <li class="flex items-center gap-2 text-gray-500">
+                    <IconTicket /> Vendido
+                  </li>
+                </ul></code
+              >
+            </div>
+
+            <p class="text-muted-foreground mb-3">
+              Donde solo el estado <b class="text-green-500">disponible</b> es seleccionable.
+            </p>
+            <p class="text-muted-foreground mb-3">
+              Si deseas deseleccionar un boleto seleccionado, simplemente da
+              click sobre el mismo.
+            </p>
+          </div>
+        </div>
+        <div class="flex items-start gap-4">
+          <div
+            class="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+          >
+            3
+          </div>
+          <div>
+            <h3 class="font-semibold text-card-foreground mb-2">
+              Procede a comprar.
+            </h3>
+            <p class="text-muted-foreground mb-3">
+              Una vez seleccionados los boletos, da clic en el botón <b
+                class="text-primary">[Comprar]</b
+              > donde aparcera el total de boletos seleccionados.
+            </p>
+            <p class="text-muted-foreground mb-3">
+              Se abrira una ventana modal donde podras confirmar los numeros
+              seleccionados y el cual te redirigira finalmente a la seccion de
+              pagos.
+            </p>
+          </div>
+        </div>
+        <div class="mt-6 p-4 bg-warmth-100 rounded-lg">
+          <h4 class="font-medium mb-2">💡 Tip:</h4>
+          <div class="text-sm space-y-1">
+            <ul class="space-y-1 list-disc list-inside">
+              <li>
+                Los boletos seleccionados se guardan en el carrito de compras,
+                sin importar a donde naveges.
+              </li>
+              <li>
+                Si deseas limpiar el carrito de compras, simplemente da clic en
+                el botón <b class="text-primary">[Limpiar Seleccion]</b> ubicado
+                en parte inferior de la seccion de boletos.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</GuideLayout>

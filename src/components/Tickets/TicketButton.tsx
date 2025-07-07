@@ -22,7 +22,7 @@ export const TicketButton = ({
       onClick={onClick}
       className={[
         "relative inline-block hover:scale-[1.05] transition-all duration-200 w-fit h-fit",
-        disabled ? "opacity-50 cursor-not-allowed" : "",
+        disabled ? "cursor-not-allowed" : "",
         className,
       ].join(" ")}
     >
@@ -33,7 +33,12 @@ export const TicketButton = ({
         width={125}
         height={58}
       />
-      <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-transparent text-sm font-bold text-gray-800">
+      <span
+        className={[
+          "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-transparent text-sm font-bold text-gray-800",
+          disabled ? "opacity-60" : "",
+        ].join(" ")}
+      >
         {children}
       </span>
     </button>

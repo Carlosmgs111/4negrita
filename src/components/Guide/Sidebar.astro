@@ -1,9 +1,10 @@
 ---
 import NavIndex from "./NavIndex.astro";
 import IconSignup from "./Icons/signup.astro";
-import IconLogin from "./Icons/login.astro";
-import IconNavigation from "./Icons/navigation.astro";
-import IconLimitations from "./Icons/limitations.astro";
+import IconTicket from "./Icons/ticket.astro";
+import IconCreditCard from "./Icons/credit-card.astro";
+import IconIdCardTest from "./Icons/id-card-test.astro";
+import IconCreditCardTest from "./Icons/credit.card-test.astro";
 ---
 
 <aside
@@ -40,15 +41,20 @@ import IconLimitations from "./Icons/limitations.astro";
       Guía de Uso
     </h2>
     <nav class="flex flex-col space-y-2">
-      <NavIndex path="signup" label="Registro de Usuario">
+      <NavIndex path="signup">
         <IconSignup /> Registro de Usuario
       </NavIndex>
-      <NavIndex path="login"> <IconLogin /> Iniciar Sesión </NavIndex>
-      <NavIndex path="navigation">
-        <IconNavigation /> Navegación Básica
+      <NavIndex path="tickets-selection">
+        <IconTicket /> Seleccion de Boletos
       </NavIndex>
-      <NavIndex path="limitations">
-        <IconLimitations /> Limitaciones de Prueba
+      <NavIndex path="purchase">
+        <IconCreditCard /> Compra de Boletos
+      </NavIndex>
+      <NavIndex path="test-credentials">
+        <IconIdCardTest /> Credenciales de Prueba
+      </NavIndex>
+      <NavIndex path="test-payment-data">
+        <IconCreditCardTest /> Datos de Pago de Prueba
       </NavIndex>
     </nav>
 

@@ -1,0 +1,152 @@
+---
+import GuideLayout from "@/layouts/GuideLayout.astro";
+import IconCreditCard from "@/components/Guide/Icons/credit-card.astro";
+---
+
+<GuideLayout title="Compra de Boletos | 4Negrita">
+  <div class="content-section" id="purchase">
+    <div class="bg-card border border-border rounded-lg p-6">
+      <h2 class="text-2xl font-montserrat font-bold text-card-foreground mb-4">
+        Compra de Boletos
+      </h2>
+      <div class="flex items-start gap-4">
+        <div
+          class="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+        >
+          1
+        </div>
+        <div>
+          <h3 class="font-semibold text-card-foreground mb-2">
+            Aparecera un resumen de la compra
+          </h3>
+          <p class="text-muted-foreground mb-3">
+            Una vez redirigido a la seccion de pagos, podras ver un resumen de
+            la compra, donde nuevamente podras confirmar los numeros
+            seleccionados y el total a pagar.
+          </p>
+          <p class="text-muted-foreground mb-3">
+            En esta parte deberas darte prisa, pues dispondra de generosos 10
+            minutos para concretar la compra.
+          </p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4">
+        <div
+          class="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+        >
+          2
+        </div>
+        <div>
+          <h3 class="font-semibold text-card-foreground mb-2">Boton de pago</h3>
+          <p class="text-muted-foreground mb-3">
+            En la parte inferior de el resumen de compra, encontrara el boton de
+            pago <b class="text-blue-500">[Paga con Wompi]</b>.
+          </p>
+          <p class="text-muted-foreground mb-3">
+            Al dar clic en el boton de pago, se abrira una ventana modal deberas
+            ingresar el metodo de pago y agregar algunos datos adicionales como
+            el nombre completo, email donde llegara el recibo de la compra y el
+            numero de telefono.
+          </p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4">
+        <div
+          class="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+        >
+          3
+        </div>
+        <div>
+          <h3 class="font-semibold text-card-foreground mb-2">
+            Ingresa los datos
+          </h3>
+          <p class="text-muted-foreground mb-3">
+            Deberas ingresar los datos solicitados, sin embargo, en modo prueba,
+            debes usar datos de prueba los cuales serviran para generar una
+            respuesta diferente, como <b class="text-green-500"
+              >transaccion exitosa</b
+            >, <b class="text-orange-500">transaccion declinada</b>
+            o hubo un <b class="text-red-500">error en el procesamiento</b>.
+          </p>
+          <p class="text-sm text-heart-500 hover:underline mb-3">
+            <a href="#"
+              >Aquí puedes consultar los datos de prueba para ser usados con el
+              procesador de pago Wompi</a
+            >
+          </p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4">
+        <div
+          class="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+        >
+          4
+        </div>
+        <div>
+          <h3 class="font-semibold text-card-foreground mb-2">
+            Acepta los terminos y condiciones
+          </h3>
+          <p class="text-muted-foreground mb-3">
+            Debes aceptar los terminos y condiciones de uso del procesador de
+            pago Wompi para poder continuar y finalizar la compra.
+          </p>
+          <p class="text-muted-foreground mb-3">
+            Una vez procesado el pago, dependiendo los datos que hayas
+            ingresado, el procesador de pago generara una respuesta u otra:
+
+            <b class="text-green-500">transaccion exitosa</b>, <b
+              class="text-orange-500">transaccion declinada</b
+            >
+            , <b class="text-red-500">error en el procesamiento</b>.
+          </p>
+          <div class="bg-muted rounded-lg p-3 mb-3">
+            <code class="text-sm text-muted-foreground">
+              <ul class="space-y-1 text-sm text-muted-foreground ml-4">
+                <li class="flex items-center gap-2 text-green-500">
+                  <IconCreditCard /> Transaccion Exitosa
+                </li>
+                <li class="flex items-center gap-2 text-orange-500">
+                  <IconCreditCard /> Transaccion Declinada
+                </li>
+                <li class="flex items-center gap-2 text-red-500">
+                  <IconCreditCard /> Error en el procesamiento
+                </li>
+              </ul></code
+            >
+          </div>
+        </div>
+      </div>
+      <div class="flex items-start gap-4">
+        <div
+          class="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+        >
+          5
+        </div>
+        <div>
+          <h3 class="font-semibold text-card-foreground mb-2">
+            Finaliza el procesamiento
+          </h3>
+          <p class="text-muted-foreground mb-3">
+            Aparecera un boton que dice <b class="text-lime-500"
+              >[Finalizar Compra]</b
+            >
+            que te redirigira de nuevo a la web principal.
+          </p>
+          <p class="text-muted-foreground mb-3">
+            Podras consultar tus boletos desde la configuracion de tu cuenta, la
+            encontrara dando click en el boton<b class="text-heart-600"
+              >[Tu Nombre]</b
+            > ubicado en la barra de navegacion, donde antes estaba el boton <b
+              class="text-heart-600">[Iniciar Sesión]</b
+            >.
+          </p>
+          <p class="text-muted-foreground mb-3">
+            Ahi podras encontrar el apartado <b class="text-heart-600"
+              >Tus Boletos</b
+            >.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</GuideLayout>

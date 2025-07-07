@@ -8,9 +8,27 @@ import GuideLayout from "@/layouts/GuideLayout.astro";
       <h2 class="text-2xl font-montserrat font-bold text-card-foreground mb-4">
         Guía de Uso
       </h2>
-      <p class="text-muted-foreground">
-        Contenido para la guía de uso...
+      <p class="text-muted-foreground mb-4">
+        Aquí encontrarás información sobre cómo usar la web en el modo de
+        prueba.
       </p>
+      <ul class="list-disc list-inside text-sm gap-2 flex flex-col">
+        <li class="text-heart-700 hover:text-heart-500 hover:underline w-fit">
+          <a href="/guide/signup">Registro de Usuario</a>
+        </li>
+        <li class="text-heart-700 hover:text-heart-500 hover:underline w-fit">
+          <a href="/guide/tickets-selection">Selección de Boletos</a>
+        </li>
+        <li class="text-heart-700 hover:text-heart-500 hover:underline w-fit">
+          <a href="/guide/purchase">Compra de Boletos</a>
+        </li>
+        <li class="text-heart-700 hover:text-heart-500 hover:underline w-fit">
+          <a href="/guide/test-credentials">Credenciales de Prueba</a>
+        </li>
+        <li class="text-heart-700 hover:text-heart-500 hover:underline w-fit">
+          <a href="/guide/test-payment-data">Datos de Pago de Prueba</a>
+        </li>
+      </ul>
     </div>
   </div>
 </GuideLayout>

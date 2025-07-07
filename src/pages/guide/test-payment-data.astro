@@ -1,0 +1,210 @@
+---
+import GuideLayout from "../../layouts/GuideLayout.astro";
+---
+
+<GuideLayout title="Guía de Uso | 4Negrita">
+  <div class="content-section" id="payment-data">
+    <div class="bg-card border border-border rounded-lg p-6">
+      <h2 class="text-2xl font-montserrat font-bold text-card-foreground mb-4">
+        Datos de Pago de Prueba
+      </h2>
+      <p class="text-muted-foreground mb-2">
+        Los pagos estan potenciados por <b>Wompi</b>, por lo que para poder
+        realizar pruebas de pago, debes usar los datos de prueba proporcionados
+        por <b>Wompi</b>, para los diferentes metodos de pagos que ofrecen, a
+        continuacion una lista para cada metodo disponible.
+      </p>
+      <p class="text-muted-foreground mb-2">
+        Como parte del esfuerzo de generar pruebas consistentes, los datos
+        variaran dependiendo de lo que se espera obtener como resultado, aqui
+        los resultados posibles:
+      </p>
+      <div class="bg-muted rounded-lg p-4 mb-4">
+        <code>
+          <ul class="space-y-2 list-disc list-inside mb-2">
+            <li>
+              <span class="text-green-500 font-bold">Transacción Exitosa</span>
+              <span class="text-muted-foreground text-sm"
+                >- Transaccion que ha sido procesada exitosamente.</span
+              >
+            </li>
+            <li>
+              <span class="text-orange-500 font-bold"
+                >Transacción Declinada</span
+              >
+              <span class="text-muted-foreground text-sm"
+                >- Transaccion que ha sido procesada pero ha sido rechazada.
+                Posibles motivos: tarjeta invalida, saldo insuficiente,
+                mantenimiento en la entidad finaciera del usuario, etc.</span
+              >
+            </li>
+            <li>
+              <span class="text-red-500 font-bold"
+                >Error en el Procesamiento</span
+              >
+              <span class="text-muted-foreground text-sm"
+                >- Error que ha ocurrido durante el procesamiento de la
+                transaccion. Por motivos ajenos y fuera de control al usuario o
+                la web. Posibles motivos: problemas de red, errores inesperados
+                en la plataforma de pago, errores inesperados en la entidad
+                finaciera del usuario, etc.</span
+              >
+            </li>
+          </ul>
+        </code>
+      </div>
+
+      <p class="text-muted-foreground mb-6">
+        A continuacion se expondran los metodos mas usados, para el resto de metodos
+        disponibles, puedes consultar la documentacion oficial de <a
+          href="https://docs.wompi.co/docs/colombia/datos-de-prueba-en-sandbox/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-lime-500 hover:underline font-bold"
+          >datos de prueba de Wompi</a
+        >.
+      </p>
+      <!-- Metodos de Pago -->
+      <div class="flex items-start gap-4 mb-6">
+        <div
+          class="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+        >
+          &bull;
+        </div>
+        <div>
+          <h3 class="font-semibold text-card-foreground mb-2">
+            Tarjeta de Credito
+          </h3>
+          <p class="text-muted-foreground mb-3">
+            En el widget desplegado para procesar la transacción, ingresa
+            cualquier dato valido para correo, nombre completo y telefono, pero
+            deberas ingresar para el numero de la tarjeta:
+          </p>
+          <p class="text-green-500 mb-3 text-sm">
+            <b><i>4242 4242 4242 4242</i></b> para una transacción aprobada (APPROVED).
+            Cualquier fecha de expiración en el futuro y CVC de 3 dígitos son válidos.
+          </p>
+          <p class="text-orange-500 mb-3 text-sm">
+            <b><i>4111 1111 1111 1111</i></b> para una transacción declinada (DECLINED).
+            Cualquier fecha de expiración en el futuro y CVC de 3 dígitos son válidos.
+          </p>
+          <p class="text-red-500 mb-3 text-sm">
+            Cualquier otra tarjeta que no sea alguna de estas dos, el estado
+            final de la transacción será ERROR.
+          </p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 mb-6">
+        <div
+          class="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+        >
+          &bull;
+        </div>
+
+        <div>
+          <h3 class="font-semibold text-card-foreground mb-2">Nequi</h3>
+          <p class="text-muted-foreground mb-3">
+            En el widget desplegado para procesar la transacción, ingresa
+            cualquier dato valido para correo y nombre completo, pero deberas
+            ingresar para el numero de cuenta nequi:
+          </p>
+          <p class="text-green-500 mb-3 text-sm">
+            <b><i>3991111111</i></b> para generar una transacción aprobada (APPROVED)
+          </p>
+          <p class="text-orange-500 mb-3 text-sm">
+            <b><i>3992222222</i></b> para generar una transacción declinada (DECLINED)
+          </p>
+          <p class="text-red-500 mb-3 text-sm">
+            Cualquier otro número que utilices resultará en una transacción con
+            status final en ERROR.
+          </p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 mb-6">
+        <div
+          class="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+        >
+          &bull;
+        </div>
+        <div>
+          <h3 class="font-semibold text-card-foreground mb-2">PSE</h3>
+          <p class="text-muted-foreground mb-3">
+            En el widget desplegado para procesar la transacción, ingresa
+            cualquier dato valido para correo, nombre completo, telefono y
+            documento de indentidad, y verás listados los siguientes bancos para
+            tu elección, estos seran los que defina el resultado de la
+            transacción:
+          </p>
+          <p class="text-green-500 mb-3 text-sm">
+            <b><i>Banco que aprueba:</i></b> Con este, obtienes una transacción APROBADA
+            de PSE.
+          </p>
+          <p class="text-orange-500 mb-3 text-sm">
+            <b><i>Banco que rechaza:</i></b> Con este, obtienes una transacción DECLINADA
+            de PSE.
+          </p>
+          <p class="text-red-500 mb-3 text-sm">
+            No existe un caso especifico para generar error en este metodo de
+            pago.
+          </p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 mb-6">
+        <div
+          class="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+        >
+          &bull;
+        </div>
+        <div>
+          <h3 class="font-semibold text-card-foreground mb-2">Daviplata</h3>
+          <p class="text-muted-foreground mb-3">
+            En el widget desplegado para procesar la transacción, ingresa
+            cualquier dato valido para correo, nombre completo, telefono y
+            documento de indentidad, se mostrara un widget similar a este:
+          </p>
+          <img
+            src="/banbox-daviplata-snapshot.png"
+            alt="Daviplata"
+            class="w-[500px] h-auto rounded-lg aspect-[16/10] object-cover"
+          />
+          <p class="text-muted-foreground mb-3 text-sm">
+            Donde podras seleccionar el resultado de la transaccion entre <b
+              class="text-green-500 font-bold">APPROVED</b
+            >, <b class="text-orange-500 font-bold">DECLINED</b>, <b
+              class="text-yellow-500 font-bold">WITHOUT MONEY</b
+            > y <b class="text-red-500 font-bold">ERROR</b>.
+          </p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4 mb-6">
+        <div
+          class="w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+        >
+          &bull;
+        </div>
+        <div>
+          <h3 class="font-semibold text-card-foreground mb-2">
+            Desde Bancolombia
+          </h3>
+          <p class="text-muted-foreground mb-3">
+            En el widget desplegado para procesar la transacción, ingresa
+            cualquier dato valido para correo, nombre completo y telefono, se
+            mostrara un widget similar a este:
+          </p>
+          <img
+            src="/banbox-bancolombia-snapshot.png"
+            alt="Bancolombia"
+            class="w-[500px] h-auto rounded-lg aspect-[16/10] object-cover"
+          />
+          <p class="text-muted-foreground mb-3 text-sm">
+            Donde podras seleccionar el resultado de la transaccion entre <b
+              class="text-green-500 font-bold">APPROVED</b
+            >, <b class="text-orange-500 font-bold">DECLINED</b> y <b
+              class="text-red-500 font-bold">ERROR</b
+            >.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</GuideLayout>

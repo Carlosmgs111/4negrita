@@ -165,38 +165,41 @@ const prize = (totalRaised * prizePercentage) / 100;
         </CardContent>
       </Card>
     </div>
-
-    <Card client:visible className="border-warmth-200 bg-warmth-100">
-      <CardContent className="p-6">
-        <h3 class="text-xl font-semibold mb-4 text-center">
-          Método de Selección
-        </h3>
-        <p class="text-center max-w-2xl mx-auto">
-          El sorteo se definirá con base al sorteo <span class="font-semibold"
-            >4574</span
-          > y los <span class="font-semibold">tres últimos dígitos</span> del número
-          ganador de la
-          <span class="font-semibold text-heart-600"
-            ><a
-              href="https://loteriadeboyaca.gov.co/"
-              target="_blank"
-              rel="noopener noreferrer">Lotería de Boyacá</a
-            ></span
+    <Tooltip
+      content=" ⚠️ Toda la información aquí presentada es solamente ilustrativa, no reflejan todas las reglas y condiciones del sorteo real."
+    >
+      <Card client:visible className="border-warmth-200 bg-warmth-100">
+        <CardContent className="p-6">
+          <h3 class="text-xl font-semibold mb-4 text-center">
+            Método de Selección
+          </h3>
+          <p class="text-center max-w-2xl mx-auto">
+            El sorteo se definirá con base al sorteo <span class="font-semibold"
+              >4574</span
+            > y los <span class="font-semibold">tres últimos dígitos</span> del número
+            ganador de la
+            <span class="font-semibold text-heart-600"
+              ><a
+                href="https://loteriadeboyaca.gov.co/"
+                target="_blank"
+                rel="noopener noreferrer">Lotería de Boyacá</a
+              ></span
+            >
+            que jugará el día
+            <span class="font-semibold">{shortPlayDateFormated}</span>. El
+            resultado será publicado aquí, en nuestra web y se notificará por
+            correo electrónico, teléfono o WhatsApp al ganador.
+          </p>
+        </CardContent>
+        <CardFooter className="flex justify-center">
+          <Button
+            variant="ghost"
+            className="text-heart-700 w-full hover:bg-heart-600 hover:text-white text-m font-thin"
           >
-          que jugará el día
-          <span class="font-semibold">{shortPlayDateFormated}</span>. El
-          resultado será publicado aquí, en nuestra web y se notificará por
-          correo electrónico, teléfono o WhatsApp al ganador.
-        </p>
-      </CardContent>
-      <CardFooter className="flex justify-center">
-        <Button
-          variant="ghost"
-          className="text-heart-700 w-full hover:bg-heart-600 hover:text-white text-m font-thin"
-        >
-          <Info /> Ver Las Reglas y Condiciones</Button
-        >
-      </CardFooter>
-    </Card>
+            <Info /> Ver Las Reglas y Condiciones</Button
+          >
+        </CardFooter>
+      </Card>
+    </Tooltip>
   </div>
 </section>

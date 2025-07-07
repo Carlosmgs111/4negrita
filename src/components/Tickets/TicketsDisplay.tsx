@@ -119,7 +119,7 @@ export const TicketsDisplay = ({
                       : "#05a33f"
                     : boleto.status === "reserved"
                     ? "#f97316"
-                    : "#9ca3af"
+                    : "#6b7280"
                 }
                 lineWidth={isSelected(boleto.number) ? 5 : 2.5}
               >
