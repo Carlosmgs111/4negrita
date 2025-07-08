@@ -8,37 +8,44 @@ export const POST: APIRoute = async ({ request }) => {
     token,
     type: "sms",
   });
-  console.log({ data, error });
+  let participant;
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       status: 400,
       headers: { "Content-Type": "application/json" },
     });
   }
-  const { data: recoverdParticipant, error: participantError } = await supabase
+  const { data: recoverdParticipant } = await supabase
     .from("participant")
     .select()
     .eq("userId", data.user.id)
     .single();
-  if (!recoverdParticipant?.id) {
-    const { data: participantData, error: participantError } = await supabase
+  if (!recoverdParticipant) {
+    const { error: participantError } = await supabase
       .from("participant")
       .insert({
         fullName: data.user.user_metadata.full_name.trim(),
         userId: data.user.id,
       })
       .single();
-
     if (participantError) {
-      console.log({ participantError });
       return new Response(JSON.stringify({ error: participantError.message }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
   }
-  return new Response(JSON.stringify({ data }), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+  return new Response(
+    JSON.stringify({
+      ...data,
+      participant: {
+        fullName: data.user.user_metadata.full_name.trim(),
+        userId: data.user.id,
+      },
+    }),
+    {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    }
+  );
 };

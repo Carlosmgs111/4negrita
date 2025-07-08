@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   ArrowDown,
@@ -79,10 +78,13 @@ export const OTPVerification = ({ phone }: { phone: string | null }) => {
           Object.entries(data.session).forEach(([key, value]) => {
             sessionStorage.setItem(key, JSON.stringify(value));
           });
-          localStorage.setItem("access_token", data.session.access_token);
+          sessionStorage.setItem("access_token", data.session.access_token);
         }
         if (data.user) {
           localStorage.setItem("user", JSON.stringify(data.user));
+        }
+        if (data.participant) {
+          localStorage.setItem("participant", JSON.stringify(data.participant));
         }
         sessionStorage.setItem("isLogged", "true");
         authStore.setState({
