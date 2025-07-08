@@ -189,6 +189,7 @@ export const Login = () => {
                 <div className="relative">
                   <FormControl>
                     <Tooltip
+                      active={appMode === "testing"}
                       className="w-full"
                       allowHover
                       content={
@@ -256,6 +257,7 @@ export const Login = () => {
                 <div className="relative">
                   <FormControl>
                     <Tooltip
+                      active={appMode === "testing"}
                       className="w-full"
                       content={
                         <div className="flex flex-col text-xs p-2 gap-2 relative">
@@ -284,7 +286,6 @@ export const Login = () => {
                       }
                       distance={10}
                       allowHover
-                      active={appMode === "testing"}
                     >
                       <Input
                         type={showPassword ? "text" : "password"}
