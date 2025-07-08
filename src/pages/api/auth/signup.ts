@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { supabase } from "../../../lib/supabase";
+const appMode = import.meta.env.PUBLIC_APP_MODE;
 
 const validateData = (data: any) => {
   const errors: string[] = [];
@@ -15,6 +16,11 @@ const validateData = (data: any) => {
     errors.push("Por favor, ingresa un teléfono válido");
   if (data.fullName.length < 3)
     errors.push("El nombre debe tener al menos 3 caracteres");
+  if (appMode === "testing" && data.password !== data.phone.substring(4, 10)) {
+    errors.push(
+      "En modo prueba, la contraseña debe ser igual al codigo OTP (verificacion), el cual coincide con los ultimos 6 digitos del numero de telefono"
+    );
+  }
   return errors;
 };
 

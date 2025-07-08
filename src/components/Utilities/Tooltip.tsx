@@ -11,6 +11,7 @@ interface TooltipProps {
   allowHover?: boolean;
   // Distancia desde el componente envuelto al tooltip (en píxeles)
   distance?: number;
+  active?: boolean;
 }
 
 export const Tooltip: React.FC<TooltipProps> = ({
@@ -21,7 +22,9 @@ export const Tooltip: React.FC<TooltipProps> = ({
   className = "",
   allowHover = false, // Por defecto deshabilitado para mantener comportamiento actual
   distance = 8, // Distancia por defecto de 8px (2 en Tailwind = 8px)
+  active = true,
 }) => {
+  if (!active) return <>{children}</>;
   const [isVisible, setIsVisible] = useState(false);
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);

@@ -8,14 +8,14 @@ const validPaths = ["/", "/tickets"];
 export const Navbar = ({ pathname }: { pathname: string }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isValidPath = validPaths.includes(pathname);
-  const [token, setToken] = useState<{ name: string } | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<{ name: string } | null>(null);
   useEffect(() => {
     const storedToken = sessionStorage.getItem("access_token");
     const participant = JSON.parse(localStorage.getItem("participant") || "{}");
     setUser({ name: participant?.fullName?.split(" ")[0] || "" });
     if (storedToken) {
-      setToken(JSON.parse(storedToken));
+      setToken(storedToken);
     }
   }, []);
   const toggleMenu: any = () => {
@@ -24,6 +24,7 @@ export const Navbar = ({ pathname }: { pathname: string }) => {
   if (!isValidPath) {
     return null;
   }
+  console.log({token });
   return (
     <div className="container mx-100 px-4">
       <div className="flex justify-between items-center h-16">

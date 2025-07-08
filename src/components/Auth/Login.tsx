@@ -13,28 +13,21 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/useToast";
-import {
-  ArrowUpRightFromCircle,
-  ArrowUpRightSquare,
-  Eye,
-  EyeOff,
-  Info,
-  LogIn,
-  Phone,
-  UserPlus,
-} from "lucide-react";
+import { HelpCircle, Eye, EyeOff, LogIn, Phone, UserPlus } from "lucide-react";
 import { authStore } from "@/stores/authStore";
 import { URLManager } from "@/lib/URLManager";
 import { Tooltip } from "../Utilities/Tooltip";
 import validMobilePrefix from "@/mocks/validMobilePrefix.json";
 import testValidMobilePrefix from "@/mocks/testValidMobilePrefix.json";
 
+const appMode = import.meta.env.PUBLIC_APP_MODE;
+
 const validPrefix =
-  import.meta.env.PUBLIC_APP_MODE === "testing"
+  appMode === "testing"
     ? testValidMobilePrefix
     : validMobilePrefix;
 const phoneMessage =
-  import.meta.env.PUBLIC_APP_MODE === "testing"
+  appMode === "testing"
     ? "Esta en modo de pruebas, por lo que el número no debe corresponder con un operador móvil real, deberia empezar con 377, 388 o 399"
     : "El número debe corresponder con un operador móvil válido";
 
@@ -201,30 +194,30 @@ export const Login = () => {
                       content={
                         <div className="flex flex-col text-xs p-2 gap-2 relative">
                           <p>
-                            ⚠️ Los números de teléfono permitidos son las
-                            permutaciones de:
+                            🤔¿No sabes que poner?, cualquier número que empiece
+                            con{" "}
+                            <b className="text-orange-500">
+                              <i>377 284 70</i>
+                            </b>
+                            ,{" "}
+                            <b className="text-cyan-500">
+                              <i>388 593 60</i>
+                            </b>{" "}
+                            o{" "}
+                            <b className="text-lime-500">
+                              <i>399 174 20</i>
+                            </b>
+                            , terminando con cualquier numero de 2 digitos
                           </p>
 
-                          <ul>
-                            <li className="mb-1 text-xs">
-                              377 284 70 [XX] =&#62; 00-99
-                            </li>
-                            <li className="mb-1 text-xs">
-                              388 593 60 [XX] =&#62; 00-99
-                            </li>
-                            <li className="mb-1 text-xs">
-                              399 174 20 [XX] =&#62; 00-99
-                            </li>
-                          </ul>
                           <div className="absolute top-0 right-[-5px]">
                             <Tooltip
-                              className="animate-pulse-gentle"
                               distance={10}
                               position="right"
                               content="Haz click para saber más"
                             >
-                              <a href="/beta-testing">
-                                <ArrowUpRightFromCircle size={16} />
+                              <a href="/guide/test-credentials">
+                                <HelpCircle size={16} />
                               </a>
                             </Tooltip>
                           </div>
@@ -262,12 +255,44 @@ export const Login = () => {
                 <FormLabel>Contraseña</FormLabel>
                 <div className="relative">
                   <FormControl>
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="••••••••"
-                      disabled={isLoading}
-                      {...field}
-                    />
+                    <Tooltip
+                      className="w-full"
+                      content={
+                        <div className="flex flex-col text-xs p-2 gap-2 relative">
+                          <p>
+                            ☝️ Recuerda que la contraseña debe ser igual al
+                            codigo OTP (verificacion), el cual coincide con los
+                            ultimos <b className="text-red-500">6 digitos</b>{" "}
+                            del numero de telefono.
+                          </p>
+                          <p>
+                            ej: <b className="text-cyan-500">3885936024</b> →{" "}
+                            <b className="text-red-500">936024</b>
+                          </p>{" "}
+                          <div className="absolute top-0 right-[-5px]">
+                            <Tooltip
+                              distance={10}
+                              position="right"
+                              content="Haz click para saber más"
+                            >
+                              <a href="/guide/test-credentials#otp-codes">
+                                <HelpCircle size={16} />
+                              </a>
+                            </Tooltip>
+                          </div>
+                        </div>
+                      }
+                      distance={10}
+                      allowHover
+                      active={appMode === "testing"}
+                    >
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        disabled={isLoading}
+                        {...field}
+                      />
+                    </Tooltip>
                   </FormControl>
                   <button
                     type="button"
