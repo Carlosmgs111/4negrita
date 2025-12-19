@@ -9,7 +9,7 @@ const {
 } = Astro.props;
 ---
 
-<div class="relative bg-gradient-to-b from-warmth-100 to-white py-20 md:py-28">
+<div class="relative bg-gradient-to-b from-warmth-100 via-white to-prize-50 py-20 md:py-28">
   <div class="container-section">
     <div class="text-center max-w-4xl mx-auto">
       <span
@@ -39,7 +39,7 @@ const {
       </div>
 
       <div
-        class="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-xl w-full inline-flex flex-wrap justify-center gap-x-6 gap-y-2 "
+        class="bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-xl w-full inline-flex flex-wrap justify-center gap-x-6 gap-y-2 border border-heart-200"
       >
         <div class="text-center px-2">
           <p class="text-sm text-gray-500">Boletos Vendidos</p>
@@ -49,13 +49,13 @@ const {
         </div>
         <div class="text-center px-2">
           <p class="text-sm text-gray-500">Valor por boleto</p>
-          <p data-total-tickets class="font-bold text-heart-600 text-xl">
+          <p data-total-tickets class="font-bold text-warmth-500 text-xl">
             ${ticketPrice}
           </p>
         </div>
         <div class="text-center px-2">
           <p class="text-sm text-gray-500">Recaudado</p>
-          <p class="font-bold text-heart-600 text-xl">${totalRaised}</p>
+          <p class="font-bold text-prize-600 text-xl">${totalRaised}</p>
         </div>
         <div class="text-center px-2">
           <p class="text-sm text-gray-500">Días Restantes</p>
